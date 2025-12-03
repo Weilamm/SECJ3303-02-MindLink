@@ -87,8 +87,8 @@
                         </button>
                     </form>
                     <br>
-                    <form>
-                        <button onclick="history.back()" type="submit" class="no-btn">
+                    <form action="question5.jsp" method="post">
+                        <button  type="submit" class="no-btn">
                             <p><b>NO</b></p>
                         </button>
                     </form>  
