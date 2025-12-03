@@ -105,7 +105,7 @@
                 <img src="icon1.png" alt="edit">
             </a>
             <div class="question">
-                <form action="questionEdit.jsp" method="post">
+                <form action="editQuestion.jsp" method="post">
                     <button type="submit">
                         <h3>Are you taking any medications?</h3>
                         <p>Presribed Mediactions; Over the Counter Supplements; I'm not taking any; Prefer not to say</p>
@@ -145,7 +145,7 @@
             </div>
             <br>
             <div class="question">
-                <form action="welcome.jsp" method="post">
+                <form action="#" method="post">
                     <button type="submit">
                         <h3>Have you sought professional help before?</h3>
                         <p>Yes; No;</p>
