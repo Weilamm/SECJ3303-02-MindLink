@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCO5 Self Assessment (User) - MindLink</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: white;
+        }
+        .header {
+            padding: 10px 100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 40px;
+            font-weight: bold;
+            color: #00313e;
+        }
+        .nav-links a {
+            font-size: 15px;
+            color: #666;
+            text-decoration: none;
+        }
+
+        .container {
+            background: #f9e6d0;
+            padding: 25px;
+            padding-left: 50px;
+            text-align: left;
+        }
+        .question button {
+            width: 90%;
+            background: #ffffff9e;
+            border-radius: 20px;
+            padding: 10px 20px;
+            text-align: left;
+            border: none;
+            cursor: pointer;
+        }
+        .question h3 {
+            font-size: 25px;
+        }
+        h4 {
+            color: #00313e;
+            font-size: 30px;
+            font-weight: bold;
+            margin-top: 20px;
+        } 
+        .icon1 {
+            font-size: 60px;
+            position: absolute;
+            right: 250px;
+            top: 40px;
+            text-decoration: none;
+            color: black;
+        }
+        .icon2 img{
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            right: 150px;
+            top: 105px;
+            cursor: pointer;
+        }
+        .question p {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+        <div class="header">
+                <div class="nav-links"><a href="#">Home</a></div>
+                <div class="nav-links"><a href="#">Learning</a></div>
+                <div class="logo">MindLink</div>
+                <div class="nav-links"><a href="#">Community</a></div>
+                <div class="nav-links"><a href="#">Profile</a></div>
+        </div>
+        
+        <div class="container">
+            <h4><b>Mental Health Assessment</b></h4>
+            <a class="icon1" href="add.jsp">
+                <p>+</p>
+            <a>
+            <a class="icon2" href="edit.jsp">
+                <img src="icon1.png" alt="edit">
+            <a>
+            <div class="question">
+                <form action="questionEdit.jsp" method="post">
+                    <button type="submit">
+                        <h3>Are you taking any medications?</h3>
+                        <p>Presribed Mediactions; Over the Counter Supplements; I'm not taking any; Prefer not to say</p>
+                    </button>    
+                </form>
+            </div>
+            <br>   
+            <div class="question">
+                <form action="#" method="post">
+                    <button type="submit">
+                        <h3>Do you have other mental health symptoms?</h3>
+                        <p>#Social Withdrawal; #Feeling Numbness; #Feeling Sad; #Depressed; #Angry</p>
+                    </button>
+                </form>
+            </div>
+            <br>
+            <div class="question">
+                <form action="#" method="post">
+                    <button type="submit">
+                        <h3>What’s your health goal for today?</h3>
+                        <p>I wanna reduce stress; I wanna try AI ; I want to cope with trauma; I want to be a better person; Just trying out the app, mate!</p>
+                    </button>
+                </form>
+            </div>
+            <br>
+            <div class="question">
+                <form action="#" method="post">
+                    <button type="submit">
+                        <h3>How would you rate your sleep quality?</h3>
+                        <p>#Excellent; #Good; #Fair; #Poor; ;#Worst</p>
+                    </button>
+                </form>
+            </div>
+            <br>
+            <div class="question">
+                <form action="#" method="post">
+                    <button type="submit">
+                        <h3>Are you experiencing any physical distress?</h3>
+                        <p>#Social Withdrawal; #Feeling Numbness; #Feeling Sad; #Depressed; #Angry</p>
+                    </button>
+                </form>
+            </div>
+            <br>
+            <div class="question">
+                <form action="welcome.jsp" method="post">
+                    <button type="submit">
+                        <h3>Have you sought professional help before?</h3>
+                        <p>Yes; No;</p>
+                    </button>
+                </form>
+            </div>
+            <br>
+            
+        </div>
+</body>
+</html>
