@@ -1,1 +1,0 @@
-# SECJ3303-02-MindLink
