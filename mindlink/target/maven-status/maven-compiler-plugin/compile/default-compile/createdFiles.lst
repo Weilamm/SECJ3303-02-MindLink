@@ -1,0 +1,5 @@
+com\mindlink\MindlinkApp.class
+com\mindlink\admin\Feedback.class
+com\mindlink\admin\FeedbackService.class
+com\mindlink\admin\DashboardStats.class
+com\mindlink\admin\AdminController.class
