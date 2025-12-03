@@ -1,9 +1,10 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UCO7 Manage Assessment (Admin) - MindLink</title>
+    <title>UCO5 Self Assessment (User) - MindLink</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -40,6 +41,7 @@
             text-align: left;
             border: none;
             cursor: pointer;
+            position: relative;
         }
         .question h3 {
             font-size: 25px;
@@ -69,6 +71,20 @@
         .question p {
             color: #666;
         }
+        .delete-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 45px;
+            color: #000000;
+            display: none;
+        }
+        .question.delete-mode .delete-btn {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -84,15 +100,16 @@
             <h4><b>Mental Health Assessment</b></h4>
             <a class="icon1" href="add.jsp">
                 <p>+</p>
-            <a>
-            <a class="icon2" href="edit.jsp">
+            </a>
+            <a class="icon2" onclick="toggleDeleteMode()">
                 <img src="icon1.png" alt="edit">
-            <a>
+            </a>
             <div class="question">
                 <form action="questionEdit.jsp" method="post">
                     <button type="submit">
                         <h3>Are you taking any medications?</h3>
                         <p>Presribed Mediactions; Over the Counter Supplements; I'm not taking any; Prefer not to say</p>
+                        <a href="#" class="delete-btn" onclick="return confirmDelete(1)">🗑</a>
                     </button>    
                 </form>
             </div>
@@ -102,6 +119,7 @@
                     <button type="submit">
                         <h3>Do you have other mental health symptoms?</h3>
                         <p>#Social Withdrawal; #Feeling Numbness; #Feeling Sad; #Depressed; #Angry</p>
+                        <a href="#" class="delete-btn" onclick="return confirmDelete(2)">🗑</a>
                     </button>
                 </form>
             </div>
@@ -109,8 +127,9 @@
             <div class="question">
                 <form action="#" method="post">
                     <button type="submit">
-                        <h3>What’s your health goal for today?</h3>
+                        <h3>What's your health goal for today?</h3>
                         <p>I wanna reduce stress; I wanna try AI ; I want to cope with trauma; I want to be a better person; Just trying out the app, mate!</p>
+                        <a href="#" class="delete-btn" onclick="return confirmDelete(3)">🗑</a>
                     </button>
                 </form>
             </div>
@@ -120,6 +139,7 @@
                     <button type="submit">
                         <h3>How would you rate your sleep quality?</h3>
                         <p>#Excellent; #Good; #Fair; #Poor; ;#Worst</p>
+                        <a href="#" class="delete-btn" onclick="return confirmDelete(4)">🗑</a>
                     </button>
                 </form>
             </div>
@@ -129,6 +149,7 @@
                     <button type="submit">
                         <h3>Are you experiencing any physical distress?</h3>
                         <p>#Social Withdrawal; #Feeling Numbness; #Feeling Sad; #Depressed; #Angry</p>
+                        <a href="#" class="delete-btn" onclick="return confirmDelete(5)">🗑</a>
                     </button>
                 </form>
             </div>
@@ -138,11 +159,26 @@
                     <button type="submit">
                         <h3>Have you sought professional help before?</h3>
                         <p>Yes; No;</p>
+                        <a href="#" class="delete-btn" onclick="return confirmDelete(6)">🗑</a>
                     </button>
                 </form>
             </div>
             <br>
             
         </div>
+
+    <script>
+        function toggleDeleteMode() {
+            const questions = document.querySelectorAll('.question');
+            questions.forEach(q => q.classList.toggle('delete-mode'));
+        }
+
+        function confirmDelete(id) {
+            if(confirm('Are you sure you want to delete this question?')) {
+                window.location.href = 'deleteQuestion.jsp?id=' + id;
+            }
+            return false;
+        }
+    </script>
 </body>
 </html>
