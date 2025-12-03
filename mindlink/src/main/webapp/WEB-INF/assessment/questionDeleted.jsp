@@ -113,16 +113,6 @@
                     </button>    
                 </form>
             </div>
-            <br>   
-            <div class="question">
-                <form action="#" method="post">
-                    <button type="submit">
-                        <h3>Do you have other mental health symptoms?</h3>
-                        <p>#Social Withdrawal; #Feeling Numbness; #Feeling Sad; #Depressed; #Angry</p>
-                        <a href="#" class="delete-btn" onclick="return confirmDelete(2)">🗑</a>
-                    </button>
-                </form>
-            </div>
             <br>
             <div class="question">
                 <form action="#" method="post">
@@ -166,19 +156,5 @@
             <br>
             
         </div>
-
-    <script>
-        function toggleDeleteMode() {
-            const questions = document.querySelectorAll('.question');
-            questions.forEach(q => q.classList.toggle('delete-mode'));
-        }
-
-        function confirmDelete(id) {
-            if(confirm('Are you sure you want to delete this question?')) {
-                window.location.href = 'questionDeleted.jsp';
-            }
-            return false;
-        }
-    </script>
 </body>
 </html>
