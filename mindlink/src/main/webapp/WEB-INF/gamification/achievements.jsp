@@ -76,7 +76,7 @@
         <div class="container">
             <h1>Begin your journey to <br>earning achievements <br>and self-improvement!</h1>
             <br><br>
-            <form action="achivements.jsp" method="post">
+            <form action="viewAchievements.jsp" method="post">
                 <button type="submit" class="start-btn">View Achievements &nbsp &nbsp &nbsp →</button>
             </form>
             <br>
