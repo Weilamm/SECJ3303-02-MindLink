@@ -13,8 +13,59 @@
         
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: var(--text-dark); }
         
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .logo { font-size: 24px; font-weight: bold; color: #003049; }
+        /* Header Navigation */
+        .header {
+            padding: 20px 100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+        }
+
+        .nav-left,
+        .nav-right {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            flex: 1;
+            gap: 0;
+        }
+
+        .nav-left a, .nav-right a {
+            text-decoration: none;
+            color: #00313e;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-left a:hover, .nav-right a:hover {
+            color: #0d4e57;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: #00313e;
+            font-size: 32px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
         
         /* Stats Cards at top */
         .stats-row { display: flex; gap: 20px; margin-bottom: 30px; }
@@ -55,11 +106,23 @@
     </style>
 </head>
 <body>
-
+<!-- Header Navigation -->
     <div class="header">
-        <div class="logo">❤️ MindLink</div>
-        <div>
-            <a href="/admin/analytics" style="text-decoration:none; color:#333; font-weight:500;">&larr; Back to Dashboard</a>
+        <div class="nav-left">
+            <a href="/admin/home">Home</a>
+            <a href="/admin/modules">Module</a>
+        </div>
+        
+        <a href="${pageContext.request.contextPath}/home" class="logo">
+            <div class="logo-icon">
+                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
+            </div>
+            <span>MindLink</span>
+        </a>
+        
+        <div class="nav-right">
+            <a href="/admin/forum/reports">Forum</a>
+            <a href="/admin/profile">Profile</a>
         </div>
     </div>
 
