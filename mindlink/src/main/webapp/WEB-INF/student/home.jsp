@@ -341,7 +341,7 @@
                         <h3>Session with Dr. Evelyn Reed</h3>
                         <p>Date: July 5, 2025, 10:00 AM</p>
                     </div>
-                    <a href="${pageContext.request.contextPath}/learning" class="view-button">View</a>
+                    <a href="/counseling" class="view-button">View</a>
                 </div>
 
                 <div class="session-item">
@@ -349,7 +349,7 @@
                         <h3>Session with Dr. Aaron Smith</h3>
                         <p>Date: July 20, 2025, 10:00 AM</p>
                     </div>
-                    <a href="${pageContext.request.contextPath}/learning" class="view-button">View</a>
+                    <a href="/counseling" class="view-button">View</a>
                 </div>
             </div>
         </div>

@@ -4,46 +4,39 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-/**
- * Community Support - Forum Controller (UC12)
- * Simple navigation mapping - just shows JSP files
- */
 @Controller
-@RequestMapping("/forum")
+@RequestMapping("/forum") // 1. Base URL: All links start with /forum
 public class ForumController {
 
-    // URL: /forum/welcome
-    // JSP: WEB-INF/views/CommunitySupport/uc12_forum_welcome.jsp
+    // URL: localhost:8080/forum/welcome 
+    // (Matches the link in your header)
     @GetMapping("/welcome")
     public String showWelcome() {
-        return "CommunitySupport/uc12_forum_welcome";
+        return "forum/forum_welcome";
     }
 
-    // URL: /forum/available
-    // JSP: WEB-INF/views/CommunitySupport/uc12_forum_available.jsp
+    // URL: localhost:8080/forum/available
     @GetMapping("/available")
     public String showAvailable() {
-        return "CommunitySupport/uc12_forum_available";
+        return "forum/forum_available";
     }
 
-    // URL: /forum/joined
-    // JSP: WEB-INF/views/CommunitySupport/uc12_forum_joined.jsp
+    // URL: localhost:8080/forum/joined
     @GetMapping("/joined")
     public String showJoined() {
-        return "CommunitySupport/uc12_forum_joined";
+        return "forum/forum_joined";
     }
 
-    // URL: /forum/detail
-    // JSP: WEB-INF/views/CommunitySupport/uc12_forum_detail.jsp
+    // URL: localhost:8080/forum/detail
+    // (Fixed from /joined/detail to keep it consistent)
     @GetMapping("/detail")
     public String showDetail() {
-        return "CommunitySupport/uc12_forum_detail";
+        return "forum/forum_details";
     }
 
-    // URL: /forum/create
-    // JSP: WEB-INF/views/CommunitySupport/uc12_create_discussion.jsp
+    // URL: localhost:8080/forum/create
     @GetMapping("/create")
     public String showCreate() {
-        return "CommunitySupport/uc12_create_discussion";
+        return "forum/create_discussion";
     }
 }

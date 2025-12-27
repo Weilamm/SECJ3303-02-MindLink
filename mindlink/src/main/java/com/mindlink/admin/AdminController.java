@@ -12,14 +12,34 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/admin")
 public class AdminController {
 
+    //Admin Home Page
+    @GetMapping("/home")
+    public String showAdminHome() {
+        return "admin/home"; // Looks for WEB-INF/admin/home.jsp
+    }
+
+    // Admin Profile Page
+    @GetMapping("/profile")
+    public String showAdminProfile(Model model) {
+        AdminProfile profile = new AdminProfile(
+            "Admin", 
+            "S23CS0123", 
+            36, 
+            "admin@graduate.utm.my", 
+            "+60123456789", 
+            "Faculty of Computing"
+        );
+        
+        model.addAttribute("p", profile);
+        return "admin/profile"; // Looks for WEB-INF/admin/profile.jsp
+    }
+
     @Autowired
     private FeedbackService feedbackService; // <--- The Service holds the REAL data
 
     // READ
     @GetMapping("/feedback")
     public String showFeedbackPage(Model model) {
-        // ERROR WAS HERE: You were creating a 'new ArrayList' here. I removed it.
-        // Now we ONLY use the service, so the IDs are stable.
         model.addAttribute("feedbackList", feedbackService.getAllFeedback());
         
         // Stats
@@ -35,7 +55,7 @@ public class AdminController {
     public String saveReview(@RequestParam("id") String id, 
                              @RequestParam("response") String response) {
         
-        // Debugging: Watch your VS Code Terminal when you click save!
+        // Debugging
         System.out.println("DEBUG: Request to update ID: " + id);
         
         feedbackService.reviewFeedback(id, response);
@@ -59,5 +79,29 @@ public class AdminController {
         model.addAttribute("avgCompletionRate", stats.getAvgCompletionRate());
         model.addAttribute("activeUsers", stats.getActiveUsers());
         return "admin/analytics"; 
+    }
+
+    @Autowired
+    private ForumReportService forumReportService;
+
+    // Show Forum Reports Page
+    @GetMapping("/forum/reports")
+    public String showForumReports(Model model) {
+        model.addAttribute("reports", forumReportService.getAllReports());
+        return "admin/forum_reports"; // Looks for WEB-INF/admin/forum_reports.jsp
+    }
+
+    // Delete Reported Post
+    @GetMapping("/forum/reports/delete")
+    public String deleteReportedPost(@RequestParam("id") String id) {
+        forumReportService.deletePost(id);
+        return "redirect:/admin/forum/reports";
+    }
+    
+    // Dismiss Report (Mark as safe)
+    @GetMapping("/forum/reports/dismiss")
+    public String dismissReport(@RequestParam("id") String id) {
+        forumReportService.dismissReport(id);
+        return "redirect:/admin/forum/reports";
     }
 }

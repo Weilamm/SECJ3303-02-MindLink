@@ -26,27 +26,58 @@
             color: var(--text-dark);
         }
 
-        /* Navbar */
-        .navbar {
+        /* Header Navigation */
+        .header {
+            padding: 20px 100px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 50px;
-            background-color: var(--bg-color);
+            background: white;
         }
-        .nav-links a {
+
+        .nav-left,
+        .nav-right {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            flex: 1;
+            gap: 0;
+        }
+
+        .nav-left a, .nav-right a {
             text-decoration: none;
-            color: #333;
-            margin: 0 15px;
+            color: #00313e;
+            font-size: 16px;
             font-weight: 500;
+            transition: color 0.3s;
         }
+
+        .nav-left a:hover, .nav-right a:hover {
+            color: #0d4e57;
+        }
+
         .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #003049;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-weight: 700;
+            color: #00313e;
+            font-size: 32px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         /* Container */
@@ -164,20 +195,25 @@
     </style>
 </head>
 <body>
-
-    <nav class="navbar">
-        <div class="nav-links">
-            <a href="#">Home</a>
-            <a href="#">Portal</a>
+<!-- Header Navigation -->
+    <div class="header">
+        <div class="nav-left">
+            <a href="/admin/home">Home</a>
+            <a href="/admin/modules">Module</a>
         </div>
-        <div class="logo">
-             ❤️ MindLink
+        
+        <a href="/admin/home" class="logo">
+            <div class="logo-icon">
+                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
+            </div>
+            <span>MindLink</span>
+        </a>
+        
+        <div class="nav-right">
+            <a href="/admin/forum/reports">Forum</a>
+            <a href="/admin/profile">Profile</a>
         </div>
-        <div class="nav-links">
-            <a href="#">Forum</a>
-            <a href="#">Profile</a>
-        </div>
-    </nav>
+    </div>
 
     <div class="container">
         

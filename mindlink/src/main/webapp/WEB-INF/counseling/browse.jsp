@@ -20,10 +20,59 @@
             color: var(--text-dark);
         }
 
-        /* Navbar */
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 40px; }
-        .nav-links a { text-decoration: none; color: var(--text-dark); margin: 0 15px; font-weight: 500; }
-        .logo { font-size: 28px; font-weight: 800; color: var(--text-dark); }
+        /* Header Navigation */
+        .header {
+            padding: 20px 100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+        }
+
+        .nav-left,
+        .nav-right {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            flex: 1;
+            gap: 0;
+        }
+
+        .nav-left a, .nav-right a {
+            text-decoration: none;
+            color: #00313e;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-left a:hover, .nav-right a:hover {
+            color: #0d4e57;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: #00313e;
+            font-size: 32px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
 
         .container { max-width: 1100px; margin: 40px auto; }
         
@@ -79,18 +128,25 @@
     </style>
 </head>
 <body>
-
-    <nav class="navbar">
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/learning">Learning</a>
+<!-- Header Navigation -->
+    <div class="header">
+        <div class="nav-left">
+            <a href="${pageContext.request.contextPath}/home">Home</a>
+            <a href="${pageContext.request.contextPath}/learning">Learning</a>
         </div>
-        <div class="logo">❤️ MindLink</div>
-        <div class="nav-links">
-            <a href="#">Forum</a>
-            <a href="#">Profile</a>
+        
+        <a href="${pageContext.request.contextPath}/home" class="logo">
+            <div class="logo-icon">
+                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
+            </div>
+            <span>MindLink</span>
+        </a>
+        
+        <div class="nav-right">
+            <a href="${pageContext.request.contextPath}/forum/welcome">Forum</a>
+            <a href="${pageContext.request.contextPath}/profile">Profile</a>
         </div>
-    </nav>
+    </div>
 
     <div class="container">
         <h1>Find Your Counselor</h1>
