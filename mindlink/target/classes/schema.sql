@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 -- MindLink Database Schema
 -- Virtual Assistant & Support Module Tables
 
@@ -7,16 +6,6 @@ CREATE DATABASE IF NOT EXISTS mindlink_db;
 USE mindlink_db;
 
 -- Student Table: Stores student user information
-=======
---MindLink Database Schema
---Virtual Assistant & Support Module Tables
-
---Create Database
-CREATE DATABASE IF NOT EXISTS mindlink_db;
-USE mindlink_db;
-
---Student Table: Stores student user information
->>>>>>> d47ef884d7fdcffdaaf12c1c57e394f2a97cb0cd
 CREATE TABLE IF NOT EXISTS student (
     student_id VARCHAR(100) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -122,6 +111,19 @@ CREATE TABLE IF NOT EXISTS forum_comment (
     INDEX idx_post_id (post_id),
     INDEX idx_user_id (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Appointment Table: Stores counseling appointment details
+CREATE TABLE IF NOT EXISTS appointment (
+    id VARCHAR(50) PRIMARY KEY,
+    student_id VARCHAR(50),      -- Who booked it
+    counselor_name VARCHAR(100), -- Who they booked with
+    appointment_date VARCHAR(20),
+    appointment_time VARCHAR(20),
+    type VARCHAR(20),            -- Online/Physical
+    venue VARCHAR(100),
+    status VARCHAR(20) DEFAULT 'Confirmed',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 -- Sample Data for Students (Student IDs start from S001)
 INSERT INTO student (student_id, name, email, password, phone, faculty, year) VALUES
