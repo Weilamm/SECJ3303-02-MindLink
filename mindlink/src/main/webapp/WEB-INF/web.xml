@@ -7,30 +7,16 @@
 
     <display-name>MindLink Mental Health Platform</display-name>
 
-    <!-- 1. The Front Controller (Spring DispatcherServlet) -->
-    <!-- This handles all requests and routes them to your specific Modules -->
-    <servlet>
-        <servlet-name>mindlink-dispatcher</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <!-- In Spring Boot, we don't need init-param for contextConfigLocation 
-             because the main Application class handles it. -->
-        <load-on-startup>1</load-on-startup>
-    </servlet>
+    <!-- Spring Boot uses ServletInitializer to configure DispatcherServlet automatically -->
+    <!-- No manual servlet configuration needed for Spring Boot -->
 
-    <!-- 2. Mapping -->
-    <!-- Map everything (/) to the Spring Dispatcher -->
-    <servlet-mapping>
-        <servlet-name>mindlink-dispatcher</servlet-name>
-        <url-pattern>/</url-pattern>
-    </servlet-mapping>
-
-    <!-- 3. Session Timeout (Optional) -->
+    <!-- Session Timeout (Optional) -->
     <!-- Logs the user out automatically after 30 minutes of inactivity -->
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
 
-    <!-- 4. Welcome File List -->
+    <!-- Welcome File List -->
     <!-- If someone hits the root URL and Spring doesn't catch it, try index.jsp -->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

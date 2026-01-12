@@ -268,121 +268,74 @@
 
     <!-- Tips Container -->
     <div class="tips-container">
-        <!-- Tip 1 -->
-        <div class="tip-card" id="tip1">
-            <div>
-                <div class="tip-number">1.</div>
-                <div class="tip-title">
-                    <span class="tip-emoji">🧘</span>
-                    Find Your Calm Before You Begin
+        <c:forEach var="tip" items="${randomTips}" varStatus="status">
+            <div class="tip-card ${status.index == 0 ? '' : 'hidden'}" id="tip${status.index + 1}">
+                <div>
+                    <div class="tip-number">${status.index + 1}.</div>
+                    <div class="tip-title">
+                        <span class="tip-emoji">💡</span>
+                        ${tip.title}
+                    </div>
+                    <div class="tip-content">
+                        ${tip.content}
+                    </div>
                 </div>
-                <div class="tip-content">
-                    Before studying or starting your day, take a moment to pause. 
-                    Close your eyes, three deep breaths for 5 seconds, feel it, 
-                    and release. A calm mind helps you focus better 🧠
-                </div>
+                <c:choose>
+                    <c:when test="${status.index < randomTips.size() - 1}">
+                        <button class="next-button" onclick="nextTip(${status.index + 2})">Next</button>
+                    </c:when>
+                    <c:otherwise>
+                        <button class="next-button" onclick="nextTip(1)">Next</button>
+                    </c:otherwise>
+                </c:choose>
+                
+                <div class="heart-decoration">💛</div>
+                <div class="flower-decoration">🌸</div>
             </div>
-            <button class="next-button" onclick="nextTip(2)">Next</button>
-            
-            <div class="heart-decoration">💛</div>
-            <div class="flower-decoration">🌸</div>
-        </div>
-
-        <!-- Tip 2 -->
-        <div class="tip-card hidden" id="tip2">
-            <div>
-                <div class="tip-number">2.</div>
-                <div class="tip-title">
-                    <span class="tip-emoji">✏️</span>
-                    Progress, Not Perfection
-                </div>
-                <div class="tip-content">
-                    It's okay to feel anxious before exams — it means you care! 
-                    Focus on small sessions and play mental breaks. 
-                    Mistakes aren't failures or tokens perfection; 
-                    they're proof you're learning and growing 💪
-                </div>
-            </div>
-            <button class="next-button" onclick="nextTip(3)">Next</button>
-            
-            <div class="heart-decoration">💛</div>
-            <div class="flower-decoration">🌸</div>
-        </div>
-
-        <!-- Tip 3 -->
-        <div class="tip-card hidden" id="tip3">
-            <div>
-                <div class="tip-number">3.</div>
-                <div class="tip-title">
-                    <span class="tip-emoji">💚</span>
-                    Be Kind to Yourself
-                </div>
-                <div class="tip-content">
-                    Remember — rest is productive too. 
-                    You don't judge from all friends when overwhelmed, 
-                    so why not do the same for yourself? 
-                    Give yourself that kindness — you've doing your best 🌟
-                </div>
-            </div>
-            <button class="next-button" onclick="nextTip(1)">Next</button>
-            
-            <div class="heart-decoration">💛</div>
-            <div class="flower-decoration">🌸</div>
-        </div>
+        </c:forEach>
 
         <!-- Progress Dots -->
         <div class="progress-dots">
-            <div class="dot active" id="dot1" onclick="showTip(1)"></div>
-            <div class="dot" id="dot2" onclick="showTip(2)"></div>
-            <div class="dot" id="dot3" onclick="showTip(3)"></div>
+            <c:forEach var="tip" items="${randomTips}" varStatus="status">
+                <div class="dot ${status.index == 0 ? 'active' : ''}" id="dot${status.index + 1}" onclick="showTip(${status.index + 1})"></div>
+            </c:forEach>
         </div>
     </div>
 
     <script>
+        const totalTips = ${randomTips.size()};
         let currentTip = 1;
 
         function nextTip(tipNumber) {
             // Hide current tip
             document.getElementById('tip' + currentTip).classList.add('hidden');
-            document.getElementById('dot' + currentTip).classList.remove('active');
+            const currentDot = document.getElementById('dot' + currentTip);
+            if (currentDot) currentDot.classList.remove('active');
             
             // Show next tip
             document.getElementById('tip' + tipNumber).classList.remove('hidden');
-            document.getElementById('dot' + tipNumber).classList.add('active');
+            const nextDot = document.getElementById('dot' + tipNumber);
+            if (nextDot) nextDot.classList.add('active');
             
             currentTip = tipNumber;
         }
 
         function showTip(tipNumber) {
             // Hide all tips
-            for (let i = 1; i <= 3; i++) {
-                document.getElementById('tip' + i).classList.add('hidden');
-                document.getElementById('dot' + i).classList.remove('active');
+            for (let i = 1; i <= totalTips; i++) {
+                const tipEl = document.getElementById('tip' + i);
+                const dotEl = document.getElementById('dot' + i);
+                if (tipEl) tipEl.classList.add('hidden');
+                if (dotEl) dotEl.classList.remove('active');
             }
             
             // Show selected tip
-            document.getElementById('tip' + tipNumber).classList.remove('hidden');
-            document.getElementById('dot' + tipNumber).classList.add('active');
+            const selectedTip = document.getElementById('tip' + tipNumber);
+            const selectedDot = document.getElementById('dot' + tipNumber);
+            if (selectedTip) selectedTip.classList.remove('hidden');
+            if (selectedDot) selectedDot.classList.add('active');
             
             currentTip = tipNumber;
-        }
-
-        function finishTips() {
-            // Mark tips as completed in session
-            fetch('TipsServlet', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'action=complete'
-            })
-            .then(() => {
-                window.location.href = 'learning.jsp';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                window.location.href = 'learning.jsp';
-            });
         }
     </script>
 </body>

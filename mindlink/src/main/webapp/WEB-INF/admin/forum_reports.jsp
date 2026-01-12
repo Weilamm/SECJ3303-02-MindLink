@@ -53,7 +53,7 @@
 
     <div class="header">
         <div class="logo">MindLink Admin</div>
-        <a href="/admin/home" style="text-decoration:none; color:#003049; font-weight:600;">&larr; Back to Dashboard</a>
+        <a href="${pageContext.request.contextPath}/admin/home" style="text-decoration:none; color:#003049; font-weight:600;">&larr; Back to Dashboard</a>
     </div>
 
     <h1>Forum Reports</h1>
@@ -83,13 +83,13 @@
                     </td>
                     <td>
                         <c:if test="${item.status == 'Pending'}">
-                            <a href="/admin/forum/reports/delete?id=${item.id}" 
+                            <a href="${pageContext.request.contextPath}/admin/forum/reports/delete?id=${item.id}" 
                                class="btn-action btn-delete"
                                onclick="return confirm('Are you sure you want to delete this post? This cannot be undone.');">
                                Delete Post
                             </a>
                             
-                            <a href="/admin/forum/reports/dismiss?id=${item.id}" 
+                            <a href="${pageContext.request.contextPath}/admin/forum/reports/dismiss?id=${item.id}" 
                                class="btn-action btn-dismiss">
                                Dismiss
                             </a>

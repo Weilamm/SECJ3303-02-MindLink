@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 -- MindLink Database Schema
 -- Virtual Assistant & Support Module Tables
 
@@ -6,6 +7,16 @@ CREATE DATABASE IF NOT EXISTS mindlink_db;
 USE mindlink_db;
 
 -- Student Table: Stores student user information
+=======
+--MindLink Database Schema
+--Virtual Assistant & Support Module Tables
+
+--Create Database
+CREATE DATABASE IF NOT EXISTS mindlink_db;
+USE mindlink_db;
+
+--Student Table: Stores student user information
+>>>>>>> d47ef884d7fdcffdaaf12c1c57e394f2a97cb0cd
 CREATE TABLE IF NOT EXISTS student (
     student_id VARCHAR(100) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,

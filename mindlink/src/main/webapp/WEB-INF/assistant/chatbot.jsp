@@ -501,21 +501,7 @@
         let messageIdCounter = 1;
         let messageToDelete = null;
 
-        // Bot responses
-        const botResponses = {
-            'hello': 'Hello! How can I help you today?',
-            'hi': 'Hi there! What\'s on your mind?',
-            'stress': 'I understand you\'re feeling stressed. Try this breathing exercise: Breathe in for 4 counts, hold for 4, breathe out for 4. Repeat 3 times.',
-            'anxiety': 'Anxiety can be overwhelming. Remember: You are safe right now. Try grounding yourself by naming 5 things you can see around you.',
-            'sleep': 'Having trouble sleeping? Try establishing a bedtime routine: Turn off screens 1 hour before bed, keep your room cool and dark, and try reading.',
-            'sad': 'I\'m sorry you\'re feeling down. Your feelings are valid. Would you like to talk to one of our counselors? They\'re here to help.',
-            'depressed': 'I hear you. Depression is serious. Please consider reaching out to a mental health professional. In the meantime, try to do one small thing you enjoy today.',
-            'tired': 'Feeling tired? Make sure you\'re getting enough sleep (7-9 hours), staying hydrated, and taking short breaks throughout the day.',
-            'thank': 'You\'re very welcome! I\'m always here if you need to chat. Take care of yourself!',
-            'thanks': 'You\'re welcome! Feel free to reach out anytime.',
-            'help': 'I can help you with: stress management, anxiety relief, sleep tips, mood tracking, or just listen if you need to talk. What\'s on your mind?',
-            'default': 'I\'m here to listen. Can you tell me more about what you\'re experiencing?'
-        };
+        // Bot responses - now fetched from server/database
 
         // Send message on Enter key
         userInput.addEventListener('keypress', function(e) {
@@ -539,11 +525,24 @@
             // Add user message
             addMessage(text, 'user', messageId);
 
-            // Get bot response after a short delay
-            setTimeout(() => {
-                const response = getBotResponse(text);
-                addMessage(response, 'bot');
-            }, 500);
+            // Get bot response from server/database
+            getBotResponse(text).then(response => {
+                const botMessageId = 'bot-msg-' + messageIdCounter++;
+                addMessage(response, 'bot', botMessageId);
+                // Store reference to bot response in user message
+                const userMessageDiv = document.getElementById(messageId);
+                if (userMessageDiv) {
+                    userMessageDiv.dataset.botResponseId = botMessageId;
+                }
+            }).catch(error => {
+                console.error('Error getting bot response:', error);
+                const botMessageId = 'bot-msg-' + messageIdCounter++;
+                addMessage('Sorry, I encountered an error. Please try again.', 'bot', botMessageId);
+                const userMessageDiv = document.getElementById(messageId);
+                if (userMessageDiv) {
+                    userMessageDiv.dataset.botResponseId = botMessageId;
+                }
+            });
         }
 
         function addMessage(text, type, messageId = null) {
@@ -629,17 +628,24 @@
         }
 
         function editMessage(messageId) {
-            const editContainer = document.getElementById(`edit-${messageId}`);
-            const bubble = document.getElementById(messageId).querySelector('.message-bubble');
-            const actions = document.getElementById(messageId).querySelector('.message-actions');
+            const messageDiv = document.getElementById(messageId);
+            if (!messageDiv) return;
             
-            editContainer.classList.add('active');
-            bubble.style.display = 'none';
-            actions.style.display = 'none';
+            const editContainer = document.getElementById(`edit-${messageId}`);
+            const bubble = messageDiv.querySelector('.message-bubble');
+            const actions = messageDiv.querySelector('.message-actions');
+            
+            if (editContainer && bubble && actions) {
+                editContainer.classList.add('active');
+                bubble.style.display = 'none';
+                actions.style.display = 'none';
+            }
         }
 
         function saveEdit(messageId) {
             const messageDiv = document.getElementById(messageId);
+            if (!messageDiv) return;
+            
             const editContainer = document.getElementById(`edit-${messageId}`);
             const input = editContainer.querySelector('.message-edit-input');
             const bubble = messageDiv.querySelector('.message-bubble');
@@ -650,11 +656,31 @@
                 bubble.textContent = newText;
                 messageDiv.dataset.originalText = newText;
                 
-                // Get new bot response
-                setTimeout(() => {
-                    const response = getBotResponse(newText);
-                    addMessage(response, 'bot');
-                }, 500);
+                // Remove old bot response if it exists
+                const oldBotResponseId = messageDiv.dataset.botResponseId;
+                if (oldBotResponseId) {
+                    const oldBotMessage = document.getElementById(oldBotResponseId);
+                    if (oldBotMessage) {
+                        oldBotMessage.style.animation = 'slideOut 0.3s ease-out';
+                        setTimeout(() => {
+                            oldBotMessage.remove();
+                        }, 300);
+                    }
+                    messageDiv.dataset.botResponseId = '';
+                }
+                
+                // Get new bot response from server/database
+                getBotResponse(newText).then(response => {
+                    const botMessageId = 'bot-msg-' + messageIdCounter++;
+                    addMessage(response, 'bot', botMessageId);
+                    // Store reference to new bot response
+                    messageDiv.dataset.botResponseId = botMessageId;
+                }).catch(error => {
+                    console.error('Error getting bot response:', error);
+                    const botMessageId = 'bot-msg-' + messageIdCounter++;
+                    addMessage('Sorry, I encountered an error. Please try again.', 'bot', botMessageId);
+                    messageDiv.dataset.botResponseId = botMessageId;
+                });
             }
             
             editContainer.classList.remove('active');
@@ -688,25 +714,46 @@
         function confirmDelete() {
             if (messageToDelete) {
                 const messageDiv = document.getElementById(messageToDelete);
-                messageDiv.style.animation = 'slideOut 0.3s ease-out';
-                
-                setTimeout(() => {
-                    messageDiv.remove();
-                }, 300);
+                if (messageDiv) {
+                    // Also remove the corresponding bot response if it exists
+                    const botResponseId = messageDiv.dataset.botResponseId;
+                    if (botResponseId) {
+                        const botMessage = document.getElementById(botResponseId);
+                        if (botMessage) {
+                            botMessage.style.animation = 'slideOut 0.3s ease-out';
+                            setTimeout(() => {
+                                botMessage.remove();
+                            }, 300);
+                        }
+                    }
+                    
+                    // Remove user message
+                    messageDiv.style.animation = 'slideOut 0.3s ease-out';
+                    setTimeout(() => {
+                        messageDiv.remove();
+                    }, 300);
+                }
             }
             closeDeleteModal();
         }
 
         function getBotResponse(message) {
-            const lowerMessage = message.toLowerCase();
-
-            for (let key in botResponses) {
-                if (lowerMessage.includes(key)) {
-                    return botResponses[key];
-                }
-            }
-
-            return botResponses['default'];
+            // Call server endpoint to get response from database
+            const formData = new FormData();
+            formData.append('message', message);
+            
+            return fetch('${pageContext.request.contextPath}/ai/chatbot/query', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                return data.response || 'I\'m here to help! Please ask me a question.';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                return 'Sorry, I encountered an error. Please try again.';
+            });
         }
 
         // Add slideOut animation

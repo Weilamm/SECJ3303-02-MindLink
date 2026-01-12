@@ -1,4 +1,4 @@
-# MindLink
+# MindLink 
 
 **MindLink** is a web-based project developed for the **SECJ3303-02** course. It provides a platform to **manage, track, and interact with mind-mapping sessions**, offering real-time collaboration features for users. The project is built using **Java, Apache Tomcat, Maven, and VSCode**, following modern web application practices and Jakarta EE standards.
 

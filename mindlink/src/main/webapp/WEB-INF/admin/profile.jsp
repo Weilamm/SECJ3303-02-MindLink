@@ -139,11 +139,102 @@
     }
 </style>
 
+<<<<<<< HEAD
 <!-- Header Navigation -->
 <div class="header">
     <div class="nav-left">
         <a href="/admin/home">Home</a>
         <a href="/admin/modules">Module</a>
+=======
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background-color: var(--card-bg);
+            border-radius: 50px;
+            padding: 60px 80px;
+            position: relative;
+            min-height: 500px;
+        }
+
+        /* Back Button */
+        .back-btn {
+            position: absolute; top: 40px; left: 40px;
+            font-size: 32px; text-decoration: none; color: #000;
+        }
+
+        /* Grid Layout */
+        .profile-layout {
+            display: flex; gap: 60px; align-items: flex-start; margin-top: 20px;
+        }
+
+        /* Profile Icon */
+        .profile-icon {
+            width: 150px; height: 150px;
+            border: 6px solid #000; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+        }
+        
+        .profile-icon svg { width: 80px; height: 80px; }
+
+        /* Details */
+        .details-section { flex: 1; display: flex; flex-direction: column; gap: 25px; }
+        .row { display: flex; align-items: center; font-size: 20px; }
+        .label { font-weight: 800; color: var(--text-dark); margin-right: 10px; }
+        .value { font-weight: 700; color: var(--text-blue); }
+
+        .top-row { display: flex; justify-content: space-between; width: 100%; }
+
+        /* Edit Button */
+        .btn-edit {
+            background-color: var(--btn-dark);
+            color: white; width: 300px; padding: 15px;
+            border-radius: 30px; font-size: 18px; font-weight: 600;
+            border: none; cursor: pointer;
+            display: block; margin: 60px auto 0 auto;
+            transition: 0.2s;
+        }
+        .btn-edit:hover { opacity: 0.9; }
+
+    </style>
+</head>
+<body>
+
+  <!-- Header Navigation -->
+    <div class="header">
+        <div class="nav-left">
+            <a href="${pageContext.request.contextPath}/admin/home">Home</a>
+            <a href="${pageContext.request.contextPath}/admin/modules">Module</a>
+            <a href="${pageContext.request.contextPath}/admin/tips">Tips</a>
+        </div>
+        
+        <a href="${pageContext.request.contextPath}/admin/home" class="logo">
+            <div class="logo-icon">
+                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
+            </div>
+            <span>MindLink</span>
+        </a>
+        
+        <div class="nav-right">
+            <a href="${pageContext.request.contextPath}/admin/chatbot">Chatbot</a>
+            <a href="${pageContext.request.contextPath}/admin/forum/manage">Forum</a>
+            <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
+        </div>
+>>>>>>> d47ef884d7fdcffdaaf12c1c57e394f2a97cb0cd
     </div>
     
     <a href="${pageContext.request.contextPath}/home" class="logo">
