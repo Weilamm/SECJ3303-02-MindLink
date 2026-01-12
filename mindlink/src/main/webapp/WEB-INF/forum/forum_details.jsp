@@ -461,73 +461,156 @@
         
         <div class="nav-right">
             <a href="${pageContext.request.contextPath}/forum/welcome" style="color: #0d4e57; font-weight: 600;">Forum</a>
+            <a href="${pageContext.request.contextPath}/admin/forum/posts" style="color: #d32f2f; font-weight: 600;">Manage Forums</a>
             <a href="${pageContext.request.contextPath}/profile">Profile</a>
         </div>
     </div>
 
     <!-- Container -->
     <div class="container">
+        <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+        <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+        
         <!-- Back + Title row -->
         <div class="top-row">
-            <button class="back-btn" onclick="window.location.href='${pageContext.request.contextPath}/forum/joined'">←</button>
-            <div class="forum-emoji">😰</div>
+            <button class="back-btn" onclick="window.location.href='${pageContext.request.contextPath}/forum/available'">←</button>
+            <div class="forum-emoji">💬</div>
             <div class="forum-title-wrapper">
-                <div class="forum-title">Anxiety &amp; Stress Support Forum</div>
-                <div class="forum-subtitle">Share your own experiences and discuss with others!</div>
+                <c:if test="${not empty forum}">
+                    <div class="forum-title">${forum.title}</div>
+                    <div class="forum-subtitle">${forum.description}</div>
+                </c:if>
             </div>
         </div>
 
-        <!-- Pinned Posts -->
-        <div style="margin-bottom: 32px;">
-            <div class="section-header">
-                <h2 class="section-title">Pinned Posts</h2>
-                <a href="${pageContext.request.contextPath}/forum/create" class="new-discussion-btn">+ New Discussion</a>
-            </div>
-
-            <div class="pinned-card">
-                <div class="pinned-main">
-                    <span>📌</span>
-                    <span>Forum Guidelines &amp; Support Resources</span>
+        <c:if test="${not empty forum}">
+            <!-- Pinned Posts -->
+            <div style="margin-bottom: 32px;">
+                <div class="section-header">
+                    <h2 class="section-title">Pinned Posts</h2>
+                    <a href="${pageContext.request.contextPath}/forum/create?forumId=${forum.id}" class="new-discussion-btn">+ New Discussion</a>
                 </div>
-                <div class="pinned-meta">
-                    By: Moderator<br>
-                    • Please read before posting<br>
-                    • Be kind, respectful, and keep conversations supportive.
+
+                <div class="pinned-card">
+                    <div class="pinned-main">
+                        <span>📌</span>
+                        <span>Forum Guidelines &amp; Support Resources</span>
+                    </div>
+                    <div class="pinned-meta">
+                        Created by: ${forum.createdBy}<br>
+                        • Please read before posting<br>
+                        • Be kind, respectful, and keep conversations supportive.
+                    </div>
                 </div>
             </div>
-        </div>
+        </c:if>
 
-        <!-- Recent Discussions -->
+        <!-- Recent Discussions / Posts -->
         <div>
             <div class="section-header">
-                <h2 class="section-title">Recent Discussions</h2>
+                <h2 class="section-title">Discussions</h2>
+                <c:if test="${not empty forum}">
+                    <a href="${pageContext.request.contextPath}/forum/create?forumId=${forum.id}" class="new-discussion-btn">+ New Discussion</a>
+                </c:if>
             </div>
 
-            <div class="discussion-card">
-                <button class="more-btn">⋯</button>
+            <c:choose>
+                <c:when test="${empty posts || postCount == 0}">
+                    <div class="discussion-card">
+                        <div class="discussion-title" style="color: #999; font-weight: 400;">No posts yet</div>
+                        <div class="discussion-body" style="color: #999;">
+                            Be the first to start a discussion in this forum!
+                        </div>
+                        <c:if test="${not empty forum}">
+                            <div style="text-align: center; margin-top: 20px;">
+                                <a href="${pageContext.request.contextPath}/forum/create?forumId=${forum.id}" class="new-discussion-btn">Create First Post</a>
+                            </div>
+                        </c:if>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <c:forEach var="post" items="${posts}">
+                        <div class="discussion-card" style="margin-bottom: 20px;">
+                            <div class="discussion-title">${post.userName}</div>
+                            <div class="discussion-meta">
+                                By: ${post.userName} (${post.userId})
+                                <c:if test="${not empty post.createdAt}">
+                                    • 
+                                    <c:catch var="dateError">
+                                        <fmt:parseDate value="${post.createdAt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDate" />
+                                        <fmt:formatDate value="${parsedDate}" pattern="MMM dd, yyyy HH:mm" />
+                                    </c:catch>
+                                    <c:if test="${not empty dateError}">
+                                        ${post.createdAt}
+                                    </c:if>
+                                </c:if>
+                            </div>
 
-                <div class="discussion-title">"Anyone else anxious about final exams?"</div>
-                <div class="discussion-meta">By: Anonymous • 2 hours ago</div>
+                            <div class="discussion-body">
+                                ${post.content}
+                            </div>
 
-                <div class="discussion-body">
-                    I'm feeling overwhelmed with upcoming finals...
-                </div>
+                            <div class="discussion-stats">
+                                <span class="stat">💬 ${commentsMap[post.id] != null ? commentsMap[post.id].size() : 0} comments</span>
+                                <span class="stat">Post #${post.id}</span>
+                            </div>
 
-                <div class="discussion-stats">
-                    <span class="stat">💬 23 replies</span>
-                    <span class="stat">👍 45</span>
-                    <span class="stat">👎 12</span>
-                </div>
+                            <!-- Comments Section -->
+                            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                                <h4 style="font-size: 16px; font-weight: 600; color: #00313e; margin-bottom: 15px;">Comments</h4>
+                                
+                                <!-- Display existing comments -->
+                                <c:if test="${not empty commentsMap[post.id]}">
+                                    <div style="margin-bottom: 15px;">
+                                        <c:forEach var="comment" items="${commentsMap[post.id]}">
+                                            <div style="background: #f9f9f9; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+                                                <div style="font-weight: 600; font-size: 13px; color: #00313e; margin-bottom: 5px;">
+                                                    ${comment.userName} (${comment.userId})
+                                                </div>
+                                                <div style="font-size: 13px; color: #555; margin-bottom: 5px;">
+                                                    ${comment.content}
+                                                </div>
+                                                <div style="font-size: 11px; color: #999;">
+                                                    <c:if test="${not empty comment.createdAt}">
+                                                        <c:catch var="dateError">
+                                                            <fmt:parseDate value="${comment.createdAt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDate" />
+                                                            <fmt:formatDate value="${parsedDate}" pattern="MMM dd, yyyy HH:mm" />
+                                                        </c:catch>
+                                                        <c:if test="${not empty dateError}">
+                                                            ${comment.createdAt}
+                                                        </c:if>
+                                                    </c:if>
+                                                </div>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+                                </c:if>
+                                <c:if test="${empty commentsMap[post.id]}">
+                                    <div style="color: #999; font-size: 13px; margin-bottom: 15px; font-style: italic;">
+                                        No comments yet. Be the first to comment!
+                                    </div>
+                                </c:if>
 
-                <div class="input-section">
-                    <input type="text" class="input-field" placeholder="Type comment here....">
-                    <button class="post-btn">➤</button>
-                </div>
+                                <!-- Comment Input Section -->
+                                <div class="input-section">
+                                    <form action="${pageContext.request.contextPath}/forum/comment" method="POST" style="display: flex; gap: 12px; width: 100%;">
+                                        <input type="hidden" name="postId" value="${post.id}">
+                                        <input type="hidden" name="userId" value="S001">
+                                        <input type="hidden" name="userName" value="Student User">
+                                        <input type="text" name="content" class="input-field" placeholder="Type comment here...." required>
+                                        <button type="submit" class="post-btn">➤</button>
+                                    </form>
+                                </div>
 
-                <div style="margin-top: 12px; text-align: right; font-size: 13px;">
-                    <button class="report-btn" onclick="openReportModal()">Report</button>
-                </div>
-            </div>
+                                <!-- Report Button -->
+                                <div style="margin-top: 12px; text-align: right; font-size: 13px;">
+                                    <button class="report-btn" onclick="openReportModal('${post.id}')">Report</button>
+                                </div>
+                            </div>
+                        </div>
+                    </c:forEach>
+                </c:otherwise>
+            </c:choose>
         </div>
     </div>
 
@@ -575,14 +658,49 @@
         <img src="${pageContext.request.contextPath}/images/chatbot.png" alt="Chat" class="chat-button-icon">
     </a>
     <script>
-        function openReportModal() {
+        let currentPostId = null;
+
+        function openReportModal(postId) {
+            currentPostId = postId;
             document.getElementById('reportModal').classList.add('active');
         }
 
         function submitReport() {
-            // in a real app you would send the reasons to the server here
-            document.getElementById('reportModal').classList.remove('active');
-            document.getElementById('reportSuccessModal').classList.add('active');
+            if (!currentPostId) {
+                return;
+            }
+
+            // Get selected reason
+            const selectedReason = document.querySelector('input[name="reason"]:checked');
+            const otherReason = document.getElementById('reportOther').value.trim();
+            const reason = selectedReason ? selectedReason.value : (otherReason || 'Other');
+
+            // Submit report to server
+            const formData = new FormData();
+            formData.append('postId', currentPostId);
+            formData.append('reason', reason);
+
+            fetch('${pageContext.request.contextPath}/forum/report', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('reportModal').classList.remove('active');
+                    document.getElementById('reportSuccessModal').classList.add('active');
+                    // Reset form
+                    document.querySelectorAll('input[name="reason"]').forEach(input => input.checked = false);
+                    document.getElementById('reportOther').value = '';
+                } else {
+                    alert('Error submitting report. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Network error. Please try again.');
+            });
+
+            currentPostId = null;
         }
 
         function closeSuccessModal() {
@@ -591,7 +709,10 @@
 
         // close modals when clicking outside card
         document.getElementById('reportModal').addEventListener('click', function (e) {
-            if (e.target === this) this.classList.remove('active');
+            if (e.target === this) {
+                this.classList.remove('active');
+                currentPostId = null;
+            }
         });
         document.getElementById('reportSuccessModal').addEventListener('click', function (e) {
             if (e.target === this) this.classList.remove('active');

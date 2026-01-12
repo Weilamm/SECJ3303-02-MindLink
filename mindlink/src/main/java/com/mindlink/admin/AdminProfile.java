@@ -1,27 +1,48 @@
 package com.mindlink.admin;
 
 public class AdminProfile {
-    private String fullName;
-    private String studentId; // Or 'Admin ID'
-    private int age;
-    private String email;
-    private String phoneNumber;
-    private String faculty;
+    private String adminId;    // Matches DB column: admin_id
+    private String name;       // Matches DB column: name
+    private String email;      // Matches DB column: email
+    private String password;   // Matches DB column: password
+    private String phone;      // Matches DB column: phone
+    private String department; // Matches DB column: department (was 'faculty')
+    private String role;       // Matches DB column: role
 
-    public AdminProfile(String fullName, String studentId, int age, String email, String phoneNumber, String faculty) {
-        this.fullName = fullName;
-        this.studentId = studentId;
-        this.age = age;
+    // Default Constructor (Needed for Spring)
+    public AdminProfile() {}
+
+    // Constructor with fields
+    public AdminProfile(String adminId, String name, String email, String password, String phone, String department, String role) {
+        this.adminId = adminId;
+        this.name = name;
         this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.faculty = faculty;
+        this.password = password;
+        this.phone = phone;
+        this.department = department;
+        this.role = role;
     }
 
-    // Getters
-    public String getFullName() { return fullName; }
-    public String getStudentId() { return studentId; }
-    public int getAge() { return age; }
+    // --- Getters and Setters ---
+    
+    public String getAdminId() { return adminId; }
+    public void setAdminId(String adminId) { this.adminId = adminId; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
     public String getEmail() { return email; }
-    public String getPhoneNumber() { return phoneNumber; }
-    public String getFaculty() { return faculty; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getDepartment() { return department; }
+    public void setDepartment(String department) { this.department = department; }
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 }

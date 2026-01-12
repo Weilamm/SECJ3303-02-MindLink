@@ -1,66 +1,151 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin Profile</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #FFF3E0;
-            --text-dark: #003049;
-            --text-blue: #2F80ED;
-            --card-bg: #FDF3E7;
-            --btn-dark: #013B46;
-        }
+<style>
+    body {
+        background-color: #FFF8E1; /* Your current beige background */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .profile-container {
+        max-width: 800px;
+        margin: 50px auto;
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    .profile-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .profile-icon {
+        width: 100px;
+        height: 100px;
+        background-color: #004D40; /* Dark Teal */
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        margin: 0 auto 15px;
+    }
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-group label {
+        display: block;
+        color: #666;
+        margin-bottom: 5px;
+        font-size: 0.9em;
+        font-weight: bold;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1em;
+        background-color: #f9f9f9;
+    }
+    .form-group input:focus {
+        border-color: #004D40;
+        outline: none;
+        background-color: white;
+    }
+    .btn-container {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: transform 0.2s;
+        text-decoration: none; /* For links */
+        display: inline-block;
+    }
+    .btn-save {
+        background-color: #004D40;
+        color: white;
+    }
+    .btn-logout {
+        background-color: #dc3545; /* Red for logout */
+        color: white;
+    }
+    .btn:hover {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+    
+    /* Header Navigation */
+    .header {
+        padding: 20px 100px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+    }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            margin: 0; padding: 0;
-            color: var(--text-dark);
-        }
+    .nav-left,
+    .nav-right {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        flex: 1;
+        gap: 0;
+    }
 
-        /* Header Navigation */
-        .header {
-            padding: 20px 100px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-        }
+    .nav-left a, .nav-right a {
+        text-decoration: none;
+        color: #00313e;
+        font-size: 16px;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
 
-        .nav-left,
-        .nav-right {
-            display: flex;
-            align-items: center;
-            justify-content: space-evenly;
-            flex: 1;
-            gap: 0;
-        }
+    .nav-left a:hover, .nav-right a:hover {
+        color: #0d4e57;
+    }
 
-        .nav-left a, .nav-right a {
-            text-decoration: none;
-            color: #00313e;
-            font-size: 16px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        color: #00313e;
+        font-size: 32px;
+        text-decoration: none;
+    }
 
-        .nav-left a:hover, .nav-right a:hover {
-            color: #0d4e57;
-        }
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            color: #00313e;
-            font-size: 32px;
-            text-decoration: none;
-        }
+    .logo-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+</style>
 
+<<<<<<< HEAD
+<!-- Header Navigation -->
+<div class="header">
+    <div class="nav-left">
+        <a href="/admin/home">Home</a>
+        <a href="/admin/modules">Module</a>
+=======
         .logo-icon {
             width: 40px;
             height: 40px;
@@ -132,11 +217,12 @@
   <!-- Header Navigation -->
     <div class="header">
         <div class="nav-left">
-            <a href="/admin/home">Home</a>
-            <a href="/admin/modules">Module</a>
+            <a href="${pageContext.request.contextPath}/admin/home">Home</a>
+            <a href="${pageContext.request.contextPath}/admin/modules">Module</a>
+            <a href="${pageContext.request.contextPath}/admin/tips">Tips</a>
         </div>
         
-        <a href="/admin/home" class="logo">
+        <a href="${pageContext.request.contextPath}/admin/home" class="logo">
             <div class="logo-icon">
                 <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
             </div>
@@ -144,68 +230,92 @@
         </a>
         
         <div class="nav-right">
-            <a href="/admin/forum/reports">Forum</a>
-            <a href="/admin/profile">Profile</a>
+            <a href="${pageContext.request.contextPath}/admin/chatbot">Chatbot</a>
+            <a href="${pageContext.request.contextPath}/admin/forum/manage">Forum</a>
+            <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
         </div>
+>>>>>>> d47ef884d7fdcffdaaf12c1c57e394f2a97cb0cd
     </div>
-    <div class="container">
-        <a href="/admin/home" class="back-btn">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 14L4 9l5-5"/>
-                <path d="M4 9h10c4 0 7 3 7 7v1"/>
-            </svg>
-        </a>
+    
+    <a href="${pageContext.request.contextPath}/home" class="logo">
+        <div class="logo-icon">
+            <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
+        </div>
+        <span>MindLink</span>
+    </a>
+    
+    <div class="nav-right">
+        <a href="/admin/forum/reports">Forum</a>
+        <a href="/admin/profile">Profile</a>
+    </div>
+</div>
 
-        <div class="profile-layout">
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-icon">
+            <i class="fas fa-user"></i> </div>
+        <h2>Admin Profile</h2>
+        <p style="color: #888;">Manage your personal information</p>
+    </div>
+
+    <form action="/admin/profile/update" method="post">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Admin ID</label>
+                <input type="text" name="adminId" value="${admin.adminId}" readonly style="background-color: #e9ecef;">
+            </div>
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" value="${admin.name}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" value="${admin.email}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" name="phone" value="${admin.phone}">
+            </div>
+
+            <div class="form-group">
+                <label>Department</label>
+                <input type="text" name="department" value="${admin.department}">
+            </div>
             
-            <div>
-                <div class="profile-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </div>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+            <div class="form-group">
+            <label>Password</label>
+            <div style="position: relative;">
+                <input type="password" id="passwordField" name="password" value="${admin.password}" required 
+                        style="padding-right: 40px;"> <span onclick="togglePassword()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666;">
+                    <i id="toggleIcon" class="fas fa-eye"></i>
+                </span>
             </div>
-
-            <div class="details-section">
-                
-                <div class="top-row">
-                    <div class="row">
-                        <span class="label">Full Name :</span>
-                        <span class="value">${p.fullName}</span>
-                    </div>
-                    <div class="row">
-                        <span class="label">Student ID :</span>
-                        <span class="value">${p.studentId}</span>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <span class="label">Age :</span>
-                    <span class="value">${p.age}</span>
-                </div>
-
-                <div class="row">
-                    <span class="label">Email Address :</span>
-                    <span class="value">${p.email}</span>
-                </div>
-
-                <div class="row">
-                    <span class="label">Phone Number :</span>
-                    <span class="value">${p.phoneNumber}</span>
-                </div>
-
-                <div class="row">
-                    <span class="label">Faculty :</span>
-                    <span class="value">${p.faculty}</span>
-                </div>
-
             </div>
+            <script>
+            function togglePassword() {
+                var passwordInput = document.getElementById("passwordField");
+                var icon = document.getElementById("toggleIcon");
+
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text"; // Show password
+                    icon.classList.remove("fa-eye");
+                    icon.classList.add("fa-eye-slash"); // Change icon to 'crossed eye'
+                } else {
+                    passwordInput.type = "password"; // Hide password
+                    icon.classList.remove("fa-eye-slash");
+                    icon.classList.add("fa-eye"); // Change icon back to 'eye'
+                }
+            }
+            </script>
         </div>
 
-        <button class="btn-edit">Edit</button>
-
-    </div>
-
-</body>
-</html>
+        <div class="btn-container">
+            <button type="submit" class="btn btn-save">Save Changes</button>
+            <a href="/logout" class="btn btn-logout">Logout</a>
+        </div>
+    </form>
+</div>
