@@ -109,8 +109,9 @@
 <!-- Header Navigation -->
     <div class="header">
         <div class="nav-left">
-            <a href="/admin/home">Home</a>
-            <a href="/admin/modules">Module</a>
+            <a href="${pageContext.request.contextPath}/admin/home">Home</a>
+            <a href="${pageContext.request.contextPath}/admin/modules">Module</a>
+            <a href="${pageContext.request.contextPath}/admin/tips">Tips</a>
         </div>
         
         <a href="${pageContext.request.contextPath}/home" class="logo">
@@ -121,8 +122,9 @@
         </a>
         
         <div class="nav-right">
-            <a href="/admin/forum/reports">Forum</a>
-            <a href="/admin/profile">Profile</a>
+            <a href="${pageContext.request.contextPath}/admin/chatbot">Chatbot</a>
+            <a href="${pageContext.request.contextPath}/admin/forum/manage">Forum</a>
+            <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
         </div>
     </div>
 

@@ -378,6 +378,7 @@
         
         <div class="nav-right">
             <a href="${pageContext.request.contextPath}/forum/welcome" style="color: #0d4e57; font-weight: 600;">Forum</a>
+            <a href="${pageContext.request.contextPath}/admin/forum/posts" style="color: #d32f2f; font-weight: 600;">Manage Forums</a>
             <a href="${pageContext.request.contextPath}/profile">Profile</a>
         </div>
     </div>
@@ -390,18 +391,15 @@
             <h1 class="form-title">Create New Discussion</h1>
             <p class="form-subtitle">Share your own experiences and discuss with others!</p>
 
-            <form id="discussionForm" onsubmit="handleSubmit(event)">
+            <form id="discussionForm" action="${pageContext.request.contextPath}/forum/create" method="POST">
+                <input type="hidden" name="forumId" value="${forumId}">
+                <input type="hidden" name="userId" value="S001">
+                <input type="hidden" name="userName" value="Student User">
                 <div class="form-inner">
-                    <!-- Title -->
-                    <div class="form-group">
-                        <label class="form-label">1. TITLE : <span class="required">*</span></label>
-                        <input type="text" class="form-input" placeholder="" required>
-                    </div>
-
                     <!-- Content -->
                     <div class="form-group">
-                        <label class="form-label">2. CONTENT : <span class="required">*</span></label>
-                        <textarea class="form-textarea" placeholder="" required></textarea>
+                        <label class="form-label">1. CONTENT : <span class="required">*</span></label>
+                        <textarea name="content" class="form-textarea" placeholder="Share your thoughts, experiences, or questions..." required></textarea>
                     </div>
 
                     <!-- Post Settings -->
@@ -456,8 +454,8 @@
 
     <script>
         function handleSubmit(event) {
-            event.preventDefault();
-            document.getElementById('successModal').style.display = 'flex';
+            // Form will submit normally to server
+            // Modal can be shown after successful submission if needed
         }
     </script>
 

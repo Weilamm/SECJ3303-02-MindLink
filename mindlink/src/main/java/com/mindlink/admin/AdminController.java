@@ -1,5 +1,8 @@
 package com.mindlink.admin;
 
+import com.mindlink.forum.model.Forum;
+import com.mindlink.forum.model.ForumPost;
+import com.mindlink.forum.service.ForumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,6 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -103,5 +109,97 @@ public class AdminController {
     public String dismissReport(@RequestParam("id") String id) {
         forumReportService.dismissReport(id);
         return "redirect:/admin/forum/reports";
+    }
+
+    @Autowired
+    private ForumService forumService;
+
+    // Admin Forum Management - View all forums
+    @GetMapping("/forum/manage")
+    public String manageForums(Model model) {
+        model.addAttribute("forums", forumService.getAllForumsIncludingClosed());
+        return "admin/forum_manage";
+    }
+
+    // Show form to create a new forum
+    @GetMapping("/forum/create-form")
+    public String showCreateForumForm(Model model) {
+        return "admin/forum_form";
+    }
+
+    // Create Forum (Admin only - forums are created by admins with IDs like A001, A002, etc.)
+    @PostMapping("/forum/create")
+    public String createForum(@RequestParam("title") String title,
+                             @RequestParam("description") String description,
+                             @RequestParam(value = "createdBy", defaultValue = "A001") String createdBy) {
+        // Ensure createdBy starts with 'A' for admin
+        if (!createdBy.startsWith("A")) {
+            createdBy = "A001"; // Default to A001 if not admin ID
+        }
+        forumService.createForum(title, description, createdBy);
+        return "redirect:/admin/forum/manage";
+    }
+
+    // Show form to edit a forum
+    @GetMapping("/forum/edit-form")
+    public String showEditForumForm(@RequestParam("id") int id, Model model) {
+        Forum forum = forumService.getForumById(id);
+        if (forum != null) {
+            model.addAttribute("forum", forum);
+        }
+        return "admin/forum_form";
+    }
+
+    // Update Forum
+    @PostMapping("/forum/update")
+    public String updateForum(@RequestParam("id") int id,
+                              @RequestParam("title") String title,
+                              @RequestParam("description") String description) {
+        forumService.updateForum(id, title, description);
+        return "redirect:/admin/forum/manage";
+    }
+
+    // View Forum Detail (Admin view)
+    @GetMapping("/forum/detail")
+    public String viewForumDetail(@RequestParam("id") int id, Model model) {
+        Forum forum = forumService.getForumById(id);
+        if (forum != null) {
+            model.addAttribute("forum", forum);
+            model.addAttribute("posts", forumService.getPostsByForumId(id));
+            model.addAttribute("postCount", forumService.getPostCount(id));
+        }
+        return "admin/forum_detail";
+    }
+
+    // View all forum posts (Admin can see all posts and delete them)
+    @GetMapping("/forum/posts")
+    public String viewAllPosts(@RequestParam(value = "forumId", required = false) Integer forumId, Model model) {
+        if (forumId != null) {
+            // Show posts for a specific forum
+            model.addAttribute("forum", forumService.getForumById(forumId));
+            model.addAttribute("posts", forumService.getPostsByForumId(forumId));
+            model.addAttribute("forums", forumService.getAllForums());
+        } else {
+            // Show all posts from all forums
+            model.addAttribute("forums", forumService.getAllForums());
+            // Get all posts from all forums
+            List<ForumPost> allPosts = new ArrayList<>();
+            for (Forum forum : forumService.getAllForums()) {
+                allPosts.addAll(forumService.getPostsByForumId(forum.getId()));
+            }
+            model.addAttribute("posts", allPosts);
+        }
+        return "admin/forum_posts";
+    }
+
+    // Delete a forum post (Admin only)
+    @GetMapping("/forum/posts/delete")
+    public String deletePost(@RequestParam("id") int postId,
+                            @RequestParam(value = "forumId", required = false) Integer forumId) {
+        forumService.deletePost(postId);
+        if (forumId != null) {
+            return "redirect:/admin/forum/posts?forumId=" + forumId;
+        }
+        return "redirect:/admin/forum/posts";
     }
 }

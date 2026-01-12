@@ -302,6 +302,7 @@
         
         <div class="nav-right">
             <a href="${pageContext.request.contextPath}/forum/welcome" style="color: #0d4e57; font-weight: 600;">Forum</a>
+            <a href="${pageContext.request.contextPath}/admin/forum/posts" style="color: #d32f2f; font-weight: 600;">Manage Forums</a>
             <a href="${pageContext.request.contextPath}/profile">Profile</a>
         </div>
     </div>
@@ -321,40 +322,36 @@
                     <li>10 comment</li>
                 </ul>
             </div>
-
-            <button class="forum-joined-btn" onclick="window.location.href='${pageContext.request.contextPath}/forum/joined'">
-                Forum Joined
-            </button>
         </div>
 
         <!-- Content Area -->
         <div class="content-area">
             <h1 class="content-title">Available Forums:</h1>
 
-            <!-- Forum Card 1 -->
-            <div class="forum-card">
-                <div class="forum-header">
-                    <span class="forum-icon">📚</span>
-                    <h2 class="forum-title">Academic Pressure</h2>
-                </div>
-                <p class="forum-stats">189 members • 23 online now</p>
-                <p class="forum-latest">Latest: "Dealing with assignment overload" – 5 min ago</p>
-                <!-- Only "Forum Joined" button in sidebar navigates; this button has no direct link -->
-                <button type="button" class="join-forum-btn">Join Forum</button>
-                <div style="clear: both;"></div>
-            </div>
-
-            <!-- Forum Card 2 -->
-            <div class="forum-card">
-                <div class="forum-header">
-                    <span class="forum-icon">😴</span>
-                    <h2 class="forum-title">Sleep & Wellness</h2>
-                </div>
-                <p class="forum-stats">156 members • 8 online now</p>
-                <p class="forum-latest">Latest: "My bedtime routine that works" – 2 hours ago</p>
-                <button type="button" class="join-forum-btn">Join Forum</button>
-                <div style="clear: both;"></div>
-            </div>
+            <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+            <c:choose>
+                <c:when test="${empty forums}">
+                    <div class="forum-card">
+                        <p style="text-align: center; color: #666; padding: 40px;">No forums available at the moment.</p>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <c:forEach var="forum" items="${forums}">
+                        <div class="forum-card">
+                            <div class="forum-header">
+                                <span class="forum-icon">💬</span>
+                                <a href="${pageContext.request.contextPath}/forum/detail?id=${forum.id}" class="forum-title" style="text-decoration: underline; color: #00313e;">
+                                    ${forum.title}
+                                </a>
+                            </div>
+                            <p class="forum-stats">Created by: ${forum.createdBy}</p>
+                            <p class="forum-latest">${forum.description}</p>
+                            <a href="${pageContext.request.contextPath}/forum/detail?id=${forum.id}" class="join-forum-btn" style="text-decoration: none; display: inline-block; float: right;">View Forum</a>
+                            <div style="clear: both;"></div>
+                        </div>
+                    </c:forEach>
+                </c:otherwise>
+            </c:choose>
         </div>
     </div>
 

@@ -73,13 +73,13 @@
             </div>
         <% } %>
 
-        <form action="/login/submit" method="post">
+        <form action="${pageContext.request.contextPath}/login/submit" method="post">
             
             <div class="form-group">
                 <label>I am a...</label>
                 <select name="role" id="roleSelect" onchange="toggleHint()">
                     <option value="student">Student</option>
-                    <option value="admin">Administrator</option>
+                    <option value="counselor">Counselor</option>
                 </select>
             </div>
 
@@ -92,10 +92,13 @@
                 <label>Password</label>
                 <input type="password" name="password" placeholder="Enter password" required>
                 <div style="text-align: right; margin-top: 5px;">
-                    <a href="/forgot-password" style="font-size: 12px; color: #003B46; text-decoration: none;">Forgot password?</a>
+                    <a href="${pageContext.request.contextPath}/forgot-password" style="font-size: 12px; color: #003B46; text-decoration: none;">Forgot password?</a>
                 </div>
-                <div id="adminHint" style="font-size:11px; color:#888; margin-top:5px; display:none;">
-                    (Hint: use <b>admin</b> / <b>admin123</b>)
+                <div id="studentHint" style="font-size:11px; color:#888; margin-top:5px; display:block;">
+                    (Example: <b>S001</b> or <b>karen@utm.my</b> / <b>password123</b>)
+                </div>
+                <div id="counselorHint" style="font-size:11px; color:#888; margin-top:5px; display:none;">
+                    (Example: <b>C001</b> or <b>tan.meiling@utm.my</b> / <b>counselor123</b>)
                 </div>
             </div>
 
@@ -103,18 +106,21 @@
         </form>
         
         <p style="margin-top: 20px; font-size: 13px; color: #666;">
-            Don't have an account? <a href="/register" style="color: #003B46; font-weight: 600;">Register</a>
+            Don't have an account? <a href="${pageContext.request.contextPath}/register" style="color: #003B46; font-weight: 600;">Register</a>
         </p>
     </div>
 
     <script>
         function toggleHint() {
             var role = document.getElementById("roleSelect").value;
-            var hint = document.getElementById("adminHint");
-            if(role === "admin") {
-                hint.style.display = "block";
+            var studentHint = document.getElementById("studentHint");
+            var counselorHint = document.getElementById("counselorHint");
+            if(role === "counselor") {
+                studentHint.style.display = "none";
+                counselorHint.style.display = "block";
             } else {
-                hint.style.display = "none";
+                studentHint.style.display = "block";
+                counselorHint.style.display = "none";
             }
         }
     </script>
