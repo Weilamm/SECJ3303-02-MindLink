@@ -12,14 +12,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import jakarta.servlet.http.HttpSession;
 
-<<<<<<< HEAD
-import jakarta.servlet.http.HttpSession; // Ensure this import matches your Spring Boot version (javax vs jakarta)
-import com.mindlink.admin.AdminProfile;
-=======
 import java.util.ArrayList;
 import java.util.List;
->>>>>>> d47ef884d7fdcffdaaf12c1c57e394f2a97cb0cd
 
 @Controller
 @RequestMapping("/admin")
