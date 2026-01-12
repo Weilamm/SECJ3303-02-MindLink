@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login - MindLink</title>
+    <title>Admin Login - MindLink</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,16 +25,26 @@
 
         .logo { font-size: 32px; font-weight: 700; margin-bottom: 10px; color: #003B46; }
         .subtitle { color: #667085; font-size: 14px; margin-bottom: 30px; }
+        .admin-badge {
+            background: #FF6B6B;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
 
         .form-group { margin-bottom: 20px; text-align: left; }
         label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
         
-        input, select {
+        input {
             width: 100%; padding: 12px;
             border: 1px solid #ddd; border-radius: 8px;
             font-size: 14px; outline: none; background: #F9FAFB;
         }
-        input:focus, select:focus { border-color: #003B46; background: white; }
+        input:focus { border-color: #003B46; background: white; }
 
         .btn-login {
             width: 100%; padding: 12px;
@@ -51,17 +61,28 @@
             font-size: 13px; margin-bottom: 20px;
         }
         
-        .role-selector {
-            display: flex; gap: 10px; margin-bottom: 20px;
+        .hint {
+            font-size: 11px; color: #888; margin-top: 5px;
         }
-        .role-option { flex: 1; }
+        
+        .back-link {
+            margin-top: 20px;
+            font-size: 13px;
+        }
+        .back-link a {
+            color: #003B46; text-decoration: none;
+        }
     </style>
 </head>
 <body>
 
     <div class="login-card">
-        <div class="logo"><img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink Logo">MindLink</div>
-        <p class="subtitle">Welcome back! Please enter your details.</p>
+        <div class="logo">
+            <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink Logo" style="width: 40px; height: 40px; vertical-align: middle;">
+            MindLink
+        </div>
+        <div class="admin-badge">ADMIN PORTAL</div>
+        <p class="subtitle">Administrator Access Only</p>
 
         <% if (request.getAttribute("error") != null) { %>
             <div class="error-msg"><%= request.getAttribute("error") %></div>
@@ -73,57 +94,28 @@
             </div>
         <% } %>
 
-        <form action="${pageContext.request.contextPath}/login/submit" method="post">
+        <form action="${pageContext.request.contextPath}/admin/login/submit" method="post">
             
             <div class="form-group">
-                <label>I am a...</label>
-                <select name="role" id="roleSelect" onchange="toggleHint()">
-                    <option value="student">Student</option>
-                    <option value="counselor">Counselor</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" placeholder="Enter username" required>
+                <label>Admin ID or Email</label>
+                <input type="text" name="username" placeholder="Enter admin ID or email" required>
             </div>
 
             <div class="form-group">
                 <label>Password</label>
                 <input type="password" name="password" placeholder="Enter password" required>
-                <div style="text-align: right; margin-top: 5px;">
-                    <a href="${pageContext.request.contextPath}/forgot-password" style="font-size: 12px; color: #003B46; text-decoration: none;">Forgot password?</a>
-                </div>
-                <div id="studentHint" style="font-size:11px; color:#888; margin-top:5px; display:block;">
-                    (Example: <b>S001</b> or <b>karen@utm.my</b> / <b>password123</b>)
-                </div>
-                <div id="counselorHint" style="font-size:11px; color:#888; margin-top:5px; display:none;">
-                    (Example: <b>C001</b> or <b>tan.meiling@utm.my</b> / <b>counselor123</b>)
+                <div class="hint">
+                    (Example: <b>A001</b> or <b>testadmin@utm.my</b> / <b>admin123</b>)
                 </div>
             </div>
 
-            <button type="submit" class="btn-login">Sign In</button>
+            <button type="submit" class="btn-login">Sign In as Admin</button>
         </form>
         
-        <p style="margin-top: 20px; font-size: 13px; color: #666;">
-            Don't have an account? <a href="${pageContext.request.contextPath}/register" style="color: #003B46; font-weight: 600;">Register</a>
-        </p>
+        <div class="back-link">
+            <a href="${pageContext.request.contextPath}/login">← Back to User Login</a>
+        </div>
     </div>
-
-    <script>
-        function toggleHint() {
-            var role = document.getElementById("roleSelect").value;
-            var studentHint = document.getElementById("studentHint");
-            var counselorHint = document.getElementById("counselorHint");
-            if(role === "counselor") {
-                studentHint.style.display = "none";
-                counselorHint.style.display = "block";
-            } else {
-                studentHint.style.display = "block";
-                counselorHint.style.display = "none";
-            }
-        }
-    </script>
 
 </body>
 </html>
