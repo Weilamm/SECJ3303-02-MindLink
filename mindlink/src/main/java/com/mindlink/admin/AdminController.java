@@ -23,14 +23,18 @@ import java.util.Map;
 @RequestMapping("/admin")
 public class AdminController {
 
+    // --- 1. DECLARE SERVICES ONCE AT THE TOP ---
     @Autowired
-    private JdbcTemplate jdbcTemplate; // <--- ADDED: Connects to the Database
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private FeedbackService feedbackService;
 
     @Autowired
     private ForumReportService forumReportService;
+    
+    @Autowired
+    private ForumService forumService;
 
     // Admin Home Page
     @GetMapping("/home")
@@ -38,8 +42,7 @@ public class AdminController {
         return "admin/home"; // Looks for WEB-INF/admin/home.jsp
     }
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    // (Deleted duplicate jdbcTemplate here)
 
     // Admin Profile Page
     @GetMapping("/profile")
@@ -125,7 +128,6 @@ public class AdminController {
         }
         
         // Ensure we're updating the logged-in admin's profile (security check)
-        // Don't trust the adminId from the form - use the session adminId
         try {
             // Update admin in database using session adminId
             String sql = "UPDATE admin SET name = ?, email = ?, phone = ?, department = ?, updated_at = CURRENT_TIMESTAMP WHERE admin_id = ?";
@@ -151,8 +153,7 @@ public class AdminController {
         return "redirect:/admin/profile";
     }
 
-    @Autowired
-    private FeedbackService feedbackService; // <--- The Service holds the REAL data
+    // (Deleted duplicate feedbackService here)
 
     // READ
     @GetMapping("/feedback")
@@ -211,9 +212,6 @@ public class AdminController {
         forumReportService.dismissReport(id);
         return "redirect:/admin/forum/reports";
     }
-
-    @Autowired
-    private ForumService forumService;
 
     // Admin Forum Management - View all forums
     @GetMapping("/forum/manage")
