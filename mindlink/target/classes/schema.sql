@@ -176,9 +176,49 @@ INSERT INTO forum (title, description, created_by, status) VALUES
 ('Work-Life Balance', 'Tips and discussions about balancing academic work, personal life, and self-care.', 'A001', 'active'),
 ('Self-Care Practices', 'Share and discover different self-care activities that work for you.', 'A002', 'active');
 
--- Data for Counselor
-INSERT INTO counselor (id, name, location, education, university, languages, email, bio, quote, image_url) VALUES 
-('mei-ling', 'Ms. Tan Mei Ling', 'Block A Room 117', 'M.Sc. in Counseling', 'Psychology, Universiti Malaya', 'English, Malay, Mandarin', 'tan.meiling@university.edu', 'Ms. Tan Mei Ling is a professional counselor with over 8 years of experience working with university students. She specializes in academic stress management, motivation building, and emotional resilience.', 'I believe every student has the capacity to grow.', 'https://i.pravatar.cc/300?u=mei-ling'),
-('ryan-lin', 'Mr. Ryan Lin', 'Block A Room 209', 'M.A. Clinical Psychology', 'Universiti Sains Malaysia', 'English, Hokkien', 'ryan.lin@university.edu', 'Specializes in cognitive behavioral therapy. He has a passion for helping students overcome anxiety.', 'Change starts with a single step.', 'https://i.pravatar.cc/300?u=ryan'),
-('nur-alya', 'Ms. Nur Alya', 'Block B Room 314', 'PhD in Psychology', 'UKM', 'Malay, English', 'nur.alya@university.edu', 'Expert in anxiety and mood disorders. She creates a safe space for all students.', 'Mental health is just as important as physical health.', 'https://i.pravatar.cc/300?u=alya'),
-('evelyn-reed', 'Ms. Evelyn Reed', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English', 'evelyn@uni.edu', 'Focuses on adjustment issues for international students.', 'Talk to someone, you are not alone.', 'https://i.pravatar.cc/300?u=evelyn');
+-- Module Table: Stores learning modules
+CREATE TABLE IF NOT EXISTS module (
+    module_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    image_path VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_title (title)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Module Question Table: Stores questions/lessons for each module
+CREATE TABLE IF NOT EXISTS module_question (
+    question_id INT AUTO_INCREMENT PRIMARY KEY,
+    module_id INT NOT NULL,
+    chapter_number INT NOT NULL,
+    question_number VARCHAR(50) NOT NULL,
+    question_text TEXT NOT NULL,
+    question_type VARCHAR(50) DEFAULT 'PDF',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (module_id) REFERENCES module(module_id) ON DELETE CASCADE,
+    INDEX idx_module_id (module_id),
+    INDEX idx_chapter (module_id, chapter_number)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Sample Data for Modules
+INSERT INTO module (title, description, image_path) VALUES
+('Introduction to Mental Health', 'Learn the basics of mental health, reduce stigma, and understand emotional well-being.', 'mental-health-intro.png'),
+('Emotional Awareness and Regulation', 'Recognize your emotions, understand their causes, and develop healthy strategies to manage them effectively in daily and social situations.', 'emotional-awareness.png');
+
+-- Sample Data for Module Questions (Introduction to Mental Health - Module ID 1)
+INSERT INTO module_question (module_id, chapter_number, question_number, question_text, question_type) VALUES
+(1, 1, '1.1', 'Definition and Key Concepts PDF', 'PDF'),
+(1, 1, '1.2', 'Mental Health vs Mental Illness PDF', 'PDF'),
+(1, 1, '1.3', 'Mental Health Spectrum PDF', 'PDF'),
+(1, 2, '2.1', 'What is Stigma? PDF', 'PDF'),
+(1, 2, '2.2', 'Media and Cultural Misconceptions PDF', 'PDF');
+
+-- Sample Data for Module Questions (Emotional Awareness - Module ID 2)
+INSERT INTO module_question (module_id, chapter_number, question_number, question_text, question_type) VALUES
+(2, 1, '1.1', 'Understanding Your Emotions PDF', 'PDF'),
+(2, 1, '1.2', 'Emotional Triggers and Responses PDF', 'PDF'),
+(2, 2, '2.1', 'Emotion Regulation Techniques PDF', 'PDF'),
+(2, 2, '2.2', 'Mindfulness and Emotional Awareness PDF', 'PDF');
+

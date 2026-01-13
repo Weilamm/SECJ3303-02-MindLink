@@ -31,8 +31,8 @@
     <div class="container">
         <div class="header">
             <h1>Learning Modules</h1>
-            <a href="/admin/home" style="color:#666; text-decoration:none; margin-right:20px;">Back to Home</a>
-            <a href="/admin/modules/add" class="btn-add">+ Add Module</a>
+            <a href="${pageContext.request.contextPath}/admin/home" style="color:#666; text-decoration:none; margin-right:20px;">Back to Home</a>
+            <a href="${pageContext.request.contextPath}/admin/modules/add" class="btn-add">+ Add Module</a>
         </div>
 
         <c:forEach items="${modules}" var="m">
@@ -42,8 +42,8 @@
                     <p>${m.description}</p>
                 </div>
                 <div class="actions">
-                    <a href="/admin/modules/edit?id=${m.id}" class="btn-edit">Edit</a>
-                    <a href="/admin/modules/delete?id=${m.id}" class="btn-delete" onclick="return confirm('Delete this module?')">Delete</a>
+                    <a href="${pageContext.request.contextPath}/admin/modules/edit?id=${m.moduleId}" class="btn-edit">Edit</a>
+                    <a href="${pageContext.request.contextPath}/admin/modules/delete?id=${m.moduleId}" class="btn-delete" onclick="return confirm('Delete this module?')">Delete</a>
                 </div>
             </div>
         </c:forEach>

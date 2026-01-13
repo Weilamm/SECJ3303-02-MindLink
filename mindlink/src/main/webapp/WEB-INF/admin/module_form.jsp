@@ -18,10 +18,10 @@
 </head>
 <body>
     <div class="form-card">
-        <h2 style="margin-top:0;">${module.id == null || module.id == '' ? 'Add New' : 'Edit'} Module</h2>
+        <h2 style="margin-top:0;">${module.moduleId == 0 ? 'Add New' : 'Edit'} Module</h2>
         
-        <form action="/admin/modules/save" method="post">
-            <input type="hidden" name="id" value="${module.id}">
+        <form action="${pageContext.request.contextPath}/admin/modules/save" method="post">
+            <input type="hidden" name="moduleId" value="${module.moduleId}">
             
             <div class="form-group">
                 <label>Title</label>
@@ -39,7 +39,7 @@
             </div>
             
             <button type="submit" class="btn-save">Save Module</button>
-            <a href="/admin/modules" style="display:block; text-align:center; margin-top:15px; color:#666; text-decoration:none;">Cancel</a>
+            <a href="${pageContext.request.contextPath}/admin/modules" style="display:block; text-align:center; margin-top:15px; color:#666; text-decoration:none;">Cancel</a>
         </form>
     </div>
 </body>

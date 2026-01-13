@@ -1,7 +1,7 @@
 package com.mindlink.auth;
 
-import com.mindlink.admin.AdminProfile; // Import your updated AdminProfile class
-import jakarta.servlet.http.HttpSession; // Use 'javax.servlet...' if on older Spring Boot
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.servlet.http.HttpSession;
+
+/**
+ * Separate Admin Login Controller
+ * Admin login is separate from user login for security and best practices
+ */
 @Controller
 @RequestMapping("/admin/login")
 public class AdminLoginController {
@@ -30,30 +36,31 @@ public class AdminLoginController {
     // Handle Admin Login Logic
     @PostMapping("/submit")
     public String processAdminLogin(@RequestParam("username") String username,
-                                    @RequestParam("password") String password,
-                                    Model model,
-                                    HttpSession session) { // <--- 1. Added Session
+            @RequestParam("password") String password,
+            Model model,
+            HttpSession session) {
 
-        try {
-            // 2. Changed to SELECT * so we get phone, department, etc. for the profile
-            String sql = "SELECT * FROM admin WHERE (admin_id = ? OR email = ?) AND password = ?";
-            
-            // 3. Automatically maps DB columns (admin_id) to Java fields (adminId)
-            AdminProfile admin = jdbcTemplate.queryForObject(
-                sql, 
-                new BeanPropertyRowMapper<>(AdminProfile.class), 
-                username, username, password
-            );
+        // Check admin table in database
+        String sql = "SELECT admin_id, name, email, password FROM admin WHERE (admin_id = ? OR email = ?)";
+        List<Map<String, Object>> admins = jdbcTemplate.queryForList(sql, username, username);
 
-            // 4. SAVE TO SESSION (Crucial step!)
-            session.setAttribute("loggedInAdmin", admin);
+        if (!admins.isEmpty()) {
+            Map<String, Object> adminData = admins.get(0);
+            String storedPassword = (String) adminData.get("password");
 
-            return "redirect:/admin/home";
-
-        } catch (EmptyResultDataAccessException e) {
-            // Login failed
-            model.addAttribute("error", "Invalid admin credentials. Please check your ID/Email and Password.");
-            return "auth/admin_login";
+            // Verify password (Plain Text)
+            if (password.equals(storedPassword)) {
+                // Store admin ID in session for profile and other admin operations
+                String adminId = (String) adminData.get("admin_id");
+                session.setAttribute("adminId", adminId);
+                session.setAttribute("adminName", adminData.get("name"));
+                
+                // Login successful - redirect to admin home
+                return "redirect:/admin/home";
+            }
         }
+
+        model.addAttribute("error", "Invalid admin credentials. Please check your admin ID/email and password.");
+        return "auth/admin_login";
     }
 }
