@@ -174,8 +174,9 @@
     <div class="header">
         <div class="nav-left">
             <a href="${pageContext.request.contextPath}/admin/home">Home</a>
-            <a href="${pageContext.request.contextPath}/admin/modules">Module</a>
+            <a href="${pageContext.request.contextPath}/admin/modules/dashboard">Module</a>
             <a href="${pageContext.request.contextPath}/admin/tips">Tips</a>
+            <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
         </div>
         
         <a href="${pageContext.request.contextPath}/home" class="logo">
@@ -187,7 +188,7 @@
         
         <div class="nav-right">
             <a href="${pageContext.request.contextPath}/admin/chatbot">Chatbot</a>
-            <a href="${pageContext.request.contextPath}/admin/forum/manage">Forum</a>
+            <a href="${pageContext.request.contextPath}/admin/forum/posts">Manage Forums</a>
             <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
         </div>
     </div>
@@ -206,7 +207,7 @@
                     <div class="card-title">Learning<br>Module</div>
                     <p class="card-desc">Practical tips on stress management, mindfulness, and emotional resilience.</p>
                 </div>
-                <a href="/admin/modules" class="btn btn-yellow">Update</a>
+                <a href="${pageContext.request.contextPath}/admin/modules" class="btn btn-yellow">Update</a>
             </div>
 
             <div class="admin-card">
@@ -214,7 +215,7 @@
                     <div class="card-title">Self<br>Assessment</div>
                     <p class="card-desc">Set up self assessment question for student to know more about mental health.</p>
                 </div>
-                <a href="/admin/assessment" class="btn btn-teal">Update</a>
+                <a href="${pageContext.request.contextPath}/admin/assessment" class="btn btn-teal">Update</a>
             </div>
 
             <div class="admin-card">
@@ -222,7 +223,7 @@
                     <div class="card-title">Analytics</div>
                     <p class="card-desc">Reviews graphs</p>
                 </div>
-                <a href="/admin/analytics" class="btn btn-pink">Review</a>
+                <a href="${pageContext.request.contextPath}/admin/analytics" class="btn btn-pink">Review</a>
             </div>
 
         </div>

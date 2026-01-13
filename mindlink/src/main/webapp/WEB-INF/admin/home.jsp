@@ -188,7 +188,7 @@
         
         <div class="nav-right">
             <a href="${pageContext.request.contextPath}/admin/chatbot">Chatbot</a>
-            <a href="${pageContext.request.contextPath}/admin/forum/manage">Forum</a>
+            <a href="${pageContext.request.contextPath}/admin/forum/posts">Manage Forums</a>
             <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
         </div>
     </div>

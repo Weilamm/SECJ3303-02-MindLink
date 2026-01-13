@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.mindlink.usermanagement.model.Counselor;
+import com.mindlink.usermanagement.service.CounselorService;
+
 import jakarta.servlet.http.HttpSession; 
 import java.util.Map; 
 
@@ -63,8 +66,8 @@ public class CounselingController {
             @RequestParam("date") String date,
             @RequestParam("time") String time,
             @RequestParam("counselor") String counselor,
-            @RequestParam(value = "mode", defaultValue = "Online") String mode, 
-            HttpSession session, 
+            @RequestParam(value = "mode", defaultValue = "Online") String mode,
+            HttpSession session,
             Model model) {
         
         // 1. Get Student ID from Session
@@ -119,7 +122,7 @@ public class CounselingController {
     @GetMapping("/booking/cancel")
     public String cancelBooking(@RequestParam("id") String id) {
         appointmentService.deleteAppointment(id);
-        return "redirect:/counseling/home"; 
+        return "redirect:/counseling/home";
     }
 
     // --- 5. BROWSE ---
@@ -136,8 +139,9 @@ public class CounselingController {
     // --- 6. PROFILE ---
     @GetMapping("/counselor")
     public String showCounselorProfile(@RequestParam("id") String id, Model model) {
-        Counselor c = counselorService.getCounselorById(id);
-        if (c == null) return "redirect:/counseling/browse";
+        Counselor c = counselorService.getCounselorById(id).orElse(null);
+        if (c == null)
+            return "redirect:/counseling/browse";
         model.addAttribute("c", c);
         return "counseling/profile";
     }
@@ -152,7 +156,8 @@ public class CounselingController {
     @GetMapping("/history/view")
     public String viewAppointment(@RequestParam("id") String id, Model model) {
         Appointment app = appointmentService.getAppointmentById(id);
-        if (app == null) return "redirect:/counseling/history";
+        if (app == null)
+            return "redirect:/counseling/history";
         model.addAttribute("app", app);
         return "counseling/appointment_details";
     }
@@ -165,12 +170,12 @@ public class CounselingController {
 
     @PostMapping("/history/feedback/submit")
     public String processFeedback(@RequestParam("bookingId") String id,
-                                  @RequestParam("category") String category,
-                                  @RequestParam("subject") String subject,
-                                  @RequestParam("message") String message,
-                                  @RequestParam("rating") int rating,
-                                  Model model) {
-        
+            @RequestParam("category") String category,
+            @RequestParam("subject") String subject,
+            @RequestParam("message") String message,
+            @RequestParam("rating") int rating,
+            Model model) {
+
         Feedback fb = new Feedback(id, category, subject, message, rating);
         sessionFeedbackService.saveFeedback(fb);
 

@@ -34,8 +34,9 @@ CREATE TABLE IF NOT EXISTS admin (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Counselor Table: Stores counselor user information
+DROP TABLE IF EXISTS counselor;
 CREATE TABLE counselor (
-    id VARCHAR(50) PRIMARY KEY,
+    counselor_id VARCHAR(50) PRIMARY KEY,
     name VARCHAR(100),
     password VARCHAR(255) NOT NULL,
     location VARCHAR(100),
@@ -45,7 +46,10 @@ CREATE TABLE counselor (
     email VARCHAR(100),
     bio TEXT,
     quote VARCHAR(255),
-    image_url VARCHAR(255)
+    image_url VARCHAR(255),
+    password VARCHAR(255),
+    phone VARCHAR(20),
+    specialization VARCHAR(255)
 );
 
 -- Chatbot Table: Stores keyword-response pairs for rule-based chatbot
@@ -231,4 +235,68 @@ INSERT INTO module_question (module_id, chapter_number, question_number, questio
 (2, 1, '1.2', 'Emotional Triggers and Responses PDF', 'PDF'),
 (2, 2, '2.1', 'Emotion Regulation Techniques PDF', 'PDF'),
 (2, 2, '2.2', 'Mindfulness and Emotional Awareness PDF', 'PDF');
+
+-- User Module Progress Table: Stores which questions a student has completed
+CREATE TABLE IF NOT EXISTS user_module_progress (
+    progress_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id VARCHAR(100) NOT NULL,
+    module_id INT NOT NULL,
+    question_id INT NOT NULL,
+    completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES student(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (module_id) REFERENCES module(module_id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES module_question(question_id) ON DELETE CASCADE,
+    UNIQUE KEY unique_progress (student_id, question_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Assessment Table: Stores questions for assessments
+CREATE TABLE IF NOT EXISTS assessment (
+    assessment_id INT AUTO_INCREMENT PRIMARY KEY,
+    assessment_title VARCHAR(255) NOT NULL,
+    question_text TEXT NOT NULL,
+    question_type VARCHAR(50) DEFAULT 'Multiple Choice'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Assessment Question/Option Table: Stores options for each question
+CREATE TABLE IF NOT EXISTS ass_question (
+    option_id INT AUTO_INCREMENT PRIMARY KEY,
+    assessment_id INT NOT NULL,
+    option_text VARCHAR(255) NOT NULL,
+    score_value INT NOT NULL,
+    FOREIGN KEY (assessment_id) REFERENCES assessment(assessment_id) ON DELETE CASCADE,
+    INDEX idx_assessment_id (assessment_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Sample Data for Assessment (Stress Test)
+INSERT INTO assessment (assessment_title, question_text) VALUES 
+('Stress Test', 'How often do you feel overwhelmed by your workload?'),
+('Stress Test', 'Do you find it difficult to relax after work/study?'),
+('Stress Test', 'How often do you get headaches or physical tension?');
+
+-- Options for Question 1 (IDs will assume 1, 2, 3 based on auto-increment, but for safety in scripts usually we'd need to look them up. 
+-- For this demo, assuming sequential insertion starting at 1).
+-- Q1: Overwhelmed
+INSERT INTO ass_question (assessment_id, option_text, score_value) VALUES 
+(1, 'Never', 0), (1, 'Sometimes', 5), (1, 'Often', 10);
+
+-- Q2: Difficult to relax
+INSERT INTO ass_question (assessment_id, option_text, score_value) VALUES 
+(2, 'No, I relax easily', 0), (2, 'Sometimes', 5), (2, 'Yes, very difficult', 10);
+
+-- Q3: Physical tension
+INSERT INTO ass_question (assessment_id, option_text, score_value) VALUES 
+(3, 'Rarely', 0), (3, 'Occasionally', 5), (3, 'Frequently', 10);
+
+-- Sample Data for Assessment (Happiness Check)
+INSERT INTO assessment (assessment_title, question_text) VALUES 
+('Happiness Check', 'I feel satisfied with my life currently.'),
+('Happiness Check', 'I find joy in small things.');
+
+-- Q4: Satisfied (ID 4)
+INSERT INTO ass_question (assessment_id, option_text, score_value) VALUES 
+(4, 'Strongly Disagree', 0), (4, 'Neutral', 5), (4, 'Strongly Agree', 10);
+
+-- Q5: Joy (ID 5)
+INSERT INTO ass_question (assessment_id, option_text, score_value) VALUES 
+(5, 'Rarely', 0), (5, 'Sometimes', 5), (5, 'Always', 10);
 
