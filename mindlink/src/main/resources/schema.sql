@@ -34,21 +34,18 @@ CREATE TABLE IF NOT EXISTS admin (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Counselor Table: Stores counselor user information
-CREATE TABLE IF NOT EXISTS counselor (
-    counselor_id VARCHAR(100) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    phone VARCHAR(20),
-    location VARCHAR(255),
-    education VARCHAR(255),
-    university VARCHAR(255),
-    languages VARCHAR(255),
-    specialization TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE counselor (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(100),
+    location VARCHAR(100),
+    education VARCHAR(100),
+    university VARCHAR(100),
+    languages VARCHAR(100),
+    email VARCHAR(100),
+    bio TEXT,
+    quote VARCHAR(255),
+    image_url VARCHAR(255)
+);
 
 -- Chatbot Table: Stores keyword-response pairs for rule-based chatbot
 CREATE TABLE IF NOT EXISTS chatbot (
@@ -179,3 +176,9 @@ INSERT INTO forum (title, description, created_by, status) VALUES
 ('Work-Life Balance', 'Tips and discussions about balancing academic work, personal life, and self-care.', 'A001', 'active'),
 ('Self-Care Practices', 'Share and discover different self-care activities that work for you.', 'A002', 'active');
 
+-- Data for Counselor
+INSERT INTO counselor (id, name, location, education, university, languages, email, bio, quote, image_url) VALUES 
+('mei-ling', 'Ms. Tan Mei Ling', 'Block A Room 117', 'M.Sc. in Counseling', 'Psychology, Universiti Malaya', 'English, Malay, Mandarin', 'tan.meiling@university.edu', 'Ms. Tan Mei Ling is a professional counselor with over 8 years of experience working with university students. She specializes in academic stress management, motivation building, and emotional resilience.', 'I believe every student has the capacity to grow.', 'https://i.pravatar.cc/300?u=mei-ling'),
+('ryan-lin', 'Mr. Ryan Lin', 'Block A Room 209', 'M.A. Clinical Psychology', 'Universiti Sains Malaysia', 'English, Hokkien', 'ryan.lin@university.edu', 'Specializes in cognitive behavioral therapy. He has a passion for helping students overcome anxiety.', 'Change starts with a single step.', 'https://i.pravatar.cc/300?u=ryan'),
+('nur-alya', 'Ms. Nur Alya', 'Block B Room 314', 'PhD in Psychology', 'UKM', 'Malay, English', 'nur.alya@university.edu', 'Expert in anxiety and mood disorders. She creates a safe space for all students.', 'Mental health is just as important as physical health.', 'https://i.pravatar.cc/300?u=alya'),
+('evelyn-reed', 'Ms. Evelyn Reed', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English', 'evelyn@uni.edu', 'Focuses on adjustment issues for international students.', 'Talk to someone, you are not alone.', 'https://i.pravatar.cc/300?u=evelyn');

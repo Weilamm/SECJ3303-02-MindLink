@@ -71,6 +71,36 @@
         .action-bar { margin-top: 30px; text-align: right; border-top: 1px solid #eee; padding-top: 20px; }
         .submit-btn { background: #4CAF50; color: white; padding: 15px 40px; font-size: 16px; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3); transition: 0.2s; }
         .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4); }
+
+        /* CANCEL BAR */
+        .action-bar { 
+            margin-top: 30px; 
+            text-align: right; 
+            border-top: 1px solid #eee; 
+            padding-top: 20px; 
+            display: flex;             /* Align items */
+            justify-content: flex-end; /* Push to right */
+            gap: 15px;                 /* Space between buttons */
+        }
+
+        .btn-cancel-booking {
+            background-color: #f5f5f5; 
+            color: #666; 
+            border: 1px solid #ddd;
+            padding: 15px 30px; 
+            font-size: 16px; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            text-decoration: none; /* Important because it's an <a> tag */
+            display: inline-block;
+            transition: 0.2s;
+        }
+
+        .btn-cancel-booking:hover {
+            background-color: #e0e0e0;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -107,11 +137,13 @@
                 
                 <div class="counselor-grid">
                     <c:forEach items="${counselors}" var="c">
-                        <div class="counselor-card" onclick="selectCounselor(this, '${c.name}')">
+                        <div class="counselor-card ${c.name == preselectedName ? 'active' : ''}" 
+                            onclick="selectCounselor(this, '${c.name}')">
                             <span class="counselor-icon">🎓</span>
                             <strong>${c.name}</strong>
                         </div>
                     </c:forEach>
+                    
                     <c:if test="${empty counselors}">
                         <p style="grid-column: 1/-1; color: red;">No counselors found.</p>
                     </c:if>
@@ -134,7 +166,13 @@
                 </div>
                 
                 <div class="action-bar">
-                    <button type="submit" class="submit-btn">Confirm Booking</button>
+                    <a href="${pageContext.request.contextPath}/counseling/home" class="btn-cancel-booking">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="submit-btn">
+                        Confirm Booking
+                    </button>
                 </div>
             </div>
         </div>
@@ -158,7 +196,10 @@
     let currYear = currentDate.getFullYear();
     let currMonth = currentDate.getMonth();
     let pickedDate = ""; 
-    let pickedCounselor = "";
+    let pickedCounselor = "${preselectedName}";
+    if (pickedCounselor) {
+        document.getElementById("selectedCounselor").value = pickedCounselor;
+    }
     
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     

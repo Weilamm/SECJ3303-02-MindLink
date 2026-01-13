@@ -1,6 +1,8 @@
 package com.mindlink.counselor;
 
 import com.mindlink.counseling.AppointmentService; 
+import com.mindlink.counseling.CounselorService; 
+import com.mindlink.counseling.Counselor;
 // Import your existing AppointmentService so you can see bookings
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ public class CounselorController {
 
     @Autowired
     private AppointmentService appointmentService;
+
+    @Autowired
+    private CounselorService counselorService;
 
     // Counselor Dashboard
     @GetMapping("/home")

@@ -21,23 +21,28 @@ public class CounselingController {
     private CounselorService counselorService;
 
     // Home Page 
-    @GetMapping("") 
-    public String showCounselingHome() { 
+    @GetMapping("/home") 
+    public String showCounselingHome(Model model, HttpSession session) { 
+        model.addAttribute("appointments", appointmentService.getAllAppointments());
         return "counseling/home"; 
     }
 
     // Booking Page
     @GetMapping("/booking")
-    public String showBookingPage(Model model) {
-    // 1. Get all Counselors for the dropdown/grid
-    model.addAttribute("counselors", counselorService.getAllCounselors());
+    public String showBookingPage(
+         @RequestParam(value = "preselected", required = false) String preselected, Model model) {
+        
+        // 1. Get all Counselors for the dropdown/grid
+        model.addAttribute("counselors", counselorService.getAllCounselors());
 
-    // 2. Get all Existing Appointments (To check for conflicts)
-    // We pass this to the JSP so JavaScript can disable the "Taken" buttons
-    model.addAttribute("bookedAppointments", appointmentService.getAllAppointments());
-
-    return "counseling/booking";
-}
+        // 2. Get all Existing Appointments (To check for conflicts)
+        model.addAttribute("bookedAppointments", appointmentService.getAllAppointments());
+        
+        // 3. Pass the preselected name (if any) to the JSP
+        model.addAttribute("preselectedName", preselected); 
+        
+        return "counseling/booking";
+    }
 
     // --- UPDATED: Handle Booking Submission (REAL DATABASE SAVE) ---
     @PostMapping("/booking/submit")
@@ -145,5 +150,27 @@ public class CounselingController {
         model.addAttribute("success", true);
         model.addAttribute("bookingId", id);
         return "counseling/submit_feedback";
+    }
+
+    // View Existing Appointment Details (Reusing the Success Page)
+    @GetMapping("/view")
+    public String viewAppointmentDetails(@RequestParam("id") String id, Model model) {
+        
+        // 1. Fetch the specific appointment
+        Appointment app = appointmentService.getAppointmentById(id);
+        
+        // Safety check: If not found, go back home
+        if (app == null) return "redirect:/counseling/home";
+
+        // 2. Map the data to the variable names your JSP expects
+        model.addAttribute("bookingId", app.getId());
+        model.addAttribute("counselorName", app.getCounselorName());
+        model.addAttribute("sessionType", app.getType()); // 'type' maps to 'sessionType'
+        model.addAttribute("venue", app.getVenue());
+        model.addAttribute("date", app.getDate());
+        model.addAttribute("time", app.getTime());
+
+        // 3. Send to the Booking Success page
+        return "counseling/booking_success";
     }
 }
