@@ -20,11 +20,13 @@ public class CounselingController {
     @Autowired
     private CounselorService counselorService;
 
+    @Autowired
+    private FeedbackService feedbackService;
+
     // Home Page 
     @GetMapping("/home") 
     public String showCounselingHome(Model model, HttpSession session) { 
-        model.addAttribute("appointments", appointmentService.getAllAppointments());
-        return "counseling/home"; 
+        model.addAttribute("appointments", appointmentService.getUpcomingAppointments());        return "counseling/home"; 
     }
 
     // Booking Page
@@ -120,7 +122,7 @@ public class CounselingController {
     // Appointment History Page
     @GetMapping("/history")
     public String showHistoryPage(Model model) {
-        model.addAttribute("appointments", appointmentService.getAllAppointments());
+        model.addAttribute("appointments", appointmentService.getPastAppointments());
         return "counseling/history";
     }
 
@@ -144,11 +146,18 @@ public class CounselingController {
     @PostMapping("/history/feedback/submit")
     public String processFeedback(@RequestParam("bookingId") String id,
                                   @RequestParam("category") String category,
+                                  @RequestParam("subject") String subject,
                                   @RequestParam("message") String message,
+                                  @RequestParam("rating") int rating,
                                   Model model) {
-        System.out.println("Feedback received for: " + id);
+        
+        Feedback fb = new Feedback(id, category, subject, message, rating);
+        
+        feedbackService.saveFeedback(fb);
+
         model.addAttribute("success", true);
         model.addAttribute("bookingId", id);
+        
         return "counseling/submit_feedback";
     }
 

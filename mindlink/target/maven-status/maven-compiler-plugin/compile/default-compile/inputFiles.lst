@@ -19,6 +19,7 @@ C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\m
 C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\forum\model\ForumComment.java
 C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\module\LearningModule.java
 C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\counseling\Appointment.java
+C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\counseling\Feedback.java
 C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\forum\dao\ForumPostDAO.java
 C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\assistant\dao\ChatbotDAO.java
 C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\admin\Feedback.java
@@ -26,6 +27,7 @@ C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\m
 C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\module\dao\ModuleDaoImpl.java
 C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\admin\AdminTipsController.java
 C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\assistant\TipsController.java
+C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\counseling\FeedbackService.java
 C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\auth\LoginController.java
 C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\forum\dao\ForumCommentDAO.java
 C:\Users\ying\Documents\Internet Programming\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\assistant\service\DailyTipService.java

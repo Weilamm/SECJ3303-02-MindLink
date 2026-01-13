@@ -33,7 +33,9 @@
         }
         .day-cell:hover:not(.disabled) { background: #ffe0e6; color: var(--accent); }
         .day-cell.selected { background: var(--accent); color: white; font-weight: bold; }
-        .day-cell.disabled { color: #ccc; cursor: not-allowed; }
+        
+        /* DISABLED DATE STYLE */
+        .day-cell.disabled { color: #ccc; cursor: not-allowed; opacity: 0.3; pointer-events: none; }
 
         /* COUNSELOR GRID */
         .counselor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
@@ -54,7 +56,7 @@
         .time-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
         .time-btn.disabled { background: #f0f0f0; color: #bbb; cursor: not-allowed; text-decoration: line-through; border-color: #eee; }
 
-        /* --- NEW: MODE SELECTION --- */
+        /* MODE SELECTION */
         .mode-selection { display: flex; gap: 15px; margin-top: 15px; }
         .mode-option { flex: 1; position: relative; }
         .mode-option input { position: absolute; opacity: 0; cursor: pointer; }
@@ -67,40 +69,27 @@
         }
         .mode-option:hover .mode-label { border-color: var(--accent); }
 
-        /* SUBMIT BAR */
-        .action-bar { margin-top: 30px; text-align: right; border-top: 1px solid #eee; padding-top: 20px; }
-        .submit-btn { background: #4CAF50; color: white; padding: 15px 40px; font-size: 16px; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3); transition: 0.2s; }
-        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4); }
-
-        /* CANCEL BAR */
+        /* BUTTONS */
         .action-bar { 
             margin-top: 30px; 
             text-align: right; 
             border-top: 1px solid #eee; 
             padding-top: 20px; 
-            display: flex;             /* Align items */
-            justify-content: flex-end; /* Push to right */
-            gap: 15px;                 /* Space between buttons */
+            display: flex;            
+            justify-content: flex-end; 
+            gap: 15px;                
         }
+
+        .submit-btn { background: #4CAF50; color: white; padding: 15px 40px; font-size: 16px; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3); transition: 0.2s; }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4); }
 
         .btn-cancel-booking {
-            background-color: #f5f5f5; 
-            color: #666; 
-            border: 1px solid #ddd;
-            padding: 15px 30px; 
-            font-size: 16px; 
-            border-radius: 50px; 
-            cursor: pointer; 
-            font-weight: 600; 
-            text-decoration: none; /* Important because it's an <a> tag */
-            display: inline-block;
-            transition: 0.2s;
+            background-color: #f5f5f5; color: #666; border: 1px solid #ddd;
+            padding: 15px 30px; font-size: 16px; border-radius: 50px; 
+            cursor: pointer; font-weight: 600; text-decoration: none; 
+            display: inline-block; transition: 0.2s;
         }
-
-        .btn-cancel-booking:hover {
-            background-color: #e0e0e0;
-            color: #333;
-        }
+        .btn-cancel-booking:hover { background-color: #e0e0e0; color: #333; }
     </style>
 </head>
 <body>
@@ -138,25 +127,23 @@
                 <div class="counselor-grid">
                     <c:forEach items="${counselors}" var="c">
                         <div class="counselor-card ${c.name == preselectedName ? 'active' : ''}" 
-                            onclick="selectCounselor(this, '${c.name}')">
+                             onclick="selectCounselor(this, '${c.name}')">
                             <span class="counselor-icon">🎓</span>
                             <strong>${c.name}</strong>
                         </div>
                     </c:forEach>
-                    
                     <c:if test="${empty counselors}">
                         <p style="grid-column: 1/-1; color: red;">No counselors found.</p>
                     </c:if>
                 </div>
 
                 <div class="section-title" style="margin-top: 30px;">3. Select Time</div>
-                <div class="time-grid" id="timeSlotContainer">
-                    </div>
+                <div class="time-grid" id="timeSlotContainer"></div>
 
                 <div class="section-title" style="margin-top: 30px;">4. Select Mode</div>
                 <div class="mode-selection">
                     <label class="mode-option">
-                        <input type="radio" name="mode" value="Online" checked>
+                        <input type="radio" name="mode" value="Online">
                         <span class="mode-label"><i class="fas fa-video"></i> Online (Webex)</span>
                     </label>
                     <label class="mode-option">
@@ -166,13 +153,8 @@
                 </div>
                 
                 <div class="action-bar">
-                    <a href="${pageContext.request.contextPath}/counseling/home" class="btn-cancel-booking">
-                        Cancel
-                    </a>
-
-                    <button type="submit" class="submit-btn">
-                        Confirm Booking
-                    </button>
+                    <a href="${pageContext.request.contextPath}/counseling/home" class="btn-cancel-booking">Cancel</a>
+                    <button type="submit" class="submit-btn">Confirm Booking</button>
                 </div>
             </div>
         </div>
@@ -180,10 +162,10 @@
 </div>
 
 <script>
-    // 1. Initialize empty array (Editor won't complain)
+    // --- 1. GLOBAL VARIABLES ---
     var bookedSlots = [];
-
-    // 2. Push data into it (Cleaner syntax)
+    
+    // Inject JSP data into JS array
     <c:forEach items="${bookedAppointments}" var="app">
         bookedSlots.push({ 
             date: "${app.date}", 
@@ -196,25 +178,50 @@
     let currYear = currentDate.getFullYear();
     let currMonth = currentDate.getMonth();
     let pickedDate = ""; 
-    let pickedCounselor = "${preselectedName}";
+    let pickedCounselor = "${preselectedName}"; // Auto-select logic
+
+    // Important: Initialize month names
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    // Set hidden input if auto-selected
     if (pickedCounselor) {
         document.getElementById("selectedCounselor").value = pickedCounselor;
     }
-    
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    
+
+    // --- 2. RENDER CALENDAR (WITH DISABLE PAST DATES LOGIC) ---
     function renderCalendar() {
         let firstDay = new Date(currYear, currMonth, 1).getDay();
         let lastDate = new Date(currYear, currMonth + 1, 0).getDate();
+        
         document.getElementById("monthYear").innerText = months[currMonth] + " " + currYear;
+        
         let daysHTML = "";
-        for (let i = 0; i < firstDay; i++) daysHTML += '<div class="day-cell disabled"></div>';
+        
+        // "Today" at midnight for comparison
+        let today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Blank cells for previous month
+        for (let i = 0; i < firstDay; i++) {
+            daysHTML += '<div class="day-cell disabled"></div>';
+        }
+
+        // Generate Days
         for (let i = 1; i <= lastDate; i++) {
             let m = String(currMonth + 1).padStart(2, '0');
             let d = String(i).padStart(2, '0');
             let dateStr = currYear + "-" + m + "-" + d;
-            let activeClass = (dateStr === pickedDate) ? "selected" : "";
-            daysHTML += '<div class="day-cell ' + activeClass + '" onclick="selectDate(this, \'' + dateStr + '\')">' + i + '</div>';
+            
+            let cellDate = new Date(currYear, currMonth, i);
+            
+            // LOGIC: Disable if date is in the past
+            if (cellDate < today) {
+                daysHTML += '<div class="day-cell disabled">' + i + '</div>';
+            } 
+            else {
+                let activeClass = (dateStr === pickedDate) ? "selected" : "";
+                daysHTML += '<div class="day-cell ' + activeClass + '" onclick="selectDate(this, \'' + dateStr + '\')">' + i + '</div>';
+            }
         }
         document.getElementById("calendarDays").innerHTML = daysHTML;
     }
@@ -222,6 +229,7 @@
     document.getElementById("prevMonth").onclick = () => { currMonth--; if(currMonth<0){currMonth=11;currYear--;} renderCalendar(); };
     document.getElementById("nextMonth").onclick = () => { currMonth++; if(currMonth>11){currMonth=0;currYear++;} renderCalendar(); };
     
+    // --- 3. SELECTION FUNCTIONS ---
     window.selectDate = function(el, dateStr) {
         pickedDate = dateStr;
         document.getElementById("selectedDate").value = dateStr;
@@ -254,11 +262,14 @@
         let allSlots = generateTimeSlots();
         allSlots.forEach(time => {
             let isTaken = false;
+            // Only block if we have both date and counselor selected
             if (pickedDate && pickedCounselor) {
                 isTaken = bookedSlots.some(b => b.date === pickedDate && b.time === time && b.counselor === pickedCounselor);
             }
+            
             let disabledClass = isTaken ? "disabled" : "";
             let clickAction = isTaken ? "" : "selectTime(this, '" + time + "')";
+            
             container.innerHTML += '<div class="time-btn ' + disabledClass + '" onclick="' + clickAction + '">' + time + '</div>';
         });
     }
@@ -270,13 +281,16 @@
     };
 
     function validateForm() {
-        if(!pickedDate || !pickedCounselor || !document.getElementById("selectedTime").value) {
-            alert("Please select a Date, Counselor, and Time.");
+        let modeSelected = document.querySelector('input[name="mode"]:checked');
+
+        if(!pickedDate || !pickedCounselor || !document.getElementById("selectedTime").value || !modeSelected) {
+            alert("Please complete all fields:\n- Date\n- Counselor\n- Time\n- Session Mode");
             return false;
         }
         return true;
     }
 
+    // --- 4. INITIALIZE ---
     renderCalendar();
     refreshTimeSlots();
 </script>

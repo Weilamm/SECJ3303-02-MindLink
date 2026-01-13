@@ -25,18 +25,6 @@
             color: var(--text-dark);
         }
 
-        /* HEADER */
-        .header { padding: 20px 100px; display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .nav-links a { text-decoration: none; color: #00313e; font-weight: 500; margin: 0 15px; transition: 0.3s; }
-        .nav-links a:hover { color: #0d4e57; }
-        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; color: #00313e; font-size: 24px; text-decoration: none; }
-        .logo img { height: 40px; }
-
-        .container { max-width: 900px; margin: 40px auto; }
-        
-        h1 { font-size: 32px; font-weight: 800; margin-bottom: 5px; }
-        .subtitle { color: var(--gray); margin-bottom: 30px; font-size: 16px; }
-
         /* BACK BUTTON */
         .btn-back { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #666; font-weight: 600; margin-bottom: 20px; transition: 0.2s; }
         .btn-back:hover { color: var(--text-dark); transform: translateX(-5px); }
@@ -78,28 +66,13 @@
             transition: 0.2s;
             box-shadow: 0 4px 10px rgba(72, 201, 176, 0.3);
         }
-        .btn-view:hover { background-color: #3EBXA9; transform: translateY(-2px); }
-
+        .btn-view:hover { background-color: #36b299; transform: translateY(-2px); }
+        
         /* Empty State */
         .empty-state { text-align: center; padding: 50px; background: white; border-radius: 12px; color: #888; }
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/home">Home</a>
-            <a href="${pageContext.request.contextPath}/learning">Learning</a>
-        </div>
-        <a href="${pageContext.request.contextPath}/home" class="logo">
-            <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
-            <span>MindLink</span>
-        </a>
-        <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/forum/welcome">Forum</a>
-            <a href="${pageContext.request.contextPath}/profile">Profile</a>
-        </div>
-    </div>
 
     <div class="container">
         <a href="${pageContext.request.contextPath}/counseling/home" class="btn-back">
@@ -117,7 +90,7 @@
                     <div class="card-content">
                         <div class="counselor-name">
                             ${app.counselorName}
-                            <span class="badge">Scheduled</span>
+                            <span class="badge">Completed</span>
                         </div>
                         
                         <div class="details-row">
@@ -139,7 +112,7 @@
                     </div>
 
                     <div>
-                        <a href="${pageContext.request.contextPath}/counseling/view?id=${app.id}" class="btn-view">
+                        <a href="${pageContext.request.contextPath}/counseling/history/view?id=${app.id}" class="btn-view">
                             View Details <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
