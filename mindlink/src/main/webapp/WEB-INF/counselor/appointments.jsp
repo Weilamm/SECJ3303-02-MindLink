@@ -201,7 +201,12 @@
             <c:set var="hasUpcoming" value="false" />
             
             <c:forEach items="${appointments}" var="app">
-                <c:if test="${app.status == 'Booked' || app.status == 'Confirmed'}">
+                <%-- 
+                    FIX 1: REAL-TIME LOGIC 
+                    Use ${app.upcoming} instead of checking status manually.
+                    This uses the isUpcoming() method we added to Java.
+                --%>
+                <c:if test="${app.upcoming}">
                     <c:set var="hasUpcoming" value="true" />
                     
                     <div class="appt-card">
@@ -210,7 +215,11 @@
                                 <i class="far fa-calendar"></i>
                             </div>
                             <div>
-                                <h3 style="margin:0 0 5px 0;">Student #${app.studentId}</h3>
+                                <%-- FIX 2: SHOW STUDENT NAME INSTEAD OF ID --%>
+                                <h3 style="margin:0 0 5px 0;">
+                                    ${app.studentName != null ? app.studentName : 'Unknown Student'}
+                                </h3>
+                                
                                 <div style="color:#666; font-size:14px;">
                                     <span>${app.date} @ ${app.time}</span>
                                     <span style="margin: 0 8px;">•</span>
@@ -223,7 +232,9 @@
                             <span class="status-badge ${app.status == 'Confirmed' ? 'status-confirmed' : 'status-booked'}">
                                 ${app.status}
                             </span>
-                            <a href="${pageContext.request.contextPath}/counselor/appointment?id=${app.id}" class="btn-view">View Details</a>
+                            <a href="${pageContext.request.contextPath}/counselor/appointment?id=${app.id}" class="btn-view">
+                                View Details
+                            </a>
                         </div>
                     </div>
                 </c:if>
@@ -233,6 +244,66 @@
                 <div style="text-align: center; padding: 40px; color: #999;">
                     <i class="far fa-calendar-check" style="font-size: 32px; margin-bottom: 10px; display:block;"></i>
                     No upcoming sessions found.
+                </div>
+            </c:if>
+        </div>
+
+        <div id="tab-history" class="tab-section">
+            <c:set var="hasHistory" value="false" />
+
+            <c:forEach items="${appointments}" var="app">
+                <%-- 
+                    FIX 3: HISTORY LOGIC
+                    If it is NOT upcoming, it goes to history.
+                    (Includes 'Completed', 'Cancelled', or 'Booked' dates in the past)
+                --%>
+                <c:if test="${!app.upcoming}">
+                    <c:set var="hasHistory" value="true" />
+
+                    <div class="appt-card history-card">
+                        <div class="card-left">
+                            <div class="date-box">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <div>
+                                <%-- FIX 4: SHOW STUDENT NAME --%>
+                                <h3 style="margin:0 0 5px 0; color: #666;">
+                                    ${app.studentName != null ? app.studentName : 'Unknown Student'}
+                                </h3>
+                                
+                                <div style="color:#888; font-size:14px;">
+                                    <span>${app.date} @ ${app.time}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                            <c:choose>
+                                <c:when test="${app.status == 'Cancelled'}">
+                                    <span class="status-badge status-cancelled">Cancelled</span>
+                                </c:when>
+                                <c:when test="${app.status == 'Booked' || app.status == 'Confirmed'}">
+                                    <%-- If it's past date but still booked, show as 'Missed' or 'Past' --%>
+                                    <span class="status-badge" style="background:#eee; color:#555;">Past Session</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="status-badge status-completed">Completed</span>
+                                </c:otherwise>
+                            </c:choose>
+                            
+                            <a href="${pageContext.request.contextPath}/counselor/appointment?id=${app.id}" 
+                               style="font-size: 13px; color: #888; text-decoration: none;">
+                               View Summary
+                            </a>
+                        </div>
+                    </div>
+                </c:if>
+            </c:forEach>
+
+            <c:if test="${not hasHistory}">
+                <div style="text-align: center; padding: 40px; color: #999;">
+                    <i class="fas fa-history" style="font-size: 32px; margin-bottom: 10px; display:block;"></i>
+                    No history found.
                 </div>
             </c:if>
         </div>

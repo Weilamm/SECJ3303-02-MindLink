@@ -146,21 +146,24 @@ public class AppointmentService {
     }
 
     public List<Appointment> getUpcomingAppointments() {
+        // Fetch all appointments (ensure this query includes JOIN for student_name)
         List<Appointment> allAppointments = getAllAppointments();
         List<Appointment> upcoming = new ArrayList<>();
-        LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         for (Appointment app : allAppointments) {
-            try {
-                LocalDate appDate = LocalDate.parse(app.getDate(), formatter);
-                if (!appDate.isBefore(today)) {
-                    upcoming.add(app);
-                }
-            } catch (Exception e) { /* Ignore invalid dates */ }
+            // Use the shared helper method we just created
+            if (app.isUpcoming()) {
+                upcoming.add(app);
+            }
         }
-        // Sort nearest first
-        upcoming.sort((a1, a2) -> a1.getDate().compareTo(a2.getDate()));
+        
+        // Sort: Nearest date first
+        upcoming.sort((a1, a2) -> {
+            int dateCompare = a1.getDate().compareTo(a2.getDate());
+            if (dateCompare != 0) return dateCompare;
+            return a1.getTime().compareTo(a2.getTime());
+        });
+        
         return upcoming;
     }
 

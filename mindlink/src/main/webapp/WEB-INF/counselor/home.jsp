@@ -2,11 +2,13 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
-<%-- Calculate counts for the "Daily Overview" card --%>
-<c:set var="totalAppts" value="${fn:length(appointments)}" />
+<%-- 
+    1. CALCULATE UPCOMING COUNT (Real-Time)
+    We loop through appointments and check 'app.upcoming' instead of just 'status'.
+--%>
 <c:set var="bookedCount" value="0" />
 <c:forEach items="${appointments}" var="app">
-    <c:if test="${app.status == 'Booked'}">
+    <c:if test="${app.upcoming}">
         <c:set var="bookedCount" value="${bookedCount + 1}" />
     </c:if>
 </c:forEach>
@@ -44,70 +46,36 @@
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
             padding: 15px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100;
             box-shadow: 0 4px 20px rgba(0,0,0,0.02);
         }
 
         .nav-center-logo {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            /* Absolute positioning keeps logo centered */
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
+            font-size: 24px; font-weight: 700; color: var(--text-dark);
+            display: flex; align-items: center; gap: 10px;
+            position: absolute; left: 50%; transform: translateX(-50%);
         }
 
-        .nav-links {
-            display: flex;
-            gap: 40px;
-            align-items: center;
-        }
-
+        .nav-links { display: flex; gap: 40px; align-items: center; }
         .nav-links a {
-            text-decoration: none;
-            color: var(--text-dark);
-            font-weight: 700;
-            font-size: 16px;
-            transition: color 0.2s;
-            position: relative;
+            text-decoration: none; color: var(--text-dark);
+            font-weight: 700; font-size: 16px; transition: color 0.2s; position: relative;
         }
         
-        /* Orange underline hover effect */
+        .active-link { color: var(--btn-orange) !important; }
         .nav-links a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 3px;
-            bottom: -5px;
-            left: 0;
-            background-color: var(--btn-orange);
-            transition: width 0.3s;
-            border-radius: 2px;
+            content: ''; position: absolute; width: 0; height: 3px;
+            bottom: -5px; left: 0; background-color: var(--btn-orange);
+            transition: width 0.3s; border-radius: 2px;
         }
-        
         .nav-links a:hover::after { width: 100%; }
-        
-        /* Logout button style adjustment */
         .btn-logout { color: #d9534f !important; }
-        .btn-logout:hover::after { background-color: #d9534f !important; }
 
         /* --- Main Layout --- */
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 60px 20px 100px; 
-            text-align: center;
-            position: relative;
-            z-index: 2;
+            max-width: 800px; margin: 0 auto; padding: 60px 20px 100px; 
+            text-align: center; position: relative; z-index: 2;
         }
 
         h1 { font-size: 42px; margin: 0 0 10px 0; color: var(--text-dark); }
@@ -115,36 +83,20 @@
 
         /* --- Highlight Card --- */
         .highlight-card {
-            background: var(--card-white);
-            border-radius: 25px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
-            margin-bottom: 60px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
+            background: var(--card-white); border-radius: 25px; padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 60px;
+            display: flex; flex-direction: column; align-items: center;
+            position: relative; overflow: hidden;
         }
-        
         .highlight-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 6px;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
             background: linear-gradient(90deg, #FF9F1C, #2EC4B6);
         }
-
         .highlight-icon {
-            font-size: 32px;
-            color: var(--btn-orange);
-            margin-bottom: 15px;
-            background: #FFF4E6;
-            width: 60px; height: 60px;
-            border-radius: 50%;
+            font-size: 32px; color: var(--btn-orange); margin-bottom: 15px;
+            background: #FFF4E6; width: 60px; height: 60px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
         }
-
         .highlight-text { font-size: 18px; line-height: 1.6; color: var(--text-body); max-width: 500px; }
         .highlight-stat { font-weight: 700; color: var(--text-dark); }
 
@@ -152,34 +104,21 @@
         .section-title { font-size: 28px; font-weight: 700; margin-bottom: 30px; color: var(--text-dark); }
 
         .session-card {
-            background: var(--card-white);
-            border-radius: 20px;
-            padding: 25px 35px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
-            transition: transform 0.2s, box-shadow 0.2s;
+            background: var(--card-white); border-radius: 20px; padding: 25px 35px;
+            margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03); transition: transform 0.2s, box-shadow 0.2s;
             border: 1px solid transparent;
         }
-
         .session-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-            border-color: #FFF0E5;
+            transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.06); border-color: #FFF0E5;
         }
 
         .session-left { display: flex; align-items: center; gap: 20px; text-align: left; }
 
         .avatar-circle {
-            width: 50px; height: 50px;
-            background-color: #E0F7FA;
-            color: #006064;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
-            font-weight: 700;
+            width: 50px; height: 50px; background-color: #E0F7FA; color: #006064;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: 700;
         }
 
         .session-details h3 { margin: 0 0 5px 0; font-size: 18px; color: var(--text-dark); }
@@ -187,15 +126,9 @@
         .session-meta i { color: var(--btn-orange); }
 
         .btn-view {
-            background-color: var(--btn-orange);
-            color: white;
-            padding: 12px 28px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 14px;
-            transition: background 0.2s;
-            border: none;
+            background-color: var(--btn-orange); color: white; padding: 12px 28px;
+            border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 14px;
+            transition: background 0.2s; border: none;
         }
         .btn-view:hover { background-color: var(--btn-hover); }
 
@@ -222,7 +155,7 @@
 
     <nav class="navbar">
         <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/counselor/dashboard">Home</a>
+            <a href="${pageContext.request.contextPath}/counselor/dashboard" class="active-link">Home</a>
             <a href="${pageContext.request.contextPath}/counselor/appointments">Appointment</a>
         </div>
 
@@ -244,7 +177,7 @@
             <div class="highlight-icon"><i class="far fa-lightbulb"></i></div>
             <div class="highlight-text">
                 <p style="margin: 0;">
-                    You have <span class="highlight-stat">${bookedCount} upcoming sessions</span> this week. 
+                    You have <span class="highlight-stat">${bookedCount} upcoming sessions</span>. 
                     Remember to review student notes 10 minutes before starting.
                 </p>
             </div>
@@ -253,12 +186,20 @@
         <div class="section-title">Upcoming Sessions</div>
 
         <c:forEach items="${appointments}" var="app">
-            <c:if test="${app.status == 'Booked' || app.status == 'Confirmed'}">
+            
+            <%-- 
+               2. FILTER LIST (Real-Time)
+               Only show this card if it is TRULY upcoming (checked by Java Logic)
+            --%>
+            <c:if test="${app.upcoming}">
                 <div class="session-card">
                     <div class="session-left">
                         <div class="avatar-circle"><i class="fas fa-user"></i></div>
                         <div class="session-details">
-                            <h3>Session with ${app.studentName}</h3>
+                            
+                            <%-- 3. SHOW STUDENT NAME (Not ID) --%>
+                            <h3>Session with ${app.studentName != null ? app.studentName : 'Unknown Student'}</h3>
+                            
                             <div class="session-meta">
                                 <span><i class="far fa-calendar"></i> ${app.date}</span>
                                 <span><i class="far fa-clock"></i> ${app.time}</span>

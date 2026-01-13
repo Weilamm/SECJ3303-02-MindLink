@@ -1,5 +1,11 @@
 package com.mindlink.counseling;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 public class Appointment {
     private String id;
     private String counselorName;
@@ -36,6 +42,42 @@ public class Appointment {
     }
 
     public Appointment() {
+    }
+
+    public boolean isUpcoming() {
+        if (this.date == null || this.time == null) return false;
+        
+        // If status is cancelled, it's never "upcoming"
+        if ("Cancelled".equalsIgnoreCase(this.status)) return false;
+        if ("Completed".equalsIgnoreCase(this.status)) return false;
+
+        try {
+            // 1. Parse Date
+            LocalDate appDate = LocalDate.parse(this.date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            
+            // 2. Parse Time (Handle both "14:30" and "02:30 PM" formats)
+            LocalTime appTime;
+            try {
+                // Try standard 24-hour format first
+                appTime = LocalTime.parse(this.time, DateTimeFormatter.ofPattern("HH:mm"));
+            } catch (DateTimeParseException e) {
+                // Try AM/PM format
+                appTime = LocalTime.parse(this.time, DateTimeFormatter.ofPattern("hh:mm a"));
+            }
+
+            // 3. Combine and Compare with NOW
+            LocalDateTime appDateTime = LocalDateTime.of(appDate, appTime);
+            return appDateTime.isAfter(LocalDateTime.now());
+
+        } catch (Exception e) {
+            // If parsing fails, fallback to simple date comparison
+            try {
+                LocalDate appDate = LocalDate.parse(this.date);
+                return !appDate.isBefore(LocalDate.now());
+            } catch (Exception ex) {
+                return false;
+            }
+        }
     }
 
     // --- GETTERS AND SETTERS ---
