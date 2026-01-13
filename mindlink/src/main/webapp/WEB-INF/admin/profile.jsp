@@ -215,6 +215,22 @@
                 </div>
 
             </div>
+            <script>
+            function togglePassword() {
+                var passwordInput = document.getElementById("passwordField");
+                var icon = document.getElementById("toggleIcon");
+
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text"; // Show password
+                    icon.classList.remove("fa-eye");
+                    icon.classList.add("fa-eye-slash"); // Change icon to 'crossed eye'
+                } else {
+                    passwordInput.type = "password"; // Hide password
+                    icon.classList.remove("fa-eye-slash");
+                    icon.classList.add("fa-eye"); // Change icon back to 'eye'
+                }
+            }
+            </script>
         </div>
 
         <a href="${pageContext.request.contextPath}/admin/profile/edit" class="btn-edit" style="text-decoration: none; text-align: center;">Edit</a>

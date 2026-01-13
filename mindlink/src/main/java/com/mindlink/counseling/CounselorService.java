@@ -1,55 +1,81 @@
 package com.mindlink.counseling;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CounselorService {
 
-    private List<Counselor> counselors = new ArrayList<>();
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
-    public CounselorService() {
-        // 1. Ms. Tan Mei Ling (Exact data from screenshot)
-        counselors.add(new Counselor(
-            "mei-ling", 
-            "Ms. Tan Mei Ling", 
-            "Block A Room 117",
-            "M.Sc. in Counseling",
-            "Psychology, Universiti Malaya",
-            "English, Malay, Mandarin",
-            "tan.meiling@university.edu",
-            "Ms. Tan Mei Ling is a professional counselor with over 8 years of experience working with university students. She specializes in academic stress management, motivation building, and emotional resilience.",
-            "I believe every student has the capacity to grow. My counseling sessions focus on understanding personal challenges and finding realistic strategies.",
-            "https://i.pravatar.cc/300?u=mei-ling" // Placeholder image URL
-        ));
-
-        // 2. Mr. Ryan Lin (Generic Data)
-        counselors.add(new Counselor("ryan-lin", "Mr. Ryan Lin", "Block A Room 209", "M.A. Clinical Psychology", "Universiti Sains Malaysia", "English, Hokkien", "ryan.lin@university.edu", "Specializes in cognitive behavioral therapy.", "Change starts with a single step.", "https://i.pravatar.cc/300?u=ryan"));
-        
-        // 3. Ms. Nur Alya (Generic Data)
-        counselors.add(new Counselor("nur-alya", "Ms. Nur Alya", "Block B Room 314", "PhD in Psychology", "UKM", "Malay, English", "nur.alya@university.edu", "Expert in anxiety and mood disorders.", "Mental health is just as important as physical health.", "https://i.pravatar.cc/300?u=alya"));
-        
-        // Add the rest of your list similarly...
-        counselors.add(new Counselor("evelyn-reed", "Ms. Evelyn Reed", "Block A Room 301", "M.Sc. Counseling", "UPM", "English", "evelyn@uni.edu", "Focuses on adjustment issues.", "Talk to someone.", "https://i.pravatar.cc/300?u=evelyn"));
+    // 1. READ ALL (For Browse Page)
+    public List<Counselor> getAllCounselors() {
+        String sql = "SELECT * FROM counselor";
+        return jdbcTemplate.query(sql, new CounselorRowMapper());
     }
 
-    public List<Counselor> getAllCounselors() { return counselors; }
-
-    // Search counselors by name keyword
-    public List<Counselor> searchCounselors(String keyword) {
-        if (keyword == null || keyword.isEmpty()) return counselors;
-        return counselors.stream()
-                .filter(c -> c.getName().toLowerCase().contains(keyword.toLowerCase()))
-                .collect(Collectors.toList());
-    }
-
-    // Find specific counselor by ID
+    // 2. READ ONE (For Profile Page & Edit Page)
     public Counselor getCounselorById(String id) {
-        return counselors.stream()
-                .filter(c -> c.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        String sql = "SELECT * FROM counselor WHERE id = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new CounselorRowMapper(), id);
+        } catch (Exception e) {
+            return null; // Return null if not found
+        }
+    }
+
+    // 3. SEARCH (For Search Bar)
+    public List<Counselor> searchCounselors(String keyword) {
+        if (keyword == null || keyword.isEmpty()) {
+            return getAllCounselors();
+        }
+        // Searches name OR location matching the keyword
+        String sql = "SELECT * FROM counselor WHERE LOWER(name) LIKE ? OR LOWER(location) LIKE ?";
+        String term = "%" + keyword.toLowerCase() + "%";
+        return jdbcTemplate.query(sql, new CounselorRowMapper(), term, term);
+    }
+
+    // 4. UPDATE (For Edit Profile - SAVES PERMANENTLY)
+    public void updateCounselor(Counselor c) {
+        String sql = "UPDATE counselor SET name=?, education=?, university=?, languages=?, location=?, email=?, bio=?, quote=?, image_url=? WHERE id=?";
+        
+        jdbcTemplate.update(sql,
+            c.getName(),
+            c.getEducation(),
+            c.getUniversity(),
+            c.getLanguages(),
+            c.getLocation(),
+            c.getEmail(),
+            c.getBio(),
+            c.getQuote(),
+            c.getImageUrl(),
+            c.getId()
+        );
+    }
+
+    // --- HELPER: Maps Database Columns to Java Object ---
+    private static class CounselorRowMapper implements RowMapper<Counselor> {
+        @Override
+        public Counselor mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new Counselor(
+                rs.getString("id"),
+                rs.getString("name"),
+                rs.getString("location"),
+                rs.getString("education"),
+                rs.getString("university"),
+                rs.getString("languages"),
+                rs.getString("email"),
+                rs.getString("bio"),
+                rs.getString("quote"),
+                rs.getString("image_url")
+            );
+        }
     }
 }

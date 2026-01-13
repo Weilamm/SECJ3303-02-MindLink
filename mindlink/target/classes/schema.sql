@@ -1,11 +1,11 @@
---MindLink Database Schema
---Virtual Assistant & Support Module Tables
+-- MindLink Database Schema
+-- Virtual Assistant & Support Module Tables
 
---Create Database
+-- Create Database
 CREATE DATABASE IF NOT EXISTS mindlink_db;
 USE mindlink_db;
 
---Student Table: Stores student user information
+-- Student Table: Stores student user information
 CREATE TABLE IF NOT EXISTS student (
     student_id VARCHAR(100) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -34,21 +34,18 @@ CREATE TABLE IF NOT EXISTS admin (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Counselor Table: Stores counselor user information
-CREATE TABLE IF NOT EXISTS counselor (
-    counselor_id VARCHAR(100) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    phone VARCHAR(20),
-    location VARCHAR(255),
-    education VARCHAR(255),
-    university VARCHAR(255),
-    languages VARCHAR(255),
-    specialization TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE counselor (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(100),
+    location VARCHAR(100),
+    education VARCHAR(100),
+    university VARCHAR(100),
+    languages VARCHAR(100),
+    email VARCHAR(100),
+    bio TEXT,
+    quote VARCHAR(255),
+    image_url VARCHAR(255)
+);
 
 -- Chatbot Table: Stores keyword-response pairs for rule-based chatbot
 CREATE TABLE IF NOT EXISTS chatbot (
@@ -111,6 +108,19 @@ CREATE TABLE IF NOT EXISTS forum_comment (
     INDEX idx_post_id (post_id),
     INDEX idx_user_id (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Appointment Table: Stores counseling appointment details
+CREATE TABLE IF NOT EXISTS appointment (
+    id VARCHAR(50) PRIMARY KEY,
+    student_id VARCHAR(50),      -- Who booked it
+    counselor_name VARCHAR(100), -- Who they booked with
+    appointment_date VARCHAR(20),
+    appointment_time VARCHAR(20),
+    type VARCHAR(20),            -- Online/Physical
+    venue VARCHAR(100),
+    status VARCHAR(20) DEFAULT 'Confirmed',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 -- Sample Data for Students (Student IDs start from S001)
 INSERT INTO student (student_id, name, email, password, phone, faculty, year) VALUES

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,7 +33,7 @@ public class AdminLoginController {
         return "auth/admin_login";
     }
 
-    // Handle Admin Login Logic (Database Authentication)
+    // Handle Admin Login Logic
     @PostMapping("/submit")
     public String processAdminLogin(@RequestParam("username") String username,
             @RequestParam("password") String password,

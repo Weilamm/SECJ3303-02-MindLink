@@ -58,7 +58,6 @@ com\mindlink\admin\FeedbackService.class
 com\mindlink\auth\RegisterController.class
 com\mindlink\forum\dao\ForumDAOImpl.class
 com\mindlink\auth\LoginController.class
-com\mindlink\admin\AdminController.class
 com\mindlink\module\dao\ModuleQuestionDaoImpl.class
 com\mindlink\assessment\AssessmentService.class
 com\mindlink\forum\ReportController.class

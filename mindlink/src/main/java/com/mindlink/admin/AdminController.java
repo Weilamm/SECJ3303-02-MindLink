@@ -23,14 +23,26 @@ import java.util.Map;
 @RequestMapping("/admin")
 public class AdminController {
 
-    //Admin Home Page
+    // --- 1. DECLARE SERVICES ONCE AT THE TOP ---
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private FeedbackService feedbackService;
+
+    @Autowired
+    private ForumReportService forumReportService;
+    
+    @Autowired
+    private ForumService forumService;
+
+    // Admin Home Page
     @GetMapping("/home")
     public String showAdminHome() {
         return "admin/home"; // Looks for WEB-INF/admin/home.jsp
     }
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    // (Deleted duplicate jdbcTemplate here)
 
     // Admin Profile Page
     @GetMapping("/profile")
@@ -116,7 +128,6 @@ public class AdminController {
         }
         
         // Ensure we're updating the logged-in admin's profile (security check)
-        // Don't trust the adminId from the form - use the session adminId
         try {
             // Update admin in database using session adminId
             String sql = "UPDATE admin SET name = ?, email = ?, phone = ?, department = ?, updated_at = CURRENT_TIMESTAMP WHERE admin_id = ?";
@@ -142,42 +153,34 @@ public class AdminController {
         return "redirect:/admin/profile";
     }
 
-    @Autowired
-    private FeedbackService feedbackService; // <--- The Service holds the REAL data
+    // (Deleted duplicate feedbackService here)
 
     // READ
     @GetMapping("/feedback")
     public String showFeedbackPage(Model model) {
         model.addAttribute("feedbackList", feedbackService.getAllFeedback());
-        
-        // Stats
         model.addAttribute("pendingCount", 6);
         model.addAttribute("criticalCount", 3);
         model.addAttribute("avgRating", 4.8);
-        
         return "admin/feedback_review";
     }
 
-    // UPDATE
+    // UPDATE FEEDBACK
     @PostMapping("/feedback/save")
     public String saveReview(@RequestParam("id") String id, 
                              @RequestParam("response") String response) {
-        
-        // Debugging
-        System.out.println("DEBUG: Request to update ID: " + id);
-        
         feedbackService.reviewFeedback(id, response);
         return "redirect:/admin/feedback";
     }
 
-    // DELETE
+    // DELETE FEEDBACK
     @GetMapping("/feedback/delete")
     public String deleteFeedback(@RequestParam("id") String id) {
         feedbackService.deleteFeedback(id);
         return "redirect:/admin/feedback";
     }
     
-    // ANALYTICS (Keep this as is)
+    // ANALYTICS
     @GetMapping("/analytics")
     public String showAnalyticsPage(Model model) {
         DashboardStats stats = new DashboardStats(1250, 68.5, 8234, 342);
@@ -189,32 +192,26 @@ public class AdminController {
         return "admin/analytics"; 
     }
 
-    @Autowired
-    private ForumReportService forumReportService;
-
-    // Show Forum Reports Page
+    // FORUM REPORTS
     @GetMapping("/forum/reports")
     public String showForumReports(Model model) {
         model.addAttribute("reports", forumReportService.getAllReports());
-        return "admin/forum_reports"; // Looks for WEB-INF/admin/forum_reports.jsp
+        return "admin/forum_reports"; 
     }
 
-    // Delete Reported Post
+    // DELETE REPORT
     @GetMapping("/forum/reports/delete")
     public String deleteReportedPost(@RequestParam("id") String id) {
         forumReportService.deletePost(id);
         return "redirect:/admin/forum/reports";
     }
     
-    // Dismiss Report (Mark as safe)
+    // DISMISS REPORT
     @GetMapping("/forum/reports/dismiss")
     public String dismissReport(@RequestParam("id") String id) {
         forumReportService.dismissReport(id);
         return "redirect:/admin/forum/reports";
     }
-
-    @Autowired
-    private ForumService forumService;
 
     // Admin Forum Management - View all forums
     @GetMapping("/forum/manage")

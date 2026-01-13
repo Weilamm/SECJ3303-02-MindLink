@@ -7,7 +7,9 @@ public class Appointment {
     private String time;
     private String type; // Online or Physical
     private String venue;
+    private String studentId; 
 
+    // Constructor (Keeps your existing code happy)
     public Appointment(String id, String counselorName, String date, String time, String type, String venue) {
         this.id = id;
         this.counselorName = counselorName;
@@ -17,7 +19,8 @@ public class Appointment {
         this.venue = venue;
     }
 
-    // Getters
+    public String getStudentId() { return studentId; }
+    public void setStudentId(String studentId) { this.studentId = studentId; }
     public String getId() { return id; }
     public String getCounselorName() { return counselorName; }
     public String getDate() { return date; }

@@ -1,44 +1,85 @@
 package com.mindlink.counseling;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
 public class AppointmentService {
-    
-    private List<Appointment> appointments = new ArrayList<>();
 
-    // CONSTRUCTOR: Pre-load the history data matching your screenshot
-    public AppointmentService() {
-        // 1. Future appointment (June)
-        appointments.add(new Appointment("BK20250610-045", "Ms Nur Alya", "Saturday, 10 June 2025", "12.30PM", "Physical", "Block B Room 314"));
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    // 1. SAVE (Insert into Database)
+    public void saveAppointment(Appointment app) {
+        String sql = "INSERT INTO appointment (id, student_id, counselor_name, appointment_date, appointment_time, type, venue, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
-        // 2. Past appointment (March)
-        appointments.add(new Appointment("BK20250312-034", "Mr. Ryan Lin", "Wednesday, 12 March 2025", "10.00AM", "Online", "Google Meet"));
-        
-        // 3. Past appointment (February)
-        appointments.add(new Appointment("BK20250228-055", "Ms. Cindy Leong", "Friday, 28 February 2025", "02.00PM", "Physical", "Block A Room 217"));
+        jdbcTemplate.update(sql,
+            app.getId(),
+            app.getStudentId(),    // Ensure your Appointment class has this getter!
+            app.getCounselorName(),
+            app.getDate(),
+            app.getTime(),
+            app.getType(),
+            app.getVenue(),
+            "Confirmed"            // Default status
+        );
     }
 
-    public void addAppointment(Appointment app) {
-        // Add new appointments to the TOP of the list (index 0)
-        appointments.add(0, app);
-    }
-
-    public void deleteAppointment(String id) {
-        appointments.removeIf(app -> app.getId().equals(id));
-    }
-
+    // 2. READ ALL (Select from Database)
     public List<Appointment> getAllAppointments() {
-        return appointments;
+        String sql = "SELECT * FROM appointment ORDER BY created_at DESC";
+        return jdbcTemplate.query(sql, new AppointmentRowMapper());
     }
-    
-    // Helper to find specific appointment for the "View" button
+
+    // 3. READ ONE (Find by ID)
     public Appointment getAppointmentById(String id) {
-        return appointments.stream()
-                .filter(a -> a.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        String sql = "SELECT * FROM appointment WHERE id = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new AppointmentRowMapper(), id);
+        } catch (Exception e) {
+            return null; // Return null if not found
+        }
+    }
+
+    // 4. DELETE (Remove from Database)
+    public void deleteAppointment(String id) {
+        String sql = "DELETE FROM appointment WHERE id = ?";
+        jdbcTemplate.update(sql, id);
+    }
+
+    // --- HELPER: Maps Database Columns to Java Object ---
+    private static class AppointmentRowMapper implements RowMapper<Appointment> {
+        @Override
+        public Appointment mapRow(ResultSet rs, int rowNum) throws SQLException {
+            // Create object using your existing constructor
+            Appointment app = new Appointment(
+                rs.getString("id"),
+                rs.getString("counselor_name"),
+                rs.getString("appointment_date"),
+                rs.getString("appointment_time"),
+                rs.getString("type"),
+                rs.getString("venue")
+            );
+            // Set extra fields if you added them
+            if (hasColumn(rs, "student_id")) app.setStudentId(rs.getString("student_id"));
+            return app;
+        }
+        
+        // Safety check to avoid crashes if column missing
+        private boolean hasColumn(ResultSet rs, String columnName) throws SQLException {
+            try {
+                rs.findColumn(columnName);
+                return true;
+            } catch (SQLException e) {
+                return false;
+            }
+        }
     }
 }
