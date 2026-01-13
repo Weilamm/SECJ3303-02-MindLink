@@ -39,7 +39,7 @@
             overflow-x: hidden; 
         }
 
-        /* --- Updated Navbar --- */
+        /* --- Navbar --- */
         .navbar {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
@@ -60,7 +60,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            /* Absolute positioning keeps logo centered regardless of link lengths */
+            /* Absolute positioning keeps logo centered */
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
@@ -97,9 +97,7 @@
         .nav-links a:hover::after { width: 100%; }
         
         /* Logout button style adjustment */
-        .btn-logout {
-            color: #d9534f !important;
-        }
+        .btn-logout { color: #d9534f !important; }
         .btn-logout:hover::after { background-color: #d9534f !important; }
 
         /* --- Main Layout --- */
@@ -215,16 +213,6 @@
         }
         @keyframes float { 0% { transform: translate(0, 0); } 50% { transform: translate(10px, -20px); } 100% { transform: translate(0, 0); } }
 
-        /* Chat Button */
-        .fab-chat {
-            position: fixed; bottom: 40px; right: 40px; background: white;
-            padding: 15px 25px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            display: flex; flex-direction: column; align-items: center;
-            text-decoration: none; color: var(--text-dark); font-size: 12px; font-weight: 700;
-            z-index: 100; transition: transform 0.2s;
-        }
-        .fab-chat:hover { transform: scale(1.05); }
-        .fab-icon { font-size: 24px; margin-bottom: 5px; color: var(--text-dark); }
     </style>
 </head>
 <body>
@@ -235,7 +223,7 @@
     <nav class="navbar">
         <div class="nav-links">
             <a href="${pageContext.request.contextPath}/counselor/dashboard">Home</a>
-            <a href="${pageContext.request.contextPath}/counselor/schedule">Schedule</a>
+            <a href="${pageContext.request.contextPath}/counselor/appointments">Appointment</a>
         </div>
 
         <div class="nav-center-logo">
@@ -270,7 +258,7 @@
                     <div class="session-left">
                         <div class="avatar-circle"><i class="fas fa-user"></i></div>
                         <div class="session-details">
-                            <h3>Session with Student #${app.studentId}</h3>
+                            <h3>Session with ${app.studentName}</h3>
                             <div class="session-meta">
                                 <span><i class="far fa-calendar"></i> ${app.date}</span>
                                 <span><i class="far fa-clock"></i> ${app.time}</span>
@@ -288,13 +276,7 @@
                 <i class="fas fa-mug-hot"></i> No upcoming sessions found.
             </div>
         </c:if>
-
     </div>
-
-    <a href="#" class="fab-chat">
-        <i class="fas fa-robot fab-icon"></i>
-        <span>CHAT<br>WITH AI</span>
-    </a>
 
 </body>
 </html>

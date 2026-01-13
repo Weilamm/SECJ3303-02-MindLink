@@ -7,8 +7,7 @@ public class Appointment {
     private String time;
     private String type;
     private String venue;
-    
-    // 🟢 NEW FIELDS
+    private String studentName;
     private String studentId;
     private String status; 
 
@@ -36,6 +35,9 @@ public class Appointment {
         this.studentId = studentId;
     }
 
+    public Appointment() {
+    }
+
     // --- GETTERS AND SETTERS ---
 
     public String getId() { return id; }
@@ -56,7 +58,9 @@ public class Appointment {
     public String getVenue() { return venue; }
     public void setVenue(String venue) { this.venue = venue; }
 
-    // 🟢 NEW GETTERS & SETTERS (This fixes your error)
+    public String getStudentName() { return studentName; }
+    public void setStudentName(String studentName) { this.studentName = studentName; }
+
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 

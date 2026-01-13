@@ -142,14 +142,16 @@
     <nav class="navbar">
         <div class="nav-links">
             <a href="${pageContext.request.contextPath}/counselor/dashboard">Home</a>
-            <a href="${pageContext.request.contextPath}/counselor/schedule">Schedule</a>
+            <a href="${pageContext.request.contextPath}/counselor/appointments">Appointment</a>
         </div>
+
         <div class="nav-center-logo">
             <i class="fas fa-heart"></i> MindLink
         </div>
+
         <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/counselor/profile" style="color: var(--btn-orange);">Profile</a>
-            <a href="${pageContext.request.contextPath}/logout" style="color: #d9534f;">Logout</a>
+            <a href="${pageContext.request.contextPath}/counselor/profile">Profile</a>
+            <a href="${pageContext.request.contextPath}/logout" class="btn-logout">Logout</a>
         </div>
     </nav>
 

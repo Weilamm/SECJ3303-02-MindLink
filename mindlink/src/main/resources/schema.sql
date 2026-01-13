@@ -115,8 +115,8 @@ CREATE TABLE IF NOT EXISTS appointment (
     id VARCHAR(50) PRIMARY KEY,
     student_id VARCHAR(50),      -- Who booked it
     counselor_name VARCHAR(100), -- Who they booked with
-    appointment_date VARCHAR(20),
-    appointment_time VARCHAR(20),
+    date VARCHAR(20),
+    time VARCHAR(20),
     type VARCHAR(20),            -- Online/Physical
     venue VARCHAR(100),
     status VARCHAR(20) DEFAULT 'Confirmed',
@@ -142,6 +142,14 @@ INSERT INTO counselor (id, name, email, password, location, education, universit
 ('C002', 'Mr. Ryan Lin', 'ryan.lin@utm.my', 'counselor123', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English, Hokkien', 'Specialization: Cognitive behavioral therapy', 'Change starts within.', 'ryan.jpg'),
 ('C003', 'Ms. Nur Alya', 'nur.alya@utm.my', 'counselor123', 'Block B Room 314', 'PhD in Psychology', 'UKM', 'Malay, English', 'Specialization: Anxiety and mood disorders', 'Healing takes time.', 'nur.jpg'),
 ('C004', 'Ms. Evelyn Reed', 'evelyn.reed@utm.my', 'counselor123', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English', 'Specialization: Adjustment issues', 'Guidance for every step.', 'evelyn.jpg');
+
+-- Sample Data for Appointments
+INSERT INTO appointment (id, student_id, counselor_name, date, time, type, venue, status) VALUES
+('BK001', 'S001', 'Mr. Ryan Lin', '2026-01-31', '04:00 PM', 'Physical', 'Block B Room 314', 'Booked'),
+('BK002', 'S001', 'Ms. Tan Mei Ling', '2026-01-31', '09:00 AM', 'Online', 'https://utm.webex.com/utm/mstanmeiling', 'Booked'),
+('BK003', 'S001', 'Ms. Tan Mei Ling', '2025-12-10', '10:00 AM', 'Physical', 'Block B Room 314', 'Booked'),
+('BK004', 'S001', 'Mr. Ryan Lin', '2025-01-05', '02:00 PM', 'Online', 'https://utm.webex.com/utm/ryanlin', 'Booked');
+('BK005', 'S001', 'Ms. Nur Alya', '2025-11-20', '09:00 AM', 'Online', 'https://utm.webex.com/utm/nuralya', 'Booked');
 
 -- Sample Data for Chatbot (Rule-based responses)
 INSERT INTO chatbot (keyword, response) VALUES
