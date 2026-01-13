@@ -6,7 +6,6 @@ com\mindlink\auth\ForgotPasswordController.class
 com\mindlink\module\ModuleQuestion.class
 com\mindlink\usermanagement\dao\CounselorDao.class
 com\mindlink\usermanagement\dao\StudentDaoImpl.class
-com\mindlink\student\StudentProfile.class
 com\mindlink\assistant\dao\DailyTipDAOImpl.class
 com\mindlink\auth\AdminLoginController.class
 com\mindlink\module\LearningModule.class
@@ -38,7 +37,9 @@ com\mindlink\usermanagement\service\StudentService.class
 com\mindlink\admin\Feedback.class
 com\mindlink\usermanagement\dao\StudentDaoImpl$1.class
 com\mindlink\forum\dao\ForumPostDAOImpl$1.class
+com\mindlink\module\dao\ModuleProgressDao.class
 com\mindlink\forum\model\ForumPost.class
+com\mindlink\module\UserProgress.class
 com\mindlink\usermanagement\dao\StudentDao.class
 com\mindlink\module\dao\ModuleDao.class
 com\mindlink\assistant\dao\DailyTipDAO.class
@@ -59,6 +60,7 @@ com\mindlink\module\dao\ModuleQuestionDao.class
 com\mindlink\counseling\Feedback.class
 com\mindlink\forum\dao\ForumPostDAOImpl.class
 com\mindlink\assistant\dao\ChatbotDAOImpl$1.class
+com\mindlink\module\dao\ModuleProgressDaoImpl$1.class
 com\mindlink\admin\AdminTipsController.class
 com\mindlink\admin\FeedbackService.class
 com\mindlink\auth\RegisterController.class
@@ -66,6 +68,7 @@ com\mindlink\forum\dao\ForumDAOImpl.class
 com\mindlink\auth\LoginController.class
 com\mindlink\usermanagement\dao\CounselorDaoImpl.class
 com\mindlink\admin\AdminController.class
+com\mindlink\module\dao\ModuleProgressDaoImpl.class
 com\mindlink\usermanagement\controller\CounselorManagementController.class
 com\mindlink\module\dao\ModuleQuestionDaoImpl.class
 com\mindlink\assessment\AssessmentService.class

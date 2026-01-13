@@ -219,10 +219,22 @@ INSERT INTO module_question (module_id, chapter_number, question_number, questio
 (1, 2, '2.1', 'What is Stigma? PDF', 'PDF'),
 (1, 2, '2.2', 'Media and Cultural Misconceptions PDF', 'PDF');
 
--- Sample Data for Module Questions (Emotional Awareness - Module ID 2)
 INSERT INTO module_question (module_id, chapter_number, question_number, question_text, question_type) VALUES
 (2, 1, '1.1', 'Understanding Your Emotions PDF', 'PDF'),
 (2, 1, '1.2', 'Emotional Triggers and Responses PDF', 'PDF'),
 (2, 2, '2.1', 'Emotion Regulation Techniques PDF', 'PDF'),
 (2, 2, '2.2', 'Mindfulness and Emotional Awareness PDF', 'PDF');
+
+-- User Module Progress Table: Stores which questions a student has completed
+CREATE TABLE IF NOT EXISTS user_module_progress (
+    progress_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id VARCHAR(100) NOT NULL,
+    module_id INT NOT NULL,
+    question_id INT NOT NULL,
+    completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES student(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (module_id) REFERENCES module(module_id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES module_question(question_id) ON DELETE CASCADE,
+    UNIQUE KEY unique_progress (student_id, question_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
