@@ -1,11 +1,20 @@
 package com.mindlink.admin;
 
-import com.mindlink.module.LearningModule;
-import com.mindlink.module.ModuleService;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.mindlink.module.LearningModule;
+import com.mindlink.module.ModuleQuestion;
+import com.mindlink.module.ModuleService;
 
 @Controller
 @RequestMapping("/admin/modules")
@@ -14,21 +23,58 @@ public class AdminModuleController {
     @Autowired
     private ModuleService moduleService;
 
-    // 1. List all modules
+    // 1. List all modules (for CRUD operations) - Redirect to dashboard
     @GetMapping("")
     public String listModules(Model model) {
-        model.addAttribute("modules", moduleService.getAllModules());
-        return "admin/module_list";
+        return "redirect:/admin/modules/dashboard";
     }
 
-    // 2. Show Add Form
+    // 2. Module Dashboard (admin view of all modules)
+    @GetMapping("/dashboard")
+    public String showModuleDashboard(Model model) {
+        try {
+            List<LearningModule> modules = moduleService.getAllModules();
+            model.addAttribute("modules", modules);
+            return "admin/module_dashboard";
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Error loading modules: " + e.getMessage());
+            model.addAttribute("modules", new ArrayList<>());
+            return "admin/module_dashboard";
+        }
+    }
+
+    // 3. Module Intro (admin view of specific module with questions)
+    @GetMapping("/intro")
+    public String showModuleIntro(@RequestParam(value = "id", required = false) String id, Model model) {
+        if (id != null) {
+            LearningModule module = moduleService.getModuleById(id);
+            if (module != null) {
+                model.addAttribute("module", module);
+                return "admin/module_intro";
+            }
+        }
+        // Fallback: get first module if no ID provided
+        var modules = moduleService.getAllModules();
+        if (!modules.isEmpty()) {
+            model.addAttribute("module", modules.get(0));
+            return "admin/module_intro";
+        }
+        return "redirect:/admin/modules/dashboard";
+    }
+
+    // 4. Show Add Form
     @GetMapping("/add")
     public String showAddForm(Model model) {
-        model.addAttribute("module", new LearningModule("", "", ""));
+        LearningModule module = new LearningModule();
+        module.setTitle("");
+        module.setDescription("");
+        module.setImagePath("");
+        model.addAttribute("module", module);
         return "admin/module_form";
     }
 
-    // 3. Show Edit Form
+    // 5. Show Edit Form
     @GetMapping("/edit")
     public String showEditForm(@RequestParam("id") String id, Model model) {
         LearningModule module = moduleService.getModuleById(id);
@@ -36,17 +82,57 @@ public class AdminModuleController {
         return "admin/module_form";
     }
 
-    // 4. Save (Create or Update)
+    // 6. Save (Create or Update)
     @PostMapping("/save")
     public String saveModule(@ModelAttribute LearningModule module) {
         moduleService.saveModule(module);
-        return "redirect:/admin/modules";
+        return "redirect:/admin/modules/dashboard";
     }
 
-    // 5. Delete
+    // 7. Delete
     @GetMapping("/delete")
     public String deleteModule(@RequestParam("id") String id) {
         moduleService.deleteModule(id);
-        return "redirect:/admin/modules";
+        return "redirect:/admin/modules/dashboard";
+    }
+
+    // QUESTION MANAGEMENT
+    // 8. Add Question Form
+    @GetMapping("/questions/add")
+    public String showAddQuestionForm(@RequestParam("moduleId") int moduleId, Model model) {
+        ModuleQuestion question = new ModuleQuestion();
+        question.setModuleId(moduleId);
+        question.setChapterNumber(1);
+        question.setQuestionNumber("1.1");
+        question.setQuestionType("PDF");
+        model.addAttribute("question", question);
+        model.addAttribute("moduleId", moduleId);
+        return "admin/question_form";
+    }
+
+    // 9. Edit Question Form
+    @GetMapping("/questions/edit")
+    public String showEditQuestionForm(@RequestParam("id") int questionId, Model model) {
+        ModuleQuestion question = moduleService.getQuestionById(questionId);
+        if (question != null) {
+            model.addAttribute("question", question);
+            model.addAttribute("moduleId", question.getModuleId());
+            return "admin/question_form";
+        }
+        return "redirect:/admin/modules/dashboard";
+    }
+
+    // 10. Save Question
+    @PostMapping("/questions/save")
+    public String saveQuestion(@ModelAttribute ModuleQuestion question) {
+        moduleService.saveQuestion(question);
+        return "redirect:/admin/modules/dashboard";
+    }
+
+    // 11. Delete Question
+    @GetMapping("/questions/delete")
+    public String deleteQuestion(@RequestParam("id") int questionId) {
+        moduleService.deleteQuestion(questionId);
+        return "redirect:/admin/modules/dashboard";
     }
 }

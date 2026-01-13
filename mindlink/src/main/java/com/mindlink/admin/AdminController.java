@@ -4,15 +4,20 @@ import com.mindlink.forum.model.Forum;
 import com.mindlink.forum.model.ForumPost;
 import com.mindlink.forum.service.ForumService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
@@ -24,20 +29,117 @@ public class AdminController {
         return "admin/home"; // Looks for WEB-INF/admin/home.jsp
     }
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     // Admin Profile Page
     @GetMapping("/profile")
-    public String showAdminProfile(Model model) {
-        AdminProfile profile = new AdminProfile(
-            "Admin", 
-            "S23CS0123", 
-            36, 
-            "admin@graduate.utm.my", 
-            "+60123456789", 
-            "Faculty of Computing"
-        );
+    public String showAdminProfile(Model model, HttpSession session) {
+        // Get admin_id from session (set during login)
+        String adminId = (String) session.getAttribute("adminId");
+        
+        // If not in session, redirect to login page
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+
+        // Fetch admin data from database using the logged-in admin's ID
+        String sql = "SELECT admin_id, name, email, phone, department, role FROM admin WHERE admin_id = ?";
+        List<Map<String, Object>> admins = jdbcTemplate.queryForList(sql, adminId);
+
+        AdminProfile profile;
+        if (!admins.isEmpty()) {
+            Map<String, Object> adminData = admins.get(0);
+            profile = new AdminProfile(
+                (String) adminData.get("admin_id"),
+                (String) adminData.get("name"),
+                (String) adminData.get("email"),
+                adminData.get("phone") != null ? (String) adminData.get("phone") : "",
+                adminData.get("department") != null ? (String) adminData.get("department") : "",
+                adminData.get("role") != null ? (String) adminData.get("role") : "admin"
+            );
+        } else {
+            // Admin not found in database - this shouldn't happen if login worked
+            model.addAttribute("error", "Admin profile not found. Please contact support.");
+            return "admin/profile";
+        }
         
         model.addAttribute("p", profile);
         return "admin/profile"; // Looks for WEB-INF/admin/profile.jsp
+    }
+
+    // Show Edit Profile Form
+    @GetMapping("/profile/edit")
+    public String showEditProfileForm(Model model, HttpSession session) {
+        // Get admin_id from session (must be logged in)
+        String adminId = (String) session.getAttribute("adminId");
+        
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+
+        // Fetch admin data from database using the logged-in admin's ID
+        String sql = "SELECT admin_id, name, email, phone, department, role FROM admin WHERE admin_id = ?";
+        List<Map<String, Object>> admins = jdbcTemplate.queryForList(sql, adminId);
+
+        AdminProfile profile;
+        if (!admins.isEmpty()) {
+            Map<String, Object> adminData = admins.get(0);
+            profile = new AdminProfile(
+                (String) adminData.get("admin_id"),
+                (String) adminData.get("name"),
+                (String) adminData.get("email"),
+                adminData.get("phone") != null ? (String) adminData.get("phone") : "",
+                adminData.get("department") != null ? (String) adminData.get("department") : "",
+                adminData.get("role") != null ? (String) adminData.get("role") : "admin"
+            );
+        } else {
+            // Admin not found - redirect to profile page with error
+            return "redirect:/admin/profile?error=Admin profile not found";
+        }
+        
+        model.addAttribute("p", profile);
+        return "admin/profile_edit";
+    }
+
+    // Save Profile Changes
+    @PostMapping("/profile/update")
+    public String updateAdminProfile(@ModelAttribute AdminProfile profile, 
+                                     RedirectAttributes redirectAttributes, 
+                                     HttpSession session) {
+        // Get admin_id from session (must be logged in) - use session ID for security
+        String adminId = (String) session.getAttribute("adminId");
+        
+        if (adminId == null || adminId.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "You must be logged in to update your profile.");
+            return "redirect:/admin/login";
+        }
+        
+        // Ensure we're updating the logged-in admin's profile (security check)
+        // Don't trust the adminId from the form - use the session adminId
+        try {
+            // Update admin in database using session adminId
+            String sql = "UPDATE admin SET name = ?, email = ?, phone = ?, department = ?, updated_at = CURRENT_TIMESTAMP WHERE admin_id = ?";
+            int rowsUpdated = jdbcTemplate.update(sql, 
+                                                profile.getName(), 
+                                                profile.getEmail(), 
+                                                profile.getPhone() != null ? profile.getPhone() : "", 
+                                                profile.getDepartment() != null ? profile.getDepartment() : "", 
+                                                adminId);
+            
+            if (rowsUpdated > 0) {
+                // Update session name if it changed
+                session.setAttribute("adminName", profile.getName());
+                redirectAttributes.addFlashAttribute("successMessage", "Profile updated successfully!");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Failed to update profile. Admin not found.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Error updating profile: " + e.getMessage());
+        }
+        
+        return "redirect:/admin/profile";
     }
 
     @Autowired

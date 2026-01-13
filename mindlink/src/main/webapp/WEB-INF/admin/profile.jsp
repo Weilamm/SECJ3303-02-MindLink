@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -151,12 +152,23 @@
         </div>
     </div>
     <div class="container">
-        <a href="/admin/home" class="back-btn">
+        <a href="${pageContext.request.contextPath}/admin/home" class="back-btn">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 14L4 9l5-5"/>
                 <path d="M4 9h10c4 0 7 3 7 7v1"/>
             </svg>
         </a>
+
+        <c:if test="${not empty successMessage}">
+            <div style="text-align: center; padding: 15px; background: #e8f5e9; color: #2e7d32; border-radius: 10px; margin-bottom: 20px;">
+                <strong>Success:</strong> ${successMessage}
+            </div>
+        </c:if>
+        <c:if test="${not empty errorMessage}">
+            <div style="text-align: center; padding: 15px; background: #ffebee; color: #c62828; border-radius: 10px; margin-bottom: 20px;">
+                <strong>Error:</strong> ${errorMessage}
+            </div>
+        </c:if>
 
         <div class="profile-layout">
             
@@ -174,17 +186,12 @@
                 <div class="top-row">
                     <div class="row">
                         <span class="label">Full Name :</span>
-                        <span class="value">${p.fullName}</span>
+                        <span class="value">${p.name}</span>
                     </div>
                     <div class="row">
-                        <span class="label">Student ID :</span>
-                        <span class="value">${p.studentId}</span>
+                        <span class="label">Admin ID :</span>
+                        <span class="value">${p.adminId}</span>
                     </div>
-                </div>
-
-                <div class="row">
-                    <span class="label">Age :</span>
-                    <span class="value">${p.age}</span>
                 </div>
 
                 <div class="row">
@@ -194,18 +201,23 @@
 
                 <div class="row">
                     <span class="label">Phone Number :</span>
-                    <span class="value">${p.phoneNumber}</span>
+                    <span class="value">${p.phone != null && !p.phone.isEmpty() ? p.phone : 'Not provided'}</span>
                 </div>
 
                 <div class="row">
-                    <span class="label">Faculty :</span>
-                    <span class="value">${p.faculty}</span>
+                    <span class="label">Department :</span>
+                    <span class="value">${p.department != null && !p.department.isEmpty() ? p.department : 'Not provided'}</span>
+                </div>
+
+                <div class="row">
+                    <span class="label">Role :</span>
+                    <span class="value">${p.role != null ? p.role : 'admin'}</span>
                 </div>
 
             </div>
         </div>
 
-        <button class="btn-edit">Edit</button>
+        <a href="${pageContext.request.contextPath}/admin/profile/edit" class="btn-edit" style="text-decoration: none; text-align: center;">Edit</a>
 
     </div>
 
