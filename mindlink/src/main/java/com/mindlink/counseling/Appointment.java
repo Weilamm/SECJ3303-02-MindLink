@@ -16,6 +16,7 @@ public class Appointment {
     private String studentName;
     private String studentId;
     private String status; 
+    private String notes;
 
     // Constructor 1: Used by Controller when booking
     public Appointment(String id, String counselorName, String date, String time, String type, String venue) {
@@ -108,4 +109,7 @@ public class Appointment {
 
     public String getStudentId() { return studentId; }
     public void setStudentId(String studentId) { this.studentId = studentId; }
+
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
 }

@@ -120,6 +120,7 @@ CREATE TABLE IF NOT EXISTS appointment (
     type VARCHAR(20),            -- Online/Physical
     venue VARCHAR(100),
     status VARCHAR(20) DEFAULT 'Confirmed',
+    notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

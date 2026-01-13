@@ -167,6 +167,20 @@ public class AppointmentService {
         return upcoming;
     }
 
+    public void updateSessionNotes(String id, String notes, boolean markCompleted) {
+        String sql;
+        
+        if (markCompleted) {
+            // Update Notes AND Status
+            sql = "UPDATE appointment SET notes = ?, status = 'Completed' WHERE id = ?";
+            jdbcTemplate.update(sql, notes, id);
+        } else {
+            // Update Notes ONLY (keep existing status)
+            sql = "UPDATE appointment SET notes = ? WHERE id = ?";
+            jdbcTemplate.update(sql, notes, id);
+        }
+    }
+
     // --- ROW MAPPER (Handles 'student_name' mapping) ---
     private static class AppointmentRowMapper implements RowMapper<Appointment> {
         @Override
@@ -182,12 +196,13 @@ public class AppointmentService {
             appt.setStatus(rs.getString("status"));
             appt.setStudentId(rs.getString("student_id"));
             
-            // Try to get student_name, handle if it's missing (e.g. slight query mismatch)
+            try {
+                appt.setNotes(rs.getString("notes")); 
+            } catch (SQLException e) { /* Ignore if column missing */ }
+
             try {
                 appt.setStudentName(rs.getString("student_name")); 
-            } catch (SQLException e) {
-                // Column might not exist in some specific queries, ignore
-            }
+            } catch (SQLException e) { }
             
             return appt;
         }

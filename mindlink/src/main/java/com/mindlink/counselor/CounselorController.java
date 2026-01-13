@@ -1,10 +1,14 @@
 package com.mindlink.counselor;
 
+import com.mindlink.counseling.Appointment;
 import com.mindlink.counseling.AppointmentService; 
 import com.mindlink.counseling.CounselorService; 
 import com.mindlink.counseling.Counselor; 
+import com.mindlink.counseling.SessionFeedbackService;
+import com.mindlink.counseling.Feedback;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +29,11 @@ public class CounselorController {
 
     @Autowired
     private CounselorService counselorService;
+
+    @Autowired
+    private SessionFeedbackService sessionFeedbackService;
+
+    @Qualifier("counselingFeedbackService")
 
     // --- 1. DASHBOARD ---
     @GetMapping({"/home", "/dashboard"})
@@ -101,5 +110,46 @@ public class CounselorController {
         }
 
         return "redirect:/counselor/profile";
+    }
+
+    // --- 5. VIEW APPOINTMENT DETAILS ---
+    @GetMapping("/appointment")
+    public String showAppointmentDetails(@RequestParam("id") String id, HttpSession session, Model model) {
+    if (session.getAttribute("loggedInCounselor") == null) {
+        return "redirect:/login";
+    }
+
+    Appointment appointment = appointmentService.getAppointmentById(id);
+    if (appointment == null) {
+        return "redirect:/counselor/appointments";
+    }
+
+    model.addAttribute("appointment", appointment);
+
+    Feedback feedback = sessionFeedbackService.getFeedbackByAppointmentId(id);
+    model.addAttribute("feedback", feedback);
+
+    return "counselor/appointment_details"; 
+    }
+
+    // --- 6. ADD NOTES & COMPLETING SESSION ---
+    @PostMapping("/appointment/update")
+    public String updateAppointmentNotes(
+            @RequestParam("id") String id,
+            @RequestParam("notes") String notes,
+            @RequestParam(value = "action", required = false) String action,
+            RedirectAttributes redirectAttributes) {
+        
+        boolean isComplete = "complete".equals(action);
+        
+        appointmentService.updateSessionNotes(id, notes, isComplete);
+        
+        if (isComplete) {
+            redirectAttributes.addFlashAttribute("message", "Session completed successfully!");
+            return "redirect:/counselor/appointments"; // Go back to list
+        } else {
+            redirectAttributes.addFlashAttribute("message", "Notes saved successfully.");
+            return "redirect:/counselor/appointment?id=" + id; // Stay on the same page
+        }
     }
 }

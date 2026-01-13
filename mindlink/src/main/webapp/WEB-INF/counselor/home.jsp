@@ -178,7 +178,6 @@
             <div class="highlight-text">
                 <p style="margin: 0;">
                     You have <span class="highlight-stat">${bookedCount} upcoming sessions</span>. 
-                    Remember to review student notes 10 minutes before starting.
                 </p>
             </div>
         </div>

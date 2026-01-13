@@ -22,7 +22,7 @@ public class CounselingController {
     private CounselorService counselorService;
 
     @Autowired
-    private FeedbackService feedbackService;
+    private SessionFeedbackService sessionFeedbackService;
 
     // --- 1. HOME PAGE ---
     @GetMapping("/home") 
@@ -172,7 +172,7 @@ public class CounselingController {
                                   Model model) {
         
         Feedback fb = new Feedback(id, category, subject, message, rating);
-        feedbackService.saveFeedback(fb);
+        sessionFeedbackService.saveFeedback(fb);
 
         model.addAttribute("success", true);
         model.addAttribute("bookingId", id);

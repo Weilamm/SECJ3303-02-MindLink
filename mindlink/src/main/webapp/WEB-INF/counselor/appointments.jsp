@@ -150,12 +150,6 @@
         
         .history-card .date-box { background: #E5E7EB; color: #374151; }
         
-        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
-        .status-confirmed { background: #D1FAE5; color: #065F46; } 
-        .status-booked { background: #E0F2F1; color: #00695C; }    
-        .status-cancelled { background: #FEE2E2; color: #991B1B; }  
-        .status-completed { background: #F3F4F6; color: #374151; }  
-        
         .btn-view {
             background: var(--btn-orange); color: white;
             padding: 8px 20px; border-radius: 50px; text-decoration: none;
@@ -229,9 +223,6 @@
                         </div>
 
                         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-                            <span class="status-badge ${app.status == 'Confirmed' ? 'status-confirmed' : 'status-booked'}">
-                                ${app.status}
-                            </span>
                             <a href="${pageContext.request.contextPath}/counselor/appointment?id=${app.id}" class="btn-view">
                                 View Details
                             </a>
@@ -278,19 +269,6 @@
                         </div>
 
                         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-                            <c:choose>
-                                <c:when test="${app.status == 'Cancelled'}">
-                                    <span class="status-badge status-cancelled">Cancelled</span>
-                                </c:when>
-                                <c:when test="${app.status == 'Booked' || app.status == 'Confirmed'}">
-                                    <%-- If it's past date but still booked, show as 'Missed' or 'Past' --%>
-                                    <span class="status-badge" style="background:#eee; color:#555;">Past Session</span>
-                                </c:when>
-                                <c:otherwise>
-                                    <span class="status-badge status-completed">Completed</span>
-                                </c:otherwise>
-                            </c:choose>
-                            
                             <a href="${pageContext.request.contextPath}/counselor/appointment?id=${app.id}" 
                                style="font-size: 13px; color: #888; text-decoration: none;">
                                View Summary
@@ -329,14 +307,6 @@
                         </div>
 
                         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-                            <c:choose>
-                                <c:when test="${app.status == 'Cancelled'}">
-                                    <span class="status-badge status-cancelled">Cancelled</span>
-                                </c:when>
-                                <c:otherwise>
-                                    <span class="status-badge status-completed">Completed</span>
-                                </c:otherwise>
-                            </c:choose>
                             <a href="${pageContext.request.contextPath}/counselor/appointment?id=${app.id}" 
                                style="font-size: 13px; color: #888; text-decoration: none;">View Summary</a>
                         </div>
