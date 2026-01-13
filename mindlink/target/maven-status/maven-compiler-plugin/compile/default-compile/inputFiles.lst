@@ -16,11 +16,13 @@ C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\j
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\counseling\FeedbackService.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\admin\DashboardStats.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\usermanagement\service\CounselorService.java
+C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\assessment\Assessment.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\admin\AdminProfile.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\forum\model\ForumComment.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\assistant\service\DailyTipService.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\assistant\ChatbotController.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\module\UserProgress.java
+C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\assessment\AssessmentDaoImpl.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\assistant\dao\DailyTipDAOImpl.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\module\LearningModule.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\auth\ForgotPasswordController.java
@@ -37,6 +39,7 @@ C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\j
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\admin\AdminController.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\assistant\TipsController.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\auth\AdminLoginController.java
+C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\assessment\AssessmentDao.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\counseling\CounselingController.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\forum\dao\ForumPostDAOImpl.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\student\StudentController.java
@@ -45,6 +48,7 @@ C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\j
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\auth\RegisterController.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\module\ModuleQuestion.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\usermanagement\dao\CounselorDaoImpl.java
+C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\assessment\AssessmentOption.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\learning\LearningController.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\usermanagement\UserManagementController.java
 C:\Users\user\OneDrive\Documents\GitHub\SECJ3303-02-MindLink\mindlink\src\main\java\com\mindlink\assistant\dao\ChatbotDAOImpl.java

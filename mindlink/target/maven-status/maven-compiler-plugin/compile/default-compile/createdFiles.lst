@@ -25,6 +25,7 @@ com\mindlink\forum\ForumController.class
 com\mindlink\admin\ReportedPost.class
 com\mindlink\assistant\dao\ChatbotDAOImpl.class
 com\mindlink\forum\dao\ForumDAO.class
+com\mindlink\assessment\Assessment.class
 com\mindlink\assessment\AssessmentQuestion.class
 com\mindlink\module\ModuleService.class
 com\mindlink\usermanagement\UserManagementController.class
@@ -37,6 +38,7 @@ com\mindlink\usermanagement\service\StudentService.class
 com\mindlink\admin\Feedback.class
 com\mindlink\usermanagement\dao\StudentDaoImpl$1.class
 com\mindlink\forum\dao\ForumPostDAOImpl$1.class
+com\mindlink\assessment\AssessmentDaoImpl$1.class
 com\mindlink\module\dao\ModuleProgressDao.class
 com\mindlink\forum\model\ForumPost.class
 com\mindlink\module\UserProgress.class
@@ -50,14 +52,18 @@ com\mindlink\counseling\AppointmentService.class
 com\mindlink\counseling\AppointmentService$AppointmentRowMapper.class
 com\mindlink\forum\dao\ForumDAOImpl$1.class
 com\mindlink\admin\AdminAssessmentController.class
+com\mindlink\assessment\AssessmentDaoImpl.class
 com\mindlink\counseling\Appointment.class
 com\mindlink\assistant\model\DailyTip.class
 com\mindlink\module\dao\ModuleQuestionDaoImpl$1.class
+com\mindlink\assessment\AssessmentDao.class
 com\mindlink\assistant\ChatbotController.class
 com\mindlink\assistant\service\ChatbotService.class
 com\mindlink\student\StudentController.class
 com\mindlink\module\dao\ModuleQuestionDao.class
+com\mindlink\assessment\AssessmentOption.class
 com\mindlink\counseling\Feedback.class
+com\mindlink\assessment\AssessmentDaoImpl$2.class
 com\mindlink\forum\dao\ForumPostDAOImpl.class
 com\mindlink\assistant\dao\ChatbotDAOImpl$1.class
 com\mindlink\module\dao\ModuleProgressDaoImpl$1.class
