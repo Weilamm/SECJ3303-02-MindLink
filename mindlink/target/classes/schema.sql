@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS admin (
 CREATE TABLE counselor (
     id VARCHAR(50) PRIMARY KEY,
     name VARCHAR(100),
+    password VARCHAR(255) NOT NULL,
     location VARCHAR(100),
     education VARCHAR(100),
     university VARCHAR(100),
@@ -136,11 +137,11 @@ INSERT INTO admin (admin_id, name, email, password, phone, department, role) VAL
 ('A003', 'Dr. Lee Mei Ling', 'lee.a003@utm.my', 'admin123', '+60198765434', 'Faculty of Engineering', 'admin');
 
 -- Sample Data for Counselors (Counselor IDs start from C001)
-INSERT INTO counselor (counselor_id, name, email, password, phone, location, education, university, languages, specialization) VALUES
-('C001', 'Ms. Tan Mei Ling', 'tan.meiling@utm.my', 'counselor123', '+60198765440', 'Block A Room 209', 'M.A. Clinical Psychology', 'Universiti Sains Malaysia', 'English, Mandarin, Malay', 'Academic stress management, motivation building, emotional resilience'),
-('C002', 'Mr. Ryan Lin', 'ryan.lin@utm.my', 'counselor123', '+60198765441', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English, Hokkien', 'Cognitive behavioral therapy'),
-('C003', 'Ms. Nur Alya', 'nur.alya@utm.my', 'counselor123', '+60198765442', 'Block B Room 314', 'PhD in Psychology', 'UKM', 'Malay, English', 'Anxiety and mood disorders'),
-('C004', 'Ms. Evelyn Reed', 'evelyn.reed@utm.my', 'counselor123', '+60198765443', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English', 'Adjustment issues');
+INSERT INTO counselor (id, name, email, password, location, education, university, languages, bio, quote, image_url) VALUES
+('C001', 'Ms. Tan Mei Ling', 'tan.meiling@utm.my', 'counselor123', 'Block A Room 209', 'M.A. Clinical Psychology', 'Universiti Sains Malaysia', 'English, Mandarin, Malay', 'Specialization: Academic stress management, motivation building, emotional resilience', 'Empowering your journey.', 'tan.jpg'),
+('C002', 'Mr. Ryan Lin', 'ryan.lin@utm.my', 'counselor123', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English, Hokkien', 'Specialization: Cognitive behavioral therapy', 'Change starts within.', 'ryan.jpg'),
+('C003', 'Ms. Nur Alya', 'nur.alya@utm.my', 'counselor123', 'Block B Room 314', 'PhD in Psychology', 'UKM', 'Malay, English', 'Specialization: Anxiety and mood disorders', 'Healing takes time.', 'nur.jpg'),
+('C004', 'Ms. Evelyn Reed', 'evelyn.reed@utm.my', 'counselor123', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English', 'Specialization: Adjustment issues', 'Guidance for every step.', 'evelyn.jpg');
 
 -- Sample Data for Chatbot (Rule-based responses)
 INSERT INTO chatbot (keyword, response) VALUES

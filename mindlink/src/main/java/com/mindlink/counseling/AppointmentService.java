@@ -35,14 +35,30 @@ public class AppointmentService {
         );
     }
 
-    // 2. READ ALL (Select from Database)
+    // 🟢 2. UPDATE (Modify Existing Appointment) - NEW METHOD
+    public void updateAppointment(Appointment app) {
+        // We update everything EXCEPT the ID (which is used in the WHERE clause)
+        String sql = "UPDATE appointment SET student_id=?, counselor_name=?, date=?, time=?, type=?, venue=?, status=? WHERE id=?";
+        
+        jdbcTemplate.update(sql, 
+            app.getStudentId(),
+            app.getCounselorName(),
+            app.getDate(),
+            app.getTime(),
+            app.getType(),
+            app.getVenue(),
+            app.getStatus(),
+            app.getId() // <--- The ID identifies which row to update
+        );
+    }
+
+    // 3. READ ALL (Select from Database)
     public List<Appointment> getAllAppointments() {
-        // Ensure 'created_at' column exists in DB, or remove ORDER BY if it fails
         String sql = "SELECT * FROM appointment"; 
         return jdbcTemplate.query(sql, new AppointmentRowMapper());
     }
 
-    // 3. READ ONE (Find by ID)
+    // 4. READ ONE (Find by ID)
     public Appointment getAppointmentById(String id) {
         String sql = "SELECT * FROM appointment WHERE id = ?";
         try {
@@ -52,13 +68,13 @@ public class AppointmentService {
         }
     }
 
-    // 4. DELETE (Remove from Database)
+    // 5. DELETE (Remove from Database)
     public void deleteAppointment(String id) {
         String sql = "DELETE FROM appointment WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
 
-    // 5. Past Appointments
+    // 6. Past Appointments
     public List<Appointment> getPastAppointments() {
         List<Appointment> allAppointments = getAllAppointments();
         List<Appointment> pastAppointments = new ArrayList<>();
@@ -78,7 +94,7 @@ public class AppointmentService {
         return pastAppointments;
     }
 
-    // 6. Upcoming Appointments 
+    // 7. Upcoming Appointments (Sorted Nearest First)
     public List<Appointment> getUpcomingAppointments() {
         List<Appointment> allAppointments = getAllAppointments();
         List<Appointment> upcoming = new ArrayList<>();
@@ -95,6 +111,10 @@ public class AppointmentService {
                 System.err.println("Skipping invalid date: " + app.getDate());
             }
         }
+        
+        // Sorting: Nearest date at the top
+        upcoming.sort((a1, a2) -> a1.getDate().compareTo(a2.getDate()));
+        
         return upcoming;
     }
 
@@ -102,7 +122,6 @@ public class AppointmentService {
     private static class AppointmentRowMapper implements RowMapper<Appointment> {
         @Override
         public Appointment mapRow(ResultSet rs, int rowNum) throws SQLException {
-            // 🟢 FIX: Added 'return' keyword here!
             return new Appointment(
                 rs.getString("id"),
                 rs.getString("counselor_name"),

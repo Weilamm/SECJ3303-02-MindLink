@@ -32,16 +32,26 @@ public class CounselingController {
     // Booking Page
     @GetMapping("/booking")
     public String showBookingPage(
-         @RequestParam(value = "preselected", required = false) String preselected, Model model) {
+            @RequestParam(value = "preselected", required = false) String preselected,
+            @RequestParam(value = "rescheduleId", required = false) String rescheduleId,
+            Model model) {
         
-        // 1. Get all Counselors for the dropdown/grid
         model.addAttribute("counselors", counselorService.getAllCounselors());
 
-        // 2. Get all Existing Appointments (To check for conflicts)
         model.addAttribute("bookedAppointments", appointmentService.getAllAppointments());
         
-        // 3. Pass the preselected name (if any) to the JSP
-        model.addAttribute("preselectedName", preselected); 
+        if (rescheduleId != null && !rescheduleId.isEmpty()) {
+            model.addAttribute("rescheduleId", rescheduleId);
+            
+            // Optional: Auto-select the counselor if editing
+            Appointment existing = appointmentService.getAppointmentById(rescheduleId);
+            if (existing != null) {
+                model.addAttribute("preselectedName", existing.getCounselorName());
+            }
+        } else {
+            // Normal booking
+            model.addAttribute("preselectedName", preselected); 
+        }
         
         return "counseling/booking";
     }
@@ -49,6 +59,7 @@ public class CounselingController {
     // --- UPDATED: Handle Booking Submission (REAL DATABASE SAVE) ---
     @PostMapping("/booking/submit")
     public String processBooking(
+            @RequestParam(value = "existingId", required = false) String existingId,
             @RequestParam("date") String date,
             @RequestParam("time") String time,
             @RequestParam("counselor") String counselor,
@@ -56,15 +67,16 @@ public class CounselingController {
             HttpSession session, 
             Model model) {
         
-        // 1. Get Logged In Student ID (Fallback to dummy if testing)
-        // Map<String, Object> student = (Map<String, Object>) session.getAttribute("loggedInStudent");
-        // String studentId = (student != null) ? (String) student.get("student_id") : "S23CS0123";
-        String studentId = "S23CS0123"; // Using dummy ID for now to avoid crashes while testing
+        String studentId = "S23CS0123"; 
+        String id;
+        boolean isUpdate = (existingId != null && !existingId.isEmpty());
 
-        // 2. Create Unique ID
-        String id = "BK-" + java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        if (isUpdate) {
+            id = existingId; 
+        } else {
+            id = "BK-" + java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase(); 
+        }
         
-        // 3. Determine Venue
         String venue;
         if (mode.equalsIgnoreCase("Physical")) {
             venue = "Block B Room 314";
@@ -73,14 +85,16 @@ public class CounselingController {
             venue = "https://utm.webex.com/utm/" + cleanName;
         }
 
-        // 4. Create Object & Set Student ID
-        Appointment newApp = new Appointment(id, counselor, date, time, mode, venue);
-        newApp.setStudentId(studentId); // <--- Make sure Appointment.java has this setter!
+        Appointment app = new Appointment(id, counselor, date, time, mode, venue);
+        app.setStudentId(studentId);
+        app.setStatus("Booked"); 
 
-        // 5. SAVE TO DATABASE (Using the Service)
-        appointmentService.saveAppointment(newApp);
+        if (isUpdate) {
+            appointmentService.updateAppointment(app);
+        } else {
+            appointmentService.saveAppointment(app);
+        }
 
-        // 6. Pass data to success page
         model.addAttribute("bookingId", id);
         model.addAttribute("counselorName", counselor);
         model.addAttribute("sessionType", mode);

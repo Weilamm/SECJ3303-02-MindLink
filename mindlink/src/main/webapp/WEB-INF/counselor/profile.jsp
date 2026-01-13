@@ -1,86 +1,228 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Profile | Counselor Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile | MindLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        /* Same CSS Styles from the Student View */
-        :root { --bg-color: #FFF3E0; --primary: #003049; --accent: #F497AA; --white: #ffffff; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: var(--primary); }
-        .header { padding: 20px 100px; display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; color: #00313e; font-size: 24px; text-decoration: none; }
-        .logo img { height: 40px; }
-        .container { max-width: 950px; margin: 40px auto; }
-        .btn-back { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #666; font-weight: 600; margin-bottom: 20px; transition: 0.2s; }
-        .btn-back:hover { color: var(--primary); transform: translateX(-5px); }
-        .profile-card { background: white; border-radius: 20px; padding: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; }
-        .profile-header { display: grid; grid-template-columns: 280px 1fr; gap: 50px; margin-bottom: 40px; }
-        .profile-img { width: 100%; height: 320px; object-fit: cover; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .info-list { display: flex; flex-direction: column; gap: 18px; justify-content: center; }
-        .info-row { display: grid; grid-template-columns: 140px 1fr; align-items: baseline; }
-        .label { font-weight: 700; color: var(--primary); font-size: 15px; }
-        .value { font-weight: 500; color: #444; font-size: 16px; line-height: 1.5; }
-        .bio-section { border-top: 2px solid #f5f5f5; padding-top: 30px; margin-top: 30px; font-size: 16px; line-height: 1.8; color: #444; }
-        .quote-box { margin-top: 40px; background: #FFF8E7; padding: 30px; border-radius: 12px; text-align: center; font-style: italic; color: var(--primary); font-weight: 500; font-size: 18px; border-left: 5px solid var(--accent); }
-        
-        /* --- EDIT BUTTON STYLE (Counselor Only) --- */
-        .btn-edit {
-            position: absolute; top: 30px; right: 30px;
-            background: #f0f0f0; color: #333; padding: 10px 20px; border-radius: 30px;
-            text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.2s;
-            display: flex; align-items: center; gap: 8px;
+        :root {
+            --bg-peach: #FFF0E5;       
+            --text-dark: #003B46;      
+            --text-body: #666;         
+            --card-white: #FFFFFF;
+            --btn-orange: #FF9F1C;     
+            --btn-hover: #E68A00;
         }
-        .btn-edit:hover { background: var(--primary); color: white; }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg-peach);
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        /* --- Navbar (Same as Dashboard) --- */
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
+
+        .nav-center-logo {
+            font-size: 24px; font-weight: 700; color: var(--text-dark);
+            position: absolute; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .nav-links { display: flex; gap: 40px; }
+        .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 700; font-size: 16px; position: relative; }
+        .nav-links a:hover { color: var(--btn-orange); }
+
+        /* --- Profile Layout --- */
+        .container {
+            max-width: 900px;
+            margin: 40px auto 80px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr; /* Sidebar + Form */
+            gap: 30px;
+        }
+
+        /* Left Sidebar: Photo & Basics */
+        .profile-sidebar {
+            background: var(--card-white);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            height: fit-content;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+
+        .profile-img {
+            width: 150px; height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #FFE0B2;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-name { font-size: 20px; font-weight: 700; margin-bottom: 5px; }
+        .sidebar-role { color: var(--text-body); font-size: 14px; margin-bottom: 20px; }
+
+        /* Right Side: Edit Form */
+        .edit-card {
+            background: var(--card-white);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+
+        .section-header {
+            font-size: 18px; font-weight: 700; color: var(--text-dark);
+            margin-bottom: 20px; padding-bottom: 10px;
+            border-bottom: 2px solid #FFF0E5;
+        }
+
+        .form-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;
+        }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group.full-width { grid-column: span 2; }
+
+        label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-dark); }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 2px solid #F3F4F6;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 15px;
+            box-sizing: border-box; /* Fixes padding issues */
+            transition: 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none; border-color: var(--btn-orange); background: #FFFBF5;
+        }
+
+        .btn-save {
+            background-color: var(--btn-orange);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            display: block;
+            width: 100%;
+        }
+        .btn-save:hover { background-color: var(--btn-hover); transform: translateY(-2px); }
+
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <a href="${pageContext.request.contextPath}/counselor/dashboard" class="logo">
-            <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
-            <span>Counselor Portal</span>
-        </a>
-        <div>
-             <a href="${pageContext.request.contextPath}/logout" style="text-decoration:none; color:#c62828; font-weight:600;">Logout</a>
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="${pageContext.request.contextPath}/counselor/dashboard">Home</a>
+            <a href="${pageContext.request.contextPath}/counselor/schedule">Schedule</a>
         </div>
-    </div>
+        <div class="nav-center-logo">
+            <i class="fas fa-heart"></i> MindLink
+        </div>
+        <div class="nav-links">
+            <a href="${pageContext.request.contextPath}/counselor/profile" style="color: var(--btn-orange);">Profile</a>
+            <a href="${pageContext.request.contextPath}/logout" style="color: #d9534f;">Logout</a>
+        </div>
+    </nav>
 
     <div class="container">
-        <a href="${pageContext.request.contextPath}/counselor/dashboard" class="btn-back">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </a>
-
-        <div class="profile-card">
+        <div class="profile-sidebar">
+            <img src="${not empty sessionScope.loggedInCounselor.imageUrl ? sessionScope.loggedInCounselor.imageUrl : 'https://via.placeholder.com/150'}" 
+                 alt="Profile" class="profile-img">
             
-            <a href="${pageContext.request.contextPath}/counselor/edit" class="btn-edit">
-                <i class="fas fa-pen"></i> Edit Profile
-            </a>
+            <div class="sidebar-name">${sessionScope.loggedInCounselor.name}</div>
+            <div class="sidebar-role">Licensed Counselor</div>
+            
+            <div style="margin-top: 20px; font-size: 13px; color: #999;">
+                ID: ${sessionScope.loggedInCounselor.id}
+            </div>
+        </div>
 
-            <div class="profile-header">
-                <img src="${not empty c.imageUrl ? c.imageUrl : 'https://via.placeholder.com/300'}" alt="${c.name}" class="profile-img">
+        <div class="edit-card">
+            <form action="${pageContext.request.contextPath}/counselor/updateProfile" method="post">
+                
+                <input type="hidden" name="id" value="${sessionScope.loggedInCounselor.id}">
 
-                <div class="info-list">
-                    <h1 style="margin: 0 0 20px 0; font-size: 32px;">${c.name}</h1>
-                    <div class="info-row"><span class="label">Education:</span> <span class="value">${c.education}</span></div>
-                    <div class="info-row"><span class="label">University:</span> <span class="value">${c.university}</span></div>
-                    <div class="info-row"><span class="label">Languages:</span> <span class="value">${c.languages}</span></div>
-                    <div class="info-row"><span class="label">Location:</span> <span class="value">${c.location}</span></div>
-                    <div class="info-row"><span class="label">Email:</span> <span class="value">${c.email}</span></div>
+                <div class="section-header">Personal Information</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" name="name" value="${sessionScope.loggedInCounselor.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" name="email" value="${sessionScope.loggedInCounselor.email}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" value="${sessionScope.loggedInCounselor.password}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Location / City</label>
+                        <input type="text" name="location" value="${sessionScope.loggedInCounselor.location}">
+                    </div>
                 </div>
-            </div>
 
-            <div class="bio-section">
-                <h3>About Me</h3>
-                ${c.bio}
-            </div>
+                <div class="section-header">Professional Details</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>University / Alma Mater</label>
+                        <input type="text" name="university" value="${sessionScope.loggedInCounselor.university}">
+                    </div>
+                    <div class="form-group">
+                        <label>Degree / Education</label>
+                        <input type="text" name="education" value="${sessionScope.loggedInCounselor.education}" placeholder="e.g. PhD in Psychology">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Languages Spoken</label>
+                        <input type="text" name="languages" value="${sessionScope.loggedInCounselor.languages}" placeholder="e.g. English, Mandarin, Malay">
+                    </div>
+                </div>
 
-            <div class="quote-box">
-                “${c.quote}”
-            </div>
+                <div class="section-header">Public Profile</div>
+                <div class="form-group">
+                    <label>Profile Image URL</label>
+                    <input type="text" name="imageUrl" value="${sessionScope.loggedInCounselor.imageUrl}" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Favorite Quote</label>
+                    <input type="text" name="quote" value="${sessionScope.loggedInCounselor.quote}" placeholder="A short uplifting quote...">
+                </div>
+                <div class="form-group">
+                    <label>Bio / About Me</label>
+                    <textarea name="bio" rows="4" placeholder="Tell students about your approach...">${sessionScope.loggedInCounselor.bio}</textarea>
+                </div>
+
+                <button type="submit" class="btn-save">Save Changes</button>
+            </form>
         </div>
     </div>
 

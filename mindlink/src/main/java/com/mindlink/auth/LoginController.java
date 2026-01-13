@@ -46,7 +46,7 @@ public class LoginController {
             }
         } 
         else if (role.equals("counselor")) {
-            String sql = "SELECT * FROM counselor WHERE (counselor_id = ? OR email = ?) AND password = ?";
+            String sql = "SELECT * FROM counselor WHERE (id = ? OR email = ?) AND password = ?";
             List<Map<String, Object>> counselors = jdbcTemplate.queryForList(sql, username, username, password);
             
             if (!counselors.isEmpty()) {
