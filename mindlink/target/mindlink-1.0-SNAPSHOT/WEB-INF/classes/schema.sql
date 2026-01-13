@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 -- MindLink Database Schema
 -- Virtual Assistant & Support Module Tables
 
@@ -7,16 +6,6 @@ CREATE DATABASE IF NOT EXISTS mindlink_db;
 USE mindlink_db;
 
 -- Student Table: Stores student user information
-=======
---MindLink Database Schema
---Virtual Assistant & Support Module Tables
-
---Create Database
-CREATE DATABASE IF NOT EXISTS mindlink_db;
-USE mindlink_db;
-
---Student Table: Stores student user information
->>>>>>> d47ef884d7fdcffdaaf12c1c57e394f2a97cb0cd
 CREATE TABLE IF NOT EXISTS student (
     student_id VARCHAR(100) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -45,21 +34,22 @@ CREATE TABLE IF NOT EXISTS admin (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Counselor Table: Stores counselor user information
-CREATE TABLE IF NOT EXISTS counselor (
-    counselor_id VARCHAR(100) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
+DROP TABLE IF EXISTS counselor;
+CREATE TABLE counselor (
+    counselor_id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(100),
+    location VARCHAR(100),
+    education VARCHAR(100),
+    university VARCHAR(100),
+    languages VARCHAR(100),
+    email VARCHAR(100),
+    bio TEXT,
+    quote VARCHAR(255),
+    image_url VARCHAR(255),
+    password VARCHAR(255),
     phone VARCHAR(20),
-    location VARCHAR(255),
-    education VARCHAR(255),
-    university VARCHAR(255),
-    languages VARCHAR(255),
-    specialization TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    specialization VARCHAR(255)
+);
 
 -- Chatbot Table: Stores keyword-response pairs for rule-based chatbot
 CREATE TABLE IF NOT EXISTS chatbot (
@@ -123,6 +113,19 @@ CREATE TABLE IF NOT EXISTS forum_comment (
     INDEX idx_user_id (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Appointment Table: Stores counseling appointment details
+CREATE TABLE IF NOT EXISTS appointment (
+    id VARCHAR(50) PRIMARY KEY,
+    student_id VARCHAR(50),      -- Who booked it
+    counselor_name VARCHAR(100), -- Who they booked with
+    appointment_date VARCHAR(20),
+    appointment_time VARCHAR(20),
+    type VARCHAR(20),            -- Online/Physical
+    venue VARCHAR(100),
+    status VARCHAR(20) DEFAULT 'Confirmed',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Sample Data for Students (Student IDs start from S001)
 INSERT INTO student (student_id, name, email, password, phone, faculty, year) VALUES
 ('S001', 'Karen Voon Xiu Wen', 'karen@utm.my', 'password123', '+60123456789', 'Faculty of Computing', 3),
@@ -176,4 +179,50 @@ INSERT INTO forum (title, description, created_by, status) VALUES
 ('Building Healthy Relationships', 'Discuss ways to maintain and improve relationships with friends, family, and partners.', 'A001', 'active'),
 ('Work-Life Balance', 'Tips and discussions about balancing academic work, personal life, and self-care.', 'A001', 'active'),
 ('Self-Care Practices', 'Share and discover different self-care activities that work for you.', 'A002', 'active');
+
+-- Module Table: Stores learning modules
+CREATE TABLE IF NOT EXISTS module (
+    module_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    image_path VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_title (title)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Module Question Table: Stores questions/lessons for each module
+CREATE TABLE IF NOT EXISTS module_question (
+    question_id INT AUTO_INCREMENT PRIMARY KEY,
+    module_id INT NOT NULL,
+    chapter_number INT NOT NULL,
+    question_number VARCHAR(50) NOT NULL,
+    question_text TEXT NOT NULL,
+    question_type VARCHAR(50) DEFAULT 'PDF',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (module_id) REFERENCES module(module_id) ON DELETE CASCADE,
+    INDEX idx_module_id (module_id),
+    INDEX idx_chapter (module_id, chapter_number)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Sample Data for Modules
+INSERT INTO module (title, description, image_path) VALUES
+('Introduction to Mental Health', 'Learn the basics of mental health, reduce stigma, and understand emotional well-being.', 'mental-health-intro.png'),
+('Emotional Awareness and Regulation', 'Recognize your emotions, understand their causes, and develop healthy strategies to manage them effectively in daily and social situations.', 'emotional-awareness.png');
+
+-- Sample Data for Module Questions (Introduction to Mental Health - Module ID 1)
+INSERT INTO module_question (module_id, chapter_number, question_number, question_text, question_type) VALUES
+(1, 1, '1.1', 'Definition and Key Concepts PDF', 'PDF'),
+(1, 1, '1.2', 'Mental Health vs Mental Illness PDF', 'PDF'),
+(1, 1, '1.3', 'Mental Health Spectrum PDF', 'PDF'),
+(1, 2, '2.1', 'What is Stigma? PDF', 'PDF'),
+(1, 2, '2.2', 'Media and Cultural Misconceptions PDF', 'PDF');
+
+-- Sample Data for Module Questions (Emotional Awareness - Module ID 2)
+INSERT INTO module_question (module_id, chapter_number, question_number, question_text, question_type) VALUES
+(2, 1, '1.1', 'Understanding Your Emotions PDF', 'PDF'),
+(2, 1, '1.2', 'Emotional Triggers and Responses PDF', 'PDF'),
+(2, 2, '2.1', 'Emotion Regulation Techniques PDF', 'PDF'),
+(2, 2, '2.2', 'Mindfulness and Emotional Awareness PDF', 'PDF');
 

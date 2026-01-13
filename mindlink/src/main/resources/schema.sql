@@ -34,8 +34,9 @@ CREATE TABLE IF NOT EXISTS admin (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Counselor Table: Stores counselor user information
+DROP TABLE IF EXISTS counselor;
 CREATE TABLE counselor (
-    id VARCHAR(50) PRIMARY KEY,
+    counselor_id VARCHAR(50) PRIMARY KEY,
     name VARCHAR(100),
     location VARCHAR(100),
     education VARCHAR(100),
@@ -44,7 +45,10 @@ CREATE TABLE counselor (
     email VARCHAR(100),
     bio TEXT,
     quote VARCHAR(255),
-    image_url VARCHAR(255)
+    image_url VARCHAR(255),
+    password VARCHAR(255),
+    phone VARCHAR(20),
+    specialization VARCHAR(255)
 );
 
 -- Chatbot Table: Stores keyword-response pairs for rule-based chatbot

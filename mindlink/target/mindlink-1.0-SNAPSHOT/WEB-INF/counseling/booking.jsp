@@ -1,287 +1,299 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Book Appointment</title>
+    <title>Book Session | MindLink</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        :root {
-            --bg-color: #FFF3E0;
-            --text-dark: #003049;
-            --active-pink: #F497AA; /* The selection color */
-            --white: #FFFFFF;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            margin: 0; padding: 20px;
-            color: var(--text-dark);
-        }
-
-        /* Header Navigation */
-        .header {
-            padding: 20px 100px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-        }
-
-        .nav-left,
-        .nav-right {
-            display: flex;
-            align-items: center;
-            justify-content: space-evenly;
-            flex: 1;
-            gap: 0;
-        }
-
-        .nav-left a, .nav-right a {
-            text-decoration: none;
-            color: #00313e;
-            font-size: 16px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-left a:hover, .nav-right a:hover {
-            color: #0d4e57;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            color: #00313e;
-            font-size: 32px;
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        /* Main Container */
-        .main-container { max-width: 1200px; margin: 20px auto; }
+        :root { --primary: #003049; --accent: #F497AA; --bg: #FFF3E0; --white: #ffffff; --gray: #e0e0e0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--primary); margin: 0; padding: 40px 20px; }
         
-        h1 { font-size: 32px; font-weight: 800; margin-bottom: 5px; }
-        .subtitle { color: #666; font-size: 14px; margin-bottom: 40px; }
-
-        /* --- LAYOUT GRID --- */
-        .booking-grid {
-            display: grid;
-            grid-template-columns: 350px 1fr; /* Left Calendar, Right Details */
-            gap: 50px;
-        }
-
-        /* 1. CALENDAR SECTION */
-        .calendar-box { text-align: center; }
-        .month-header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            font-size: 18px; font-weight: 600; margin-bottom: 20px; padding: 0 20px;
-        }
-        .cal-arrow { color: #aaa; cursor: pointer; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-size: 32px; margin-bottom: 10px; }
         
-        .calendar-table { width: 100%; border-collapse: collapse; }
-        .calendar-table th { color: #888; font-size: 13px; font-weight: 500; padding: 10px; }
-        .calendar-table td { 
-            padding: 10px; font-weight: 500; cursor: pointer; border-radius: 8px; 
-            text-align: center; color: #555;
-        }
-        .calendar-table td:hover { background: #f0f0f0; }
+        .layout-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; }
         
-        /* The Active Date (10th) */
-        .date-active { 
-            background-color: var(--active-pink) !important; 
-            color: var(--text-dark) !important; 
-            font-weight: 700 !important;
-        }
-        .date-faded { color: #ccc !important; }
+        .card { background: var(--white); border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .section-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
 
-        /* 2. SLOTS & COUNSELOR SECTION */
-        .selection-area { }
-        .section-header { text-align: center; color: #555; margin-bottom: 15px; font-size: 14px; }
-
-        .time-grid, .counselor-grid {
-            display: grid;
-            gap: 15px;
-            margin-bottom: 30px;
+        /* CALENDAR STYLES */
+        .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; }
+        .nav-btn { cursor: pointer; padding: 5px 10px; user-select: none; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+        .day-label { font-size: 12px; color: #888; font-weight: 600; margin-bottom: 5px; }
+        .day-cell { 
+            height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; 
+            cursor: pointer; transition: 0.2s; font-size: 14px;
         }
-        /* 2 columns for time, 2 columns for counselors */
-        .time-grid { grid-template-columns: repeat(2, 1fr); }
-        .counselor-grid { grid-template-columns: repeat(2, 1fr); }
-
-        /* Selectable Buttons */
-        .option-btn {
-            background: var(--white);
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: 0.2s;
-            text-align: center;
-        }
-        .option-btn:hover { transform: translateY(-2px); }
+        .day-cell:hover:not(.disabled) { background: #ffe0e6; color: var(--accent); }
+        .day-cell.selected { background: var(--accent); color: white; font-weight: bold; }
         
-        /* Active State for Buttons */
-        .btn-active {
-            background-color: var(--active-pink);
-            color: #000;
-            font-weight: 600;
-        }
-        .btn-disabled { background-color: #F0EAD6; color: #aaa; cursor: default; }
+        /* DISABLED DATE STYLE */
+        .day-cell.disabled { color: #ccc; cursor: not-allowed; opacity: 0.3; pointer-events: none; }
 
-        /* 3. BOTTOM ACTIONS */
-        .footer-actions {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px;
+        /* COUNSELOR GRID */
+        .counselor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        .counselor-card {
+            border: 1px solid var(--gray); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s;
         }
-        
-        .mode-selection label { margin-right: 20px; cursor: pointer; font-size: 14px; font-weight: 500; }
-        
-        .action-btns { display: flex; gap: 15px; }
-        .btn-cancel { 
-            background: #F497AA; color: #333; border: none; 
-            padding: 12px 30px; border-radius: 30px; font-weight: 600; cursor: pointer;
+        .counselor-card:hover { border-color: var(--accent); background: #fffbfb; }
+        .counselor-card.active { background: var(--accent); color: white; border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(244, 151, 170, 0.4); }
+        .counselor-icon { font-size: 24px; margin-bottom: 8px; display: block; }
+
+        /* TIME SLOTS */
+        .time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
+        .time-btn {
+            padding: 10px; border: 1px solid var(--gray); border-radius: 8px; text-align: center; 
+            font-size: 13px; cursor: pointer; background: white; transition: 0.2s;
         }
-        .btn-submit { 
-            background: #86E393; /* Green from screenshot */
-            color: #000; border: none; 
-            padding: 12px 30px; border-radius: 30px; font-weight: 600; cursor: pointer;
+        .time-btn:hover:not(.disabled) { border-color: var(--accent); color: var(--accent); }
+        .time-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .time-btn.disabled { background: #f0f0f0; color: #bbb; cursor: not-allowed; text-decoration: line-through; border-color: #eee; }
+
+        /* MODE SELECTION */
+        .mode-selection { display: flex; gap: 15px; margin-top: 15px; }
+        .mode-option { flex: 1; position: relative; }
+        .mode-option input { position: absolute; opacity: 0; cursor: pointer; }
+        .mode-label { 
+            display: block; padding: 15px; border: 1px solid var(--gray); border-radius: 12px; 
+            text-align: center; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 14px;
+        }
+        .mode-option input:checked + .mode-label {
+            background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(0, 48, 73, 0.2);
+        }
+        .mode-option:hover .mode-label { border-color: var(--accent); }
+
+        /* BUTTONS */
+        .action-bar { 
+            margin-top: 30px; 
+            text-align: right; 
+            border-top: 1px solid #eee; 
+            padding-top: 20px; 
+            display: flex;            
+            justify-content: flex-end; 
+            gap: 15px;                
         }
 
+        .submit-btn { background: #4CAF50; color: white; padding: 15px 40px; font-size: 16px; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3); transition: 0.2s; }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4); }
+
+        .btn-cancel-booking {
+            background-color: #f5f5f5; color: #666; border: 1px solid #ddd;
+            padding: 15px 30px; font-size: 16px; border-radius: 50px; 
+            cursor: pointer; font-weight: 600; text-decoration: none; 
+            display: inline-block; transition: 0.2s;
+        }
+        .btn-cancel-booking:hover { background-color: #e0e0e0; color: #333; }
     </style>
 </head>
 <body>
 
-<!-- Header Navigation -->
+<div class="container">
     <div class="header">
-        <div class="nav-left">
-            <a href="${pageContext.request.contextPath}/home">Home</a>
-            <a href="${pageContext.request.contextPath}/learning">Learning</a>
-        </div>
-        
-        <a href="${pageContext.request.contextPath}/home" class="logo">
-            <div class="logo-icon">
-                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
-            </div>
-            <span>MindLink</span>
-        </a>
-        
-        <div class="nav-right">
-            <a href="${pageContext.request.contextPath}/forum/welcome">Forum</a>
-            <a href="${pageContext.request.contextPath}/profile">Profile</a>
-        </div>
+        <h1>Book Your Session</h1>
+        <p>Select a date, choose your preferred counselor, and pick a time.</p>
     </div>
 
-    <div class="main-container">
-        <h1>Booking Appointment</h1>
-        <p class="subtitle">View counselor availability and book sessions that fit your schedule</p>
+    <form action="${pageContext.request.contextPath}/counseling/booking/submit" method="post" onsubmit="return validateForm()">
+        <input type="hidden" name="date" id="selectedDate">
+        <input type="hidden" name="time" id="selectedTime">
+        <input type="hidden" name="counselor" id="selectedCounselor">
 
-        <form action="/counseling/booking/submit" method="post">
+        <div class="layout-grid">
             
-            <div class="booking-grid">
+            <div class="card">
+                <div class="section-title">1. Select Date</div>
+                <div class="calendar-nav">
+                    <span class="nav-btn" id="prevMonth">&lt;</span>
+                    <span id="monthYear">Loading...</span>
+                    <span class="nav-btn" id="nextMonth">&gt;</span>
+                </div>
+                <div class="calendar-grid">
+                    <div class="day-label">Su</div><div class="day-label">Mo</div><div class="day-label">Tu</div>
+                    <div class="day-label">We</div><div class="day-label">Th</div><div class="day-label">Fr</div><div class="day-label">Sa</div>
+                </div>
+                <div class="calendar-grid" id="calendarDays"></div>
+            </div>
+
+            <div class="card">
+                <div class="section-title">2. Choose Counselor</div>
                 
-                <div class="calendar-box">
-                    <div class="month-header">
-                        <span class="cal-arrow">&lt;</span>
-                        <span>June 2025</span>
-                        <span class="cal-arrow">&gt;</span>
-                    </div>
-
-                    <table class="calendar-table">
-                        <thead>
-                            <tr><th>Mon</th><th>Tue</th><th>We</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="date-faded">29</td><td class="date-faded">30</td><td class="date-faded">31</td>
-                                <td>1</td><td>2</td><td>3</td><td>4</td>
-                            </tr>
-                            <tr>
-                                <td>5</td><td>6</td><td>7</td><td>8</td><td>9</td>
-                                <td class="date-active">10</td>
-                                <td>11</td>
-                            </tr>
-                            <tr>
-                                <td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td>
-                            </tr>
-                            <tr>
-                                <td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td>
-                            </tr>
-                            <tr>
-                                <td>26</td><td>27</td><td>28</td><td>29</td><td>30</td>
-                                <td class="date-faded">1</td><td class="date-faded">2</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="counselor-grid">
+                    <c:forEach items="${counselors}" var="c">
+                        <div class="counselor-card ${c.name == preselectedName ? 'active' : ''}" 
+                             onclick="selectCounselor(this, '${c.name}')">
+                            <span class="counselor-icon">🎓</span>
+                            <strong>${c.name}</strong>
+                        </div>
+                    </c:forEach>
+                    <c:if test="${empty counselors}">
+                        <p style="grid-column: 1/-1; color: red;">No counselors found.</p>
+                    </c:if>
                 </div>
 
-                <div class="selection-area">
-                    
-                    <div class="section-header">Sat, 10 June 2025</div>
-                    
-                    <div style="display:flex; justify-content: space-between; gap:20px;">
-                        <div class="time-grid" style="flex:1;">
-                            <div class="option-btn">08:00 AM</div>
-                            <div class="option-btn">09:00 AM</div>
-                            <div class="option-btn">10:00 AM</div>
-                            <div class="option-btn btn-disabled">11:00 AM</div> <div class="option-btn btn-active">12:30 PM</div> <div class="option-btn">01:30 PM</div>
-                            <div class="option-btn">02:30 PM</div>
-                            <div class="option-btn">03:30 PM</div>
-                            <div class="option-btn">04:30 PM</div>
-                            <div class="option-btn">05:30 PM</div>
-                        </div>
+                <div class="section-title" style="margin-top: 30px;">3. Select Time</div>
+                <div class="time-grid" id="timeSlotContainer"></div>
 
-                        <div style="flex:1;">
-                            <div class="section-header">Available Counselor</div>
-                            <div class="counselor-grid">
-                                <div class="option-btn">Mr. Ryan Lin</div>
-                                <div class="option-btn btn-active">Ms. Nur Alya</div> <div class="option-btn">Ms. Cindy Leong</div>
-                                <div class="option-btn">Mr. John Doe</div>
-                                <div class="option-btn">Ms. Kelly Low</div>
-                                <div class="option-btn">Mr. Mohd Alif</div>
-                                <div class="option-btn">Ms. Anika</div>
-                                <div class="option-btn">Ms. Prisha</div>
-                                <div class="option-btn">Mr. Rohan</div>
-                                <div class="option-btn">Ms. Siti Aishah</div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="footer-actions">
+                <div class="section-title" style="margin-top: 30px;">4. Select Mode</div>
                 <div class="mode-selection">
-                    <span style="font-weight:700; margin-right:15px;">Choose your Preferred Mode:</span>
-                    <label><input type="radio" name="mode" value="online" checked> Online</label>
-                    <label><input type="radio" name="mode" value="physical"> Physical</label>
+                    <label class="mode-option">
+                        <input type="radio" name="mode" value="Online">
+                        <span class="mode-label"><i class="fas fa-video"></i> Online (Webex)</span>
+                    </label>
+                    <label class="mode-option">
+                        <input type="radio" name="mode" value="Physical">
+                        <span class="mode-label"><i class="fas fa-building"></i> Physical (Room 314)</span>
+                    </label>
                 </div>
-
-                <div class="action-btns">
-                    <button type="button" class="btn-cancel" onclick="window.history.back()">CANCEL</button>
-                    <button type="submit" class="btn-submit">SUBMIT</button>
+                
+                <div class="action-bar">
+                    <a href="${pageContext.request.contextPath}/counseling/home" class="btn-cancel-booking">Cancel</a>
+                    <button type="submit" class="submit-btn">Confirm Booking</button>
                 </div>
             </div>
+        </div>
+    </form>
+</div>
 
-        </form>
-    </div>
+<script>
+    // --- 1. GLOBAL VARIABLES ---
+    var bookedSlots = [];
+    
+    // Inject JSP data into JS array
+    <c:forEach items="${bookedAppointments}" var="app">
+        bookedSlots.push({ 
+            date: "${app.date}", 
+            time: "${app.time}", 
+            counselor: "${app.counselorName}" 
+        });
+    </c:forEach>
+
+    let currentDate = new Date();
+    let currYear = currentDate.getFullYear();
+    let currMonth = currentDate.getMonth();
+    let pickedDate = ""; 
+    let pickedCounselor = "${preselectedName}"; // Auto-select logic
+
+    // Important: Initialize month names
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    // Set hidden input if auto-selected
+    if (pickedCounselor) {
+        document.getElementById("selectedCounselor").value = pickedCounselor;
+    }
+
+    // --- 2. RENDER CALENDAR (WITH DISABLE PAST DATES LOGIC) ---
+    function renderCalendar() {
+        let firstDay = new Date(currYear, currMonth, 1).getDay();
+        let lastDate = new Date(currYear, currMonth + 1, 0).getDate();
+        
+        document.getElementById("monthYear").innerText = months[currMonth] + " " + currYear;
+        
+        let daysHTML = "";
+        
+        // "Today" at midnight for comparison
+        let today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Blank cells for previous month
+        for (let i = 0; i < firstDay; i++) {
+            daysHTML += '<div class="day-cell disabled"></div>';
+        }
+
+        // Generate Days
+        for (let i = 1; i <= lastDate; i++) {
+            let m = String(currMonth + 1).padStart(2, '0');
+            let d = String(i).padStart(2, '0');
+            let dateStr = currYear + "-" + m + "-" + d;
+            
+            let cellDate = new Date(currYear, currMonth, i);
+            
+            // LOGIC: Disable if date is in the past
+            if (cellDate < today) {
+                daysHTML += '<div class="day-cell disabled">' + i + '</div>';
+            } 
+            else {
+                let activeClass = (dateStr === pickedDate) ? "selected" : "";
+                daysHTML += '<div class="day-cell ' + activeClass + '" onclick="selectDate(this, \'' + dateStr + '\')">' + i + '</div>';
+            }
+        }
+        document.getElementById("calendarDays").innerHTML = daysHTML;
+    }
+
+    document.getElementById("prevMonth").onclick = () => { currMonth--; if(currMonth<0){currMonth=11;currYear--;} renderCalendar(); };
+    document.getElementById("nextMonth").onclick = () => { currMonth++; if(currMonth>11){currMonth=0;currYear++;} renderCalendar(); };
+    
+    // --- 3. SELECTION FUNCTIONS ---
+    window.selectDate = function(el, dateStr) {
+        pickedDate = dateStr;
+        document.getElementById("selectedDate").value = dateStr;
+        renderCalendar();
+        refreshTimeSlots();
+    };
+
+    window.selectCounselor = function(el, name) {
+        pickedCounselor = name;
+        document.getElementById("selectedCounselor").value = name;
+        document.querySelectorAll(".counselor-card").forEach(c => c.classList.remove("active"));
+        el.classList.add("active");
+        refreshTimeSlots();
+    };
+
+    function generateTimeSlots() {
+        let slots = [];
+        for (let h = 9; h <= 16; h++) {
+            let suffix = h >= 12 ? "PM" : "AM";
+            let displayH = h > 12 ? h - 12 : h;
+            slots.push(String(displayH).padStart(2, '0') + ":00 " + suffix);
+            if (h !== 16) slots.push(String(displayH).padStart(2, '0') + ":30 " + suffix);
+        }
+        return slots;
+    }
+
+    function refreshTimeSlots() {
+        let container = document.getElementById("timeSlotContainer");
+        container.innerHTML = "";
+        let allSlots = generateTimeSlots();
+        allSlots.forEach(time => {
+            let isTaken = false;
+            // Only block if we have both date and counselor selected
+            if (pickedDate && pickedCounselor) {
+                isTaken = bookedSlots.some(b => b.date === pickedDate && b.time === time && b.counselor === pickedCounselor);
+            }
+            
+            let disabledClass = isTaken ? "disabled" : "";
+            let clickAction = isTaken ? "" : "selectTime(this, '" + time + "')";
+            
+            container.innerHTML += '<div class="time-btn ' + disabledClass + '" onclick="' + clickAction + '">' + time + '</div>';
+        });
+    }
+
+    window.selectTime = function(el, time) {
+        document.getElementById("selectedTime").value = time;
+        document.querySelectorAll(".time-btn").forEach(b => b.classList.remove("active"));
+        el.classList.add("active");
+    };
+
+    function validateForm() {
+        let modeSelected = document.querySelector('input[name="mode"]:checked');
+
+        if(!pickedDate || !pickedCounselor || !document.getElementById("selectedTime").value || !modeSelected) {
+            alert("Please complete all fields:\n- Date\n- Counselor\n- Time\n- Session Mode");
+            return false;
+        }
+        return true;
+    }
+
+    // --- 4. INITIALIZE ---
+    renderCalendar();
+    refreshTimeSlots();
+</script>
 
 </body>
 </html>

@@ -236,7 +236,7 @@
                     <h2>Counseling &<br>Appointment</h2>
                     <p>Live and recorded sessions with mental health professionals.</p>
                 </div>
-                <a href="/counseling" class="btn btn-pink">Explore</a>
+                <a href="/counseling/home" class="btn btn-pink">Explore</a>
             </div>
 
             <div class="card">

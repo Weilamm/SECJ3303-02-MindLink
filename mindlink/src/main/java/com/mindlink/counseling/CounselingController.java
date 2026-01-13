@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.mindlink.usermanagement.model.Counselor;
+import com.mindlink.usermanagement.service.CounselorService;
+
 import jakarta.servlet.http.HttpSession; // Use 'javax.servlet...' if on older Spring
 
 @Controller
@@ -23,26 +26,27 @@ public class CounselingController {
     @Autowired
     private FeedbackService feedbackService;
 
-    // Home Page 
-    @GetMapping("/home") 
-    public String showCounselingHome(Model model, HttpSession session) { 
-        model.addAttribute("appointments", appointmentService.getUpcomingAppointments());        return "counseling/home"; 
+    // Home Page
+    @GetMapping("/home")
+    public String showCounselingHome(Model model, HttpSession session) {
+        model.addAttribute("appointments", appointmentService.getUpcomingAppointments());
+        return "counseling/home";
     }
 
     // Booking Page
     @GetMapping("/booking")
     public String showBookingPage(
-         @RequestParam(value = "preselected", required = false) String preselected, Model model) {
-        
+            @RequestParam(value = "preselected", required = false) String preselected, Model model) {
+
         // 1. Get all Counselors for the dropdown/grid
         model.addAttribute("counselors", counselorService.getAllCounselors());
 
         // 2. Get all Existing Appointments (To check for conflicts)
         model.addAttribute("bookedAppointments", appointmentService.getAllAppointments());
-        
+
         // 3. Pass the preselected name (if any) to the JSP
-        model.addAttribute("preselectedName", preselected); 
-        
+        model.addAttribute("preselectedName", preselected);
+
         return "counseling/booking";
     }
 
@@ -52,18 +56,20 @@ public class CounselingController {
             @RequestParam("date") String date,
             @RequestParam("time") String time,
             @RequestParam("counselor") String counselor,
-            @RequestParam(value = "mode", defaultValue = "Online") String mode, 
-            HttpSession session, 
+            @RequestParam(value = "mode", defaultValue = "Online") String mode,
+            HttpSession session,
             Model model) {
-        
+
         // 1. Get Logged In Student ID (Fallback to dummy if testing)
-        // Map<String, Object> student = (Map<String, Object>) session.getAttribute("loggedInStudent");
-        // String studentId = (student != null) ? (String) student.get("student_id") : "S23CS0123";
+        // Map<String, Object> student = (Map<String, Object>)
+        // session.getAttribute("loggedInStudent");
+        // String studentId = (student != null) ? (String) student.get("student_id") :
+        // "S23CS0123";
         String studentId = "S23CS0123"; // Using dummy ID for now to avoid crashes while testing
 
         // 2. Create Unique ID
         String id = "BK-" + java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase();
-        
+
         // 3. Determine Venue
         String venue;
         if (mode.equalsIgnoreCase("Physical")) {
@@ -95,13 +101,13 @@ public class CounselingController {
     @GetMapping("/booking/cancel")
     public String cancelBooking(@RequestParam("id") String id) {
         appointmentService.deleteAppointment(id);
-        return "redirect:/counseling/home"; 
+        return "redirect:/counseling/home";
     }
 
     // Browse Counselors Page
     @GetMapping("/browse")
-    public String showBrowsePage(@RequestParam(value = "search", required = false) String search, 
-                                 Model model) {
+    public String showBrowsePage(@RequestParam(value = "search", required = false) String search,
+            Model model) {
         if (search != null && !search.isEmpty()) {
             model.addAttribute("counselors", counselorService.searchCounselors(search));
         } else {
@@ -113,8 +119,9 @@ public class CounselingController {
     // Counselor Profile Page
     @GetMapping("/counselor")
     public String showCounselorProfile(@RequestParam("id") String id, Model model) {
-        Counselor c = counselorService.getCounselorById(id);
-        if (c == null) return "redirect:/counseling/browse";
+        Counselor c = counselorService.getCounselorById(id).orElse(null);
+        if (c == null)
+            return "redirect:/counseling/browse";
         model.addAttribute("c", c);
         return "counseling/profile";
     }
@@ -130,7 +137,8 @@ public class CounselingController {
     @GetMapping("/history/view")
     public String viewAppointment(@RequestParam("id") String id, Model model) {
         Appointment app = appointmentService.getAppointmentById(id);
-        if (app == null) return "redirect:/counseling/history";
+        if (app == null)
+            return "redirect:/counseling/history";
         model.addAttribute("app", app);
         return "counseling/appointment_details";
     }
@@ -145,31 +153,32 @@ public class CounselingController {
     // Handle Feedback Submission
     @PostMapping("/history/feedback/submit")
     public String processFeedback(@RequestParam("bookingId") String id,
-                                  @RequestParam("category") String category,
-                                  @RequestParam("subject") String subject,
-                                  @RequestParam("message") String message,
-                                  @RequestParam("rating") int rating,
-                                  Model model) {
-        
+            @RequestParam("category") String category,
+            @RequestParam("subject") String subject,
+            @RequestParam("message") String message,
+            @RequestParam("rating") int rating,
+            Model model) {
+
         Feedback fb = new Feedback(id, category, subject, message, rating);
-        
+
         feedbackService.saveFeedback(fb);
 
         model.addAttribute("success", true);
         model.addAttribute("bookingId", id);
-        
+
         return "counseling/submit_feedback";
     }
 
     // View Existing Appointment Details (Reusing the Success Page)
     @GetMapping("/view")
     public String viewAppointmentDetails(@RequestParam("id") String id, Model model) {
-        
+
         // 1. Fetch the specific appointment
         Appointment app = appointmentService.getAppointmentById(id);
-        
+
         // Safety check: If not found, go back home
-        if (app == null) return "redirect:/counseling/home";
+        if (app == null)
+            return "redirect:/counseling/home";
 
         // 2. Map the data to the variable names your JSP expects
         model.addAttribute("bookingId", app.getId());
