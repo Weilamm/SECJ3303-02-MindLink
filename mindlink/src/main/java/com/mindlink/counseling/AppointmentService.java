@@ -1,7 +1,6 @@
 package com.mindlink.counseling;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
@@ -9,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 @Service
 public class AppointmentService {
@@ -18,23 +20,25 @@ public class AppointmentService {
 
     // 1. SAVE (Insert into Database)
     public void saveAppointment(Appointment app) {
-        String sql = "INSERT INTO appointment (id, student_id, counselor_name, appointment_date, appointment_time, type, venue, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO appointment (id, student_id, counselor_name, date, time, type, venue, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String status = (app.getStatus() != null) ? app.getStatus() : "Booked";
         
-        jdbcTemplate.update(sql,
+        jdbcTemplate.update(sql, 
             app.getId(),
-            app.getStudentId(),    // Ensure your Appointment class has this getter!
+            app.getStudentId(),
             app.getCounselorName(),
             app.getDate(),
             app.getTime(),
             app.getType(),
             app.getVenue(),
-            "Confirmed"            // Default status
+            status
         );
     }
 
     // 2. READ ALL (Select from Database)
     public List<Appointment> getAllAppointments() {
-        String sql = "SELECT * FROM appointment ORDER BY created_at DESC";
+        // Ensure 'created_at' column exists in DB, or remove ORDER BY if it fails
+        String sql = "SELECT * FROM appointment"; 
         return jdbcTemplate.query(sql, new AppointmentRowMapper());
     }
 
@@ -54,32 +58,61 @@ public class AppointmentService {
         jdbcTemplate.update(sql, id);
     }
 
+    // 5. Past Appointments
+    public List<Appointment> getPastAppointments() {
+        List<Appointment> allAppointments = getAllAppointments();
+        List<Appointment> pastAppointments = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        for (Appointment app : allAppointments) {
+            try {
+                LocalDate appDate = LocalDate.parse(app.getDate(), formatter);
+                if (appDate.isBefore(today)) {
+                    pastAppointments.add(app);
+                }
+            } catch (Exception e) {
+                System.err.println("Error parsing date: " + e.getMessage());
+            }
+        }
+        return pastAppointments;
+    }
+
+    // 6. Upcoming Appointments 
+    public List<Appointment> getUpcomingAppointments() {
+        List<Appointment> allAppointments = getAllAppointments();
+        List<Appointment> upcoming = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        for (Appointment app : allAppointments) {
+            try {
+                LocalDate appDate = LocalDate.parse(app.getDate(), formatter);
+                if (!appDate.isBefore(today)) {
+                    upcoming.add(app);
+                }
+            } catch (Exception e) {
+                System.err.println("Skipping invalid date: " + app.getDate());
+            }
+        }
+        return upcoming;
+    }
+
     // --- HELPER: Maps Database Columns to Java Object ---
     private static class AppointmentRowMapper implements RowMapper<Appointment> {
         @Override
         public Appointment mapRow(ResultSet rs, int rowNum) throws SQLException {
-            // Create object using your existing constructor
-            Appointment app = new Appointment(
+            // 🟢 FIX: Added 'return' keyword here!
+            return new Appointment(
                 rs.getString("id"),
                 rs.getString("counselor_name"),
-                rs.getString("appointment_date"),
-                rs.getString("appointment_time"),
+                rs.getString("date"),
+                rs.getString("time"),
                 rs.getString("type"),
-                rs.getString("venue")
+                rs.getString("venue"),
+                rs.getString("status"),
+                rs.getString("student_id")
             );
-            // Set extra fields if you added them
-            if (hasColumn(rs, "student_id")) app.setStudentId(rs.getString("student_id"));
-            return app;
-        }
-        
-        // Safety check to avoid crashes if column missing
-        private boolean hasColumn(ResultSet rs, String columnName) throws SQLException {
-            try {
-                rs.findColumn(columnName);
-                return true;
-            } catch (SQLException e) {
-                return false;
-            }
         }
     }
 }
