@@ -12,7 +12,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
+//student view assessment
+import com.mindlink.assessment.dao.AssessmentDao;
+
 @Controller
+
 @RequestMapping("/assessment")
 public class AssessmentController {
 

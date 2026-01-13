@@ -1,5 +1,6 @@
 package com.mindlink.assessment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Assessment {
@@ -7,7 +8,7 @@ public class Assessment {
     private String title;
     private String questionText;
     private String questionType;
-    private List<AssessmentOption> options;
+    private List<AssessmentOption> options = new ArrayList<>();
 
     public Assessment() {
     }

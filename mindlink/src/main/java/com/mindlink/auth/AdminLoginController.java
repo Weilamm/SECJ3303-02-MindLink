@@ -52,7 +52,7 @@ public class AdminLoginController {
                 String adminId = (String) adminData.get("admin_id");
                 session.setAttribute("adminId", adminId);
                 session.setAttribute("adminName", adminData.get("name"));
-                
+
                 // Login successful - redirect to admin home
                 return "redirect:/admin/home";
             }
