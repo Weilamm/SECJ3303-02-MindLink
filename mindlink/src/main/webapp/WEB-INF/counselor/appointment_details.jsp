@@ -31,24 +31,65 @@
             min-height: 100vh;
         }
 
-        /* --- Navbar (Consistent) --- */
-        .navbar {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px 50px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky; top: 0; z-index: 100;
+        /* --- Navbar --- */
+        .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        padding: 15px 50px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        box-sizing: border-box;
+    }
+
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            flex: 1;
+            gap: 0;
         }
-        .nav-center-logo {
-            font-size: 24px; font-weight: 800; color: var(--text-dark);
-            display: flex; align-items: center; gap: 10px; text-decoration: none;
+
+        .nav-left a, .nav-right a {
+            text-decoration: none;
+            color: #00313e;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s;
         }
-        .nav-links { display: flex; gap: 30px; }
-        .nav-links a {
-            text-decoration: none; color: #555; font-weight: 600; font-size: 16px; transition: color 0.2s;
+
+        .nav-left a:hover, .nav-right a:hover {
+            color: var(--btn-orange); /* Used orange here to match counselor theme */
         }
-        .nav-links a:hover, .nav-links a.active-link { color: var(--text-dark); }
-        .btn-logout { color: #D62828 !important; }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: #00313e;
+            font-size: 32px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
 
         /* --- Container --- */
         .container { max-width: 800px; margin: 40px auto; padding: 0 20px 80px; }
@@ -150,19 +191,24 @@
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="nav-links">
+    <div class="header">
+        <div class="nav-left">
             <a href="${pageContext.request.contextPath}/counselor/dashboard">Home</a>
-            <a href="${pageContext.request.contextPath}/counselor/appointments" class="active-link">Appointment</a>
+            <a href="${pageContext.request.contextPath}/counselor/appointments">Appointment</a>
         </div>
-        <a href="#" class="nav-center-logo">
-            <i class="fas fa-heart" style="color: #F77F00;"></i> MindLink
+
+        <a href="${pageContext.request.contextPath}/counselor/dashboard" class="logo">
+            <div class="logo-icon">
+                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
+            </div>
+            <span>MindLink</span>
         </a>
-        <div class="nav-links">
+
+        <div class="nav-right">
             <a href="${pageContext.request.contextPath}/counselor/profile">Profile</a>
-            <a href="${pageContext.request.contextPath}/logout" class="btn-logout">Logout</a>
+            <a href="${pageContext.request.contextPath}/logout" style="color: #D62828;">Logout</a>
         </div>
-    </nav>
+    </div>
 
     <div class="container">
         <a href="${pageContext.request.contextPath}/counselor/appointments" class="btn-back">

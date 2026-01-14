@@ -16,14 +16,20 @@
             --card-bg: #FFFFFF;
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            margin: 0; padding: 40px; /* Added padding to body for cleaner look without header */
-            color: var(--text-dark);
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-color); 
+            padding: 0; 
+            margin: 0; 
+            color: var(--text-dark); 
         }
 
-        .container { max-width: 1100px; margin: 0 auto; }
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding-top: 120px;
+            padding-bottom: 40px;
+        }
 
         .btn-back {
             display: inline-flex; align-items: center; gap: 10px;
@@ -65,6 +71,66 @@
         .chart-box { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .chart-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: var(--text-dark); }
 
+        /* Header Navigation */
+        .header {
+            position: fixed; /* Stick to top */
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000; /* Ensure it floats above other content */
+            padding: 15px 50px; /* Reduced padding slightly for a sleeker look */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Adds a nice shadow */
+            box-sizing: border-box; /* Ensures padding doesn't break width */
+        }
+
+        .nav-left,
+        .nav-right {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            flex: 1;
+            gap: 0;
+        }
+
+        .nav-left a, .nav-right a {
+            text-decoration: none;
+            color: #00313e;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-left a:hover, .nav-right a:hover {
+            color: #0d4e57;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: #00313e;
+            font-size: 32px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
     </style>
 </head>
 <body>

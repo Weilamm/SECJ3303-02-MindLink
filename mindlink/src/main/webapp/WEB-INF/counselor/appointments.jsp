@@ -14,184 +14,245 @@
         :root {
             --bg-color: #FFF3E0; 
             --text-dark: #003049; 
-            --card-bg: #FFFFFF;
+            --card-bg: rgba(255, 255, 255, 0.9); /* Slightly transparent */
             --btn-orange: #F77F00;
             --btn-hover: #D62828;
             --text-grey: #555;
-            --input-bg: #FFFFFF;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
+            /* FANCY BACKGROUND */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(247, 127, 0, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(72, 201, 176, 0.1) 0%, transparent 50%);
             margin: 0;
+            padding: 0;
             color: var(--text-dark);
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        /* --- Navbar (Exact Match) --- */
-        .navbar {
-            background: rgba(255, 255, 255, 0.95);
+        /*  ANIMATED BLOBS (Consistent with Dashboard) */
+        .blob {
+            position: absolute;
+            filter: blur(60px);
+            z-index: -1;
+            opacity: 0.6;
+            animation: float 10s ease-in-out infinite;
+        }
+        .blob-1 {
+            top: 100px; left: -50px;
+            width: 400px; height: 400px;
+            background: rgba(247, 127, 0, 0.15);
+            border-radius: 40% 60% 70% 30%;
+        }
+        .blob-2 {
+            bottom: 50px; right: -50px;
+            width: 500px; height: 500px;
+            background: rgba(72, 201, 176, 0.15);
+            border-radius: 60% 40% 30% 70%;
+            animation-direction: reverse;
+        }
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(20px, 20px) rotate(5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* --- Navbar --- */
+        .header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            z-index: 1000;
             padding: 15px 50px;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky; top: 0; z-index: 100;
+            background: rgba(255, 255, 255, 0.95); /* Slight blur for navbar */
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-sizing: border-box;
         }
 
-        .nav-center-logo {
-            font-size: 24px; font-weight: 800; color: var(--text-dark);
+        .nav-left, .nav-right {
+            display: flex; align-items: center; justify-content: space-evenly; flex: 1; gap: 0;
+        }
+
+        .nav-left a, .nav-right a {
+            text-decoration: none; color: #00313e; font-size: 16px; font-weight: 500; transition: color 0.3s;
+        }
+        .nav-left a:hover, .nav-right a:hover { color: var(--btn-orange); }
+
+        .logo {
             display: flex; align-items: center; gap: 10px;
-            text-decoration: none;
+            font-weight: 700; color: #00313e; font-size: 32px; text-decoration: none;
         }
-
-        .nav-links { display: flex; gap: 30px; }
-        .nav-links a {
-            text-decoration: none; color: #555; font-weight: 600; font-size: 16px;
-            transition: color 0.2s;
-        }
-        .nav-links a:hover, .nav-links a.active-link { color: var(--text-dark); }
-        .btn-logout { color: #D62828 !important; }
+        .logo-icon { width: 40px; height: 40px; }
+        .logo-icon img { width: 100%; height: 100%; object-fit: contain; }
 
         /* --- Main Container --- */
-        .container { max-width: 900px; margin: 40px auto; padding: 0 20px 80px; }
+        .container { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            padding: 130px 20px 80px; 
+        }
         
         .page-header { margin-bottom: 30px; text-align: center; }
-        .page-header h1 { font-size: 36px; font-weight: 800; margin: 0; color: var(--text-dark); }
+        .page-header h1 { 
+            font-size: 42px; font-weight: 800; margin: 0; 
+            background: -webkit-linear-gradient(45deg, #003049, #F77F00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
         
         /* --- Search Form --- */
         .search-form {
-            margin-bottom: 30px; 
+            margin-bottom: 35px; 
             display: flex; gap: 10px;
-            background: var(--card-bg);
-            padding: 10px;
-            border-radius: 50px; /* Pill shape */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            border: 1px solid rgba(0,0,0,0.05);
+            background: white;
+            padding: 8px 8px 8px 25px;
+            border-radius: 50px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.02);
+            transition: transform 0.2s;
         }
+        .search-form:focus-within { transform: scale(1.01); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
 
         .search-input {
-            flex: 1; 
-            padding: 12px 20px; 
-            border: none;
-            background: transparent;
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            outline: none;
+            flex: 1; border: none; background: transparent;
+            font-family: 'Inter', sans-serif; font-size: 16px; outline: none; color: #333;
         }
 
         .btn-search {
-            background: var(--text-dark); 
-            color: white; 
-            border: none; 
-            padding: 0 30px; 
-            border-radius: 50px; 
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.2s;
+            background: var(--text-dark); color: white; border: none; 
+            padding: 12px 35px; border-radius: 50px; cursor: pointer;
+            font-weight: 600; font-size: 15px; transition: background 0.2s;
         }
         .btn-search:hover { background: #004d73; }
 
         /* --- TABS --- */
         .tab-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid rgba(0,0,0,0.05);
-            padding-bottom: 10px;
+            display: flex; justify-content: center; gap: 30px;
+            margin-bottom: 40px;
         }
 
         .tab-btn {
-            background: transparent;
-            border: none;
-            font-family: 'Inter', sans-serif;
-            font-weight: 700;
-            font-size: 16px;
-            color: #888;
-            cursor: pointer;
-            padding: 10px 20px;
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s;
+            background: transparent; border: none;
+            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 18px;
+            color: #999; cursor: pointer; padding: 10px 10px;
+            position: relative; transition: all 0.3s;
+        }
+
+        .tab-btn::after {
+            content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 3px;
+            background: var(--btn-orange); transition: all 0.3s ease; transform: translateX(-50%);
+            border-radius: 3px;
         }
 
         .tab-btn:hover { color: var(--text-dark); }
-        
-        .tab-btn.active {
-            color: var(--text-dark);
-            border-bottom-color: var(--btn-orange);
-        }
+        .tab-btn.active { color: var(--text-dark); font-weight: 700; }
+        .tab-btn.active::after { width: 100%; }
 
         /* --- APPOINTMENT CARDS --- */
-        .tab-section { display: none; animation: fadeIn 0.3s ease; }
+        .tab-section { display: none; }
         .tab-section.active-section { display: block; }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
         .appt-card {
             background: var(--card-bg);
+            backdrop-filter: blur(5px);
             border-radius: 16px;
-            padding: 25px 30px;
+            padding: 25px 35px;
             margin-bottom: 20px;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255,255,255,0.8);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative; overflow: hidden;
+            animation: slideUp 0.5s ease-out forwards;
+            opacity: 0; transform: translateY(20px);
         }
-        .appt-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
 
-        .card-left { display: flex; gap: 20px; align-items: center; }
+        /* Stagger animation for items */
+        .appt-card:nth-child(1) { animation-delay: 0.1s; }
+        .appt-card:nth-child(2) { animation-delay: 0.2s; }
+        .appt-card:nth-child(3) { animation-delay: 0.3s; }
+        .appt-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        .appt-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+
+        /* Colored Strip Indicator */
+        .appt-card::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+            background: var(--btn-orange);
+        }
+        .history-card::before { background: #B0BEC5; }
+
+        .card-left { display: flex; gap: 25px; align-items: center; }
         
         /* Date Box Icon */
         .date-box {
-            width: 50px; height: 50px;
-            background: #FFF4E6; color: var(--btn-orange);
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px;
+            width: 60px; height: 60px;
+            background: #FFF; 
+            color: var(--btn-orange);
+            border-radius: 14px;
+            display: flex; flex-direction: column; 
+            align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            font-weight: 800; font-size: 20px;
         }
+        .date-label { font-size: 10px; text-transform: uppercase; font-weight: 600; color: #999; margin-top: -2px; }
         
-        .history-card .date-box { background: #E0E0E0; color: #777; }
+        .history-card .date-box { color: #777; }
         
-        /* Typography inside Card */
-        .student-name {
-            margin: 0 0 5px 0; font-size: 18px; font-weight: 700; color: var(--text-dark);
-        }
-        
-        .session-meta {
-            color: var(--text-grey); font-size: 14px; font-weight: 500;
-        }
+        /* Typography */
+        .student-name { margin: 0 0 6px 0; font-size: 19px; font-weight: 700; color: var(--text-dark); }
+        .session-meta { color: var(--text-grey); font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
 
-        /* Action Button */
         .btn-view {
-            background: var(--btn-orange); color: white;
+            background: white; color: var(--text-dark);
+            border: 2px solid #EEE;
             padding: 10px 25px; border-radius: 50px; 
             text-decoration: none; font-weight: 600; font-size: 14px;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
-        .btn-view:hover { background: var(--btn-hover); }
+        .btn-view:hover { 
+            background: var(--text-dark); color: white; border-color: var(--text-dark);
+        }
 
-        /* Empty State */
         .empty-state {
-            text-align: center; padding: 50px; color: #999;
-            background: rgba(255,255,255,0.5); border-radius: 16px;
+            text-align: center; padding: 60px; color: #888;
+            background: rgba(255,255,255,0.4); border-radius: 20px;
+            border: 2px dashed #E0E0E0;
         }
 
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="nav-links">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="header">
+        <div class="nav-left">
             <a href="${pageContext.request.contextPath}/counselor/dashboard">Home</a>
-            <a href="${pageContext.request.contextPath}/counselor/appointments" class="active-link">Appointment</a>
+            <a href="${pageContext.request.contextPath}/counselor/appointments" style="color:var(--btn-orange);">Appointment</a>
         </div>
-        <a href="#" class="nav-center-logo">
-            <i class="fas fa-heart" style="color: #F77F00;"></i> MindLink
+
+        <a href="${pageContext.request.contextPath}/counselor/dashboard" class="logo">
+            <div class="logo-icon">
+                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
+            </div>
+            <span>MindLink</span>
         </a>
-        <div class="nav-links">
+
+        <div class="nav-right">
             <a href="${pageContext.request.contextPath}/counselor/profile">Profile</a>
-            <a href="${pageContext.request.contextPath}/logout" class="btn-logout">Logout</a>
+            <a href="${pageContext.request.contextPath}/logout" style="color: #D62828;">Logout</a>
         </div>
-    </nav>
+    </div>
 
     <div class="container">
         <div class="page-header">
@@ -201,17 +262,17 @@
         <form action="${pageContext.request.contextPath}/counselor/appointments" method="get" class="search-form">
             <input type="text" name="search" placeholder="Search by Student Name or Date..." 
                    value="${currentSearch}" class="search-input">
-            <button type="submit" class="btn-search">Search</button>
+            <button type="submit" class="btn-search"><i class="fas fa-search"></i> Search</button>
             <c:if test="${not empty currentSearch}">
                 <a href="${pageContext.request.contextPath}/counselor/appointments" 
-                   style="display:flex; align-items:center; color:#D62828; text-decoration:none; padding:0 20px; font-weight: 600;">
-                   Reset
+                   style="display:flex; align-items:center; color:#D62828; text-decoration:none; padding-right: 15px; font-weight: 600; margin-left: 10px;">
+                   <i class="fas fa-times"></i>
                 </a>
             </c:if>
         </form>
 
         <div class="tab-container">
-            <button class="tab-btn active" onclick="switchTab('upcoming')">Upcoming Sessions</button>
+            <button class="tab-btn active" onclick="switchTab('upcoming')">Upcoming</button>
             <button class="tab-btn" onclick="switchTab('history')">History</button>
         </div>
 
@@ -225,22 +286,22 @@
                     <div class="appt-card">
                         <div class="card-left">
                             <div class="date-box">
-                                <i class="far fa-calendar-alt"></i>
+                                <i class="far fa-calendar" style="font-size: 22px;"></i>
                             </div>
                             <div>
                                 <h3 class="student-name">
                                     ${app.studentName != null ? app.studentName : 'Unknown Student'}
                                 </h3>
                                 <div class="session-meta">
-                                    <span>${app.date} @ ${app.time}</span>
-                                    <span style="margin: 0 8px;">•</span>
+                                    <span><i class="far fa-clock"></i> ${app.date} at ${app.time}</span>
+                                    <span style="color: #DDD;">|</span>
                                     <span>${app.type}</span>
                                 </div>
                             </div>
                         </div>
 
                         <a href="${pageContext.request.contextPath}/counselor/appointment?id=${app.id}" class="btn-view">
-                            View Details
+                            Details <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
                         </a>
                     </div>
                 </c:if>
@@ -248,8 +309,8 @@
 
             <c:if test="${not hasUpcoming}">
                 <div class="empty-state">
-                    <i class="far fa-calendar-check" style="font-size: 32px; margin-bottom: 10px; display:block;"></i>
-                    No upcoming sessions found.
+                    <i class="fas fa-mug-hot" style="font-size: 40px; margin-bottom: 15px; color: #CCC; display:block;"></i>
+                    No upcoming sessions. Enjoy your free time!
                 </div>
             </c:if>
         </div>
@@ -271,16 +332,15 @@
                                     ${app.studentName != null ? app.studentName : 'Unknown Student'}
                                 </h3>
                                 <div class="session-meta">
-                                    <span>${app.date} @ ${app.time}</span>
-                                    <span style="margin: 0 8px;">•</span>
+                                    <span>${app.date}</span>
+                                    <span style="color: #DDD;">|</span>
                                     <span>${app.status}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <a href="${pageContext.request.contextPath}/counselor/appointment?id=${app.id}" 
-                           style="font-size: 14px; color: #888; text-decoration: none; font-weight: 600;">
-                           View Summary
+                        <a href="${pageContext.request.contextPath}/counselor/appointment?id=${app.id}" class="btn-view">
+                            Summary
                         </a>
                     </div>
                 </c:if>
@@ -288,8 +348,8 @@
 
             <c:if test="${not hasHistory}">
                 <div class="empty-state">
-                    <i class="fas fa-history" style="font-size: 32px; margin-bottom: 10px; display:block;"></i>
-                    No history found.
+                    <i class="fas fa-folder-open" style="font-size: 40px; margin-bottom: 15px; color: #CCC; display:block;"></i>
+                    No past session history found.
                 </div>
             </c:if>
         </div>

@@ -92,5 +92,4 @@ com\mindlink\MindlinkApp.class
 com\mindlink\admin\AdminProfile.class
 com\mindlink\assistant\TipsController.class
 com\mindlink\counseling\Counselor.class
-com\mindlink\admin\DashboardStats.class
 com\mindlink\admin\ForumReportService.class
