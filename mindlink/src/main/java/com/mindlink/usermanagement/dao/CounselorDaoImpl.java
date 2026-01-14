@@ -34,6 +34,8 @@ public class CounselorDaoImpl implements CounselorDao {
             counselor.setUniversity(rs.getString("university"));
             counselor.setLanguages(rs.getString("languages"));
             counselor.setSpecialization(rs.getString("specialization"));
+            counselor.setCertId(rs.getString("cert_id"));
+            counselor.setStatus(rs.getString("status"));
             return counselor;
         }
     };
@@ -55,7 +57,7 @@ public class CounselorDaoImpl implements CounselorDao {
     @Override
     public void save(Counselor counselor) {
         // --- FIX 3: Change INSERT column to 'id' ---
-        String sql = "INSERT INTO counselor (id, name, email, password, phone, location, education, university, languages, specialization) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO counselor (id, name, email, password, phone_number, location, education, university, languages, specialization, cert_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
                 counselor.getCounselorId(),
                 counselor.getName(),
@@ -66,13 +68,15 @@ public class CounselorDaoImpl implements CounselorDao {
                 counselor.getEducation(),
                 counselor.getUniversity(),
                 counselor.getLanguages(),
-                counselor.getSpecialization());
+                counselor.getSpecialization(),
+                counselor.getCertId(),
+                counselor.getStatus() != null ? counselor.getStatus() : "pending");
     }
 
     @Override
     public void update(Counselor counselor) {
         // --- FIX 4: Change WHERE clause to use 'id' ---
-        String sql = "UPDATE counselor SET name=?, email=?, password=?, phone=?, location=?, education=?, university=?, languages=?, specialization=? WHERE id=?";
+        String sql = "UPDATE counselor SET name=?, email=?, password=?, phone_number=?, location=?, education=?, university=?, languages=?, specialization=?, cert_id=?, status=? WHERE id=?";
         jdbcTemplate.update(sql,
                 counselor.getName(),
                 counselor.getEmail(),
@@ -83,6 +87,8 @@ public class CounselorDaoImpl implements CounselorDao {
                 counselor.getUniversity(),
                 counselor.getLanguages(),
                 counselor.getSpecialization(),
+                counselor.getCertId(),
+                counselor.getStatus(),
                 counselor.getCounselorId());
     }
 
@@ -96,6 +102,25 @@ public class CounselorDaoImpl implements CounselorDao {
     @Override
     public List<Counselor> findByNameOrLocation(String keyword) {
         String sql = "SELECT * FROM counselor WHERE LOWER(name) LIKE ? OR LOWER(location) LIKE ?";
+        String term = "%" + keyword.toLowerCase() + "%";
+        return jdbcTemplate.query(sql, rowMapper, term, term);
+    }
+
+    @Override
+    public List<Counselor> findByStatus(String status) {
+        String sql = "SELECT * FROM counselor WHERE status = ? ORDER BY created_at DESC";
+        return jdbcTemplate.query(sql, rowMapper, status);
+    }
+
+    @Override
+    public void updateStatus(String id, String status) {
+        String sql = "UPDATE counselor SET status = ? WHERE id = ?";
+        jdbcTemplate.update(sql, status, id);
+    }
+
+    @Override
+    public List<Counselor> searchByIdOrName(String keyword) {
+        String sql = "SELECT * FROM counselor WHERE LOWER(id) LIKE ? OR LOWER(name) LIKE ?";
         String term = "%" + keyword.toLowerCase() + "%";
         return jdbcTemplate.query(sql, rowMapper, term, term);
     }

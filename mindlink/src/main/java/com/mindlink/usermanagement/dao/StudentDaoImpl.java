@@ -89,4 +89,11 @@ public class StudentDaoImpl implements StudentDao {
         String sql = "DELETE FROM student WHERE student_id = ?";
         jdbcTemplate.update(sql, id);
     }
+
+    @Override
+    public List<Student> searchByIdOrName(String keyword) {
+        String sql = "SELECT * FROM student WHERE LOWER(student_id) LIKE ? OR LOWER(name) LIKE ?";
+        String term = "%" + keyword.toLowerCase() + "%";
+        return jdbcTemplate.query(sql, rowMapper, term, term);
+    }
 }

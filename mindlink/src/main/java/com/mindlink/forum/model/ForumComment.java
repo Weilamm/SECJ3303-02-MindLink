@@ -8,6 +8,8 @@ public class ForumComment {
     private String userId;
     private String userName;
     private String content;
+    private String status; // 'normal' or 'reported'
+    private String reportReason;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -86,6 +88,22 @@ public class ForumComment {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getReportReason() {
+        return reportReason;
+    }
+
+    public void setReportReason(String reportReason) {
+        this.reportReason = reportReason;
     }
 }
 

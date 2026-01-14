@@ -6,6 +6,7 @@ import com.mindlink.counseling.DashboardStats;
 import com.mindlink.counseling.Feedback;
 import com.mindlink.forum.model.Forum;
 import com.mindlink.forum.model.ForumPost;
+import com.mindlink.forum.model.ForumComment;
 import com.mindlink.forum.service.ForumService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +39,9 @@ public class AdminController {
 
     @Autowired
     private ForumReportService forumReportService;
+
+    @Autowired
+    private ForumCommentReportService forumCommentReportService;
     
     @Autowired
     private ForumService forumService;
@@ -165,7 +170,13 @@ public class AdminController {
     }
 
     @GetMapping("/forum/reports")
-    public String showForumReports(Model model) {
+    public String showForumReports(Model model, HttpSession session) {
+        // Check if admin is logged in
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+        
         model.addAttribute("reports", forumReportService.getAllReports());
         return "admin/forum_reports"; 
     }
@@ -182,27 +193,110 @@ public class AdminController {
         return "redirect:/admin/forum/reports";
     }
 
+    // ===== REPORTED COMMENTS =====
+    @GetMapping("/forum/comments/reports")
+    public String showReportedComments(Model model, HttpSession session) {
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+        model.addAttribute("reports", forumCommentReportService.getAllReportedComments());
+        return "admin/forum_comment_reports";
+    }
+
+    @GetMapping("/forum/comments/reports/delete")
+    public String deleteReportedComment(@RequestParam("id") String id, HttpSession session) {
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+        forumCommentReportService.deleteComment(id);
+        return "redirect:/admin/forum/comments/reports";
+    }
+
+    @GetMapping("/forum/comments/reports/dismiss")
+    public String dismissReportedComment(@RequestParam("id") String id, HttpSession session) {
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+        forumCommentReportService.dismissCommentReport(id);
+        return "redirect:/admin/forum/comments/reports";
+    }
+
     @GetMapping("/forum/manage")
-    public String manageForums(Model model) {
-        model.addAttribute("forums", forumService.getAllForumsIncludingClosed());
+    public String manageForums(@RequestParam(value = "search", required = false) String search, Model model, HttpSession session) {
+        // Check if admin is logged in
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+        
+        List<Forum> allForums = forumService.getAllForumsIncludingClosed();
+        if (allForums == null) {
+            allForums = new ArrayList<>();
+        }
+        
+        // Filter by search query if provided
+        if (search != null && !search.trim().isEmpty()) {
+            String searchLower = search.toLowerCase().trim();
+            List<Forum> filteredForums = new ArrayList<>();
+            for (Forum forum : allForums) {
+                // Search by ID
+                if (String.valueOf(forum.getId()).contains(searchLower)) {
+                    filteredForums.add(forum);
+                    continue;
+                }
+                // Search by title/name
+                if (forum.getTitle() != null && forum.getTitle().toLowerCase().contains(searchLower)) {
+                    filteredForums.add(forum);
+                    continue;
+                }
+            }
+            allForums = filteredForums;
+        }
+        
+        model.addAttribute("forums", allForums);
+        model.addAttribute("searchQuery", search != null ? search : "");
         return "admin/forum_manage";
     }
 
     @GetMapping("/forum/create-form")
-    public String showCreateForumForm(Model model) {
+    public String showCreateForumForm(Model model, HttpSession session) {
+        // Check if admin is logged in
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+        
         return "admin/forum_form";
     }
 
     @PostMapping("/forum/create")
     public String createForum(@RequestParam("title") String title,
                              @RequestParam("description") String description,
-                             @RequestParam(value = "createdBy", defaultValue = "A001") String createdBy) {
-        forumService.createForum(title, description, createdBy);
+                             @RequestParam(value = "createdBy", defaultValue = "A001") String createdBy,
+                             HttpSession session) {
+        // Check if admin is logged in
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+        
+        // Use logged-in admin ID if available
+        String createdByAdmin = adminId != null ? adminId : createdBy;
+        forumService.createForum(title, description, createdByAdmin);
         return "redirect:/admin/forum/manage";
     }
 
     @GetMapping("/forum/edit-form")
-    public String showEditForumForm(@RequestParam("id") int id, Model model) {
+    public String showEditForumForm(@RequestParam("id") int id, Model model, HttpSession session) {
+        // Check if admin is logged in
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+        
         Forum forum = forumService.getForumById(id);
         model.addAttribute("forum", forum);
         return "admin/forum_form";
@@ -211,38 +305,165 @@ public class AdminController {
     @PostMapping("/forum/update")
     public String updateForum(@RequestParam("id") int id,
                               @RequestParam("title") String title,
-                              @RequestParam("description") String description) {
+                              @RequestParam("description") String description,
+                              HttpSession session) {
+        // Check if admin is logged in
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+        
         forumService.updateForum(id, title, description);
         return "redirect:/admin/forum/manage";
     }
 
+    @GetMapping("/forum/delete")
+    public String deleteForum(@RequestParam("id") int id, HttpSession session) {
+        // Check if admin is logged in
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+        
+        forumService.deleteForum(id);
+        return "redirect:/admin/forum/manage";
+    }
+
     @GetMapping("/forum/detail")
-    public String viewForumDetail(@RequestParam("id") int id, Model model) {
+    public String viewForumDetail(@RequestParam("id") int id, Model model, HttpSession session) {
+        // Check if admin is logged in
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+        
         Forum forum = forumService.getForumById(id);
+        if (forum == null) {
+            // Forum not found, redirect to manage page
+            return "redirect:/admin/forum/manage";
+        }
+        
         model.addAttribute("forum", forum);
-        model.addAttribute("posts", forumService.getPostsByForumId(id));
+        
+        List<ForumPost> posts = forumService.getPostsByForumId(id);
+        if (posts == null) {
+            posts = new ArrayList<>();
+        }
+        model.addAttribute("posts", posts);
         model.addAttribute("postCount", forumService.getPostCount(id));
+        
         return "admin/forum_detail";
     }
 
     @GetMapping("/forum/posts")
-    public String viewAllPosts(@RequestParam(value = "forumId", required = false) Integer forumId, Model model) {
-        if (forumId != null) {
-            model.addAttribute("posts", forumService.getPostsByForumId(forumId));
-        } else {
-            List<ForumPost> allPosts = new ArrayList<>();
-            for (Forum forum : forumService.getAllForums()) {
-                allPosts.addAll(forumService.getPostsByForumId(forum.getId()));
-            }
-            model.addAttribute("posts", allPosts);
+    public String viewAllPosts(@RequestParam(value = "forumId", required = false) Integer forumId,
+                               @RequestParam(value = "search", required = false) String search,
+                               Model model, HttpSession session) {
+        // Check if admin is logged in
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
         }
-        model.addAttribute("forums", forumService.getAllForums());
+        
+        List<ForumPost> posts;
+        Forum forum = null;
+        
+        if (forumId != null) {
+            // Get specific forum and its posts
+            forum = forumService.getForumById(forumId);
+            posts = forumService.getPostsByForumId(forumId);
+            if (posts == null) {
+                posts = new ArrayList<>();
+            }
+            model.addAttribute("forum", forum);
+        } else {
+            // Get all posts from all forums
+            List<ForumPost> allPosts = new ArrayList<>();
+            List<Forum> forums = forumService.getAllForums();
+            if (forums != null) {
+                for (Forum f : forums) {
+                    List<ForumPost> forumPosts = forumService.getPostsByForumId(f.getId());
+                    if (forumPosts != null) {
+                        allPosts.addAll(forumPosts);
+                    }
+                }
+            }
+            posts = allPosts;
+        }
+        
+        // Filter by search query if provided
+        if (search != null && !search.trim().isEmpty()) {
+            String searchLower = search.toLowerCase().trim();
+            List<ForumPost> filteredPosts = new ArrayList<>();
+            for (ForumPost post : posts) {
+                // Search by post ID
+                if (String.valueOf(post.getId()).contains(searchLower)) {
+                    filteredPosts.add(post);
+                    continue;
+                }
+            }
+            posts = filteredPosts;
+        }
+        
+        model.addAttribute("posts", posts);
+        
+        // Fetch comments for each post
+        Map<Integer, List<ForumComment>> commentsMap = new HashMap<>();
+        for (ForumPost post : posts) {
+            List<ForumComment> comments = forumService.getCommentsByPostId(post.getId());
+            if (comments == null) {
+                comments = new ArrayList<>();
+            }
+            commentsMap.put(post.getId(), comments);
+        }
+        model.addAttribute("commentsMap", commentsMap);
+        
+        List<Forum> forums = forumService.getAllForums();
+        if (forums == null) {
+            forums = new ArrayList<>();
+        }
+        model.addAttribute("forums", forums);
+        model.addAttribute("searchQuery", search != null ? search : "");
+        model.addAttribute("forumIdParam", forumId);
+        
         return "admin/forum_posts";
     }
 
     @GetMapping("/forum/posts/delete")
-    public String deletePost(@RequestParam("id") int postId) {
+    public String deletePost(@RequestParam("id") int postId, 
+                           @RequestParam(value = "forumId", required = false) Integer forumId,
+                           HttpSession session) {
+        // Check if admin is logged in
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+        
         forumService.deletePost(postId);
+        
+        // Redirect back to the same forum's posts if forumId was provided
+        if (forumId != null) {
+            return "redirect:/admin/forum/posts?forumId=" + forumId;
+        }
+        return "redirect:/admin/forum/posts";
+    }
+
+    @GetMapping("/forum/comments/delete")
+    public String deleteComment(@RequestParam("id") int commentId,
+                               @RequestParam(value = "forumId", required = false) Integer forumId,
+                               HttpSession session) {
+        // Check if admin is logged in
+        String adminId = (String) session.getAttribute("adminId");
+        if (adminId == null || adminId.isEmpty()) {
+            return "redirect:/admin/login";
+        }
+        
+        forumService.deleteComment(commentId);
+        
+        // Redirect back to the same forum's posts if forumId was provided
+        if (forumId != null) {
+            return "redirect:/admin/forum/posts?forumId=" + forumId;
+        }
         return "redirect:/admin/forum/posts";
     }
 }

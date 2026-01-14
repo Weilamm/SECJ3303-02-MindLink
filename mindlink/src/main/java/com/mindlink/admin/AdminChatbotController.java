@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 /**
  * Admin Controller for Managing Chatbot Rules
  * Allows admin to create, read, update, and delete chatbot keyword-response rules
@@ -23,8 +25,29 @@ public class AdminChatbotController {
 
     // List all chatbot rules
     @GetMapping("")
-    public String listChatbotRules(Model model) {
-        model.addAttribute("rules", chatbotService.getAllChatbotRules());
+    public String listChatbotRules(@RequestParam(value = "search", required = false) String search, Model model) {
+        List<Chatbot> allRules = chatbotService.getAllChatbotRules();
+        
+        // Filter by search query if provided
+        if (search != null && !search.trim().isEmpty()) {
+            String searchLower = search.toLowerCase().trim();
+            allRules = allRules.stream()
+                .filter(rule -> {
+                    // Search by ID
+                    if (String.valueOf(rule.getId()).contains(searchLower)) {
+                        return true;
+                    }
+                    // Search by keyword
+                    if (rule.getKeyword() != null && rule.getKeyword().toLowerCase().contains(searchLower)) {
+                        return true;
+                    }
+                    return false;
+                })
+                .collect(java.util.stream.Collectors.toList());
+        }
+        
+        model.addAttribute("rules", allRules);
+        model.addAttribute("searchQuery", search != null ? search : "");
         return "admin/chatbot_list";
     }
 

@@ -46,11 +46,14 @@ public class UserManagementCounselorService {
     private void createCounselor(Counselor counselor) {
         String newId = generateNextCounselorId();
         counselor.setCounselorId(newId);
+        if (counselor.getStatus() == null || counselor.getStatus().isEmpty()) {
+            counselor.setStatus("pending");
+        }
         counselorDao.save(counselor);
     }
 
     private String generateNextCounselorId() {
-        String sql = "SELECT MAX(CAST(SUBSTRING(counselor_id, 2) AS UNSIGNED)) FROM counselor WHERE counselor_id REGEXP '^C[0-9]+$'";
+        String sql = "SELECT MAX(CAST(SUBSTRING(id, 2) AS UNSIGNED)) FROM counselor WHERE id REGEXP '^C[0-9]+$'";
         try {
             Integer maxNum = jdbcTemplate.queryForObject(sql, Integer.class);
             if (maxNum == null) {
@@ -71,6 +74,18 @@ public class UserManagementCounselorService {
         if (keyword == null || keyword.isEmpty()) {
             return getAllCounselors();
         }
-        return counselorDao.findByNameOrLocation(keyword);
+        return counselorDao.searchByIdOrName(keyword);
+    }
+
+    public List<Counselor> getPendingCounselors() {
+        return counselorDao.findByStatus("pending");
+    }
+
+    public void approveCounselor(String id) {
+        counselorDao.updateStatus(id, "approved");
+    }
+
+    public void rejectCounselor(String id) {
+        counselorDao.updateStatus(id, "rejected");
     }
 }

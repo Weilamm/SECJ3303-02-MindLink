@@ -104,6 +104,7 @@
         <input type="hidden" name="date" id="selectedDate">
         <input type="hidden" name="time" id="selectedTime">
         <input type="hidden" name="counselor" id="selectedCounselor">
+        <input type="hidden" name="existingId" value="${rescheduleId}">
 
         <div class="layout-grid">
             

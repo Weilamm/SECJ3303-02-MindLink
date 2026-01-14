@@ -123,7 +123,7 @@
                 </div>
 
                 <div class="action-buttons">
-                    <a href="${pageContext.request.contextPath}/counseling/booking" class="btn btn-reschedule">
+                    <a href="${pageContext.request.contextPath}/counseling/booking?rescheduleId=${bookingId}" class="btn btn-reschedule">
                         Reschedule 📅
                     </a>
                     

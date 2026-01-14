@@ -60,10 +60,25 @@ public class LoginController {
                     username, username, password
                 );
 
-                // 3. Now session contains a real Counselor object, so the Controller won't crash
-                session.setAttribute("loggedInCounselor", counselor);
-                
-                return "redirect:/counselor/dashboard"; // Make sure this matches your Controller mapping
+                // 3. Check if counselor is approved
+                if (counselor != null) {
+                    String status = counselor.getStatus();
+                    if (status == null || status.isEmpty() || !status.equals("approved")) {
+                        if ("pending".equals(status)) {
+                            model.addAttribute("error", "Your counselor application is pending approval. Please wait for administrator review.");
+                        } else if ("rejected".equals(status)) {
+                            model.addAttribute("error", "Your counselor application has been rejected. Please contact the administrator.");
+                        } else {
+                            model.addAttribute("error", "Your counselor application is pending approval. Please wait for administrator review.");
+                        }
+                        return "auth/login";
+                    }
+
+                    // 4. Now session contains a real Counselor object, so the Controller won't crash
+                    session.setAttribute("loggedInCounselor", counselor);
+                    
+                    return "redirect:/counselor/dashboard"; // Make sure this matches your Controller mapping
+                }
 
             } catch (EmptyResultDataAccessException e) {
                 // This block runs if no user is found
