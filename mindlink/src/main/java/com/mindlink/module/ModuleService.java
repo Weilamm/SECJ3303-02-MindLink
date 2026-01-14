@@ -12,12 +12,15 @@ import com.mindlink.module.dao.ModuleQuestionDao;
 
 @Service
 public class ModuleService {
-    
+
     @Autowired
     private ModuleDao moduleDao;
 
     @Autowired
     private ModuleQuestionDao moduleQuestionDao;
+
+    @Autowired
+    private com.mindlink.module.dao.ModuleProgressDao moduleProgressDao;
 
     // READ
     public List<LearningModule> getAllModules() {
@@ -91,5 +94,29 @@ public class ModuleService {
 
     public void deleteQuestion(int questionId) {
         moduleQuestionDao.deleteById(questionId);
+    }
+
+    // --- PROGRESS TRACKING ---
+
+    public void markQuestionAsDone(String studentId, int moduleId, int questionId) {
+        UserProgress progress = new UserProgress(studentId, moduleId, questionId);
+        moduleProgressDao.saveProgress(progress);
+    }
+
+    public int getModuleProgressPercentage(String studentId, int moduleId) {
+        List<ModuleQuestion> allQuestions = moduleQuestionDao.findByModuleId(moduleId);
+        if (allQuestions.isEmpty()) {
+            return 0;
+        }
+        List<UserProgress> completed = moduleProgressDao.findByStudentAndModule(studentId, moduleId);
+
+        int total = allQuestions.size();
+        int done = completed.size();
+
+        return (int) Math.round(((double) done / total) * 100);
+    }
+
+    public List<UserProgress> getStudentProgressForModule(String studentId, int moduleId) {
+        return moduleProgressDao.findByStudentAndModule(studentId, moduleId);
     }
 }

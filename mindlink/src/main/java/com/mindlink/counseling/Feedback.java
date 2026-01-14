@@ -1,16 +1,18 @@
 package com.mindlink.counseling;
 
+import java.sql.Timestamp;
+
 public class Feedback {
-    private int id;
+    private String id;
     private String bookingId;
     private String category;
     private String subject;
     private String message;
     private int rating;
+    private Timestamp createdAt;
+    private String adminReply; 
 
-    // Constructors
-    public Feedback() {}
-
+    // Constructor used for saving (no ID/Time/Reply yet)
     public Feedback(String bookingId, String category, String subject, String message, int rating) {
         this.bookingId = bookingId;
         this.category = category;
@@ -19,17 +21,26 @@ public class Feedback {
         this.rating = rating;
     }
 
+    // Constructor used for reading from DB (includes everything)
+    public Feedback(String id, String bookingId, String category, String subject, String message, int rating, Timestamp createdAt, String adminReply) {
+        this.id = id;
+        this.bookingId = bookingId;
+        this.category = category;
+        this.subject = subject;
+        this.message = message;
+        this.rating = rating;
+        this.createdAt = createdAt;
+        this.adminReply = adminReply;
+    }
+
     // Getters and Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public String getId() { return id; }
     public String getBookingId() { return bookingId; }
-    public void setBookingId(String bookingId) { this.bookingId = bookingId; }
     public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
     public String getSubject() { return subject; }
-    public void setSubject(String subject) { this.subject = subject; }
     public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
     public int getRating() { return rating; }
-    public void setRating(int rating) { this.rating = rating; }
+    public Timestamp getCreatedAt() { return createdAt; }
+    public String getAdminReply() { return adminReply; }
+    public void setAdminReply(String adminReply) { this.adminReply = adminReply; }
 }

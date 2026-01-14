@@ -55,7 +55,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
             border-bottom: 1px solid #eee;
             padding-bottom: 30px;
         }
@@ -69,7 +69,7 @@
         .action-area { display: flex; justify-content: center; gap: 20px; }
 
         .btn-feedback {
-            background-color: var(--text-dark); /* Dark Blue */
+            background-color: var(--text-dark);
             color: white;
             padding: 15px 35px;
             border-radius: 50px;
@@ -81,6 +81,23 @@
             transition: 0.2s;
         }
         .btn-feedback:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0, 48, 73, 0.3); }
+
+        /* 🟢 NEW: FEEDBACK DISPLAY STYLES */
+        .feedback-container { margin-top: 20px; }
+        .feedback-title { font-weight: 700; color: #003049; margin-bottom: 15px; font-size: 18px; }
+
+        .student-msg {
+            background: #f9f9f9; padding: 20px; border-radius: 12px; border-left: 5px solid #ccc;
+            margin-bottom: 20px; font-size: 15px; line-height: 1.5; color: #444;
+        }
+
+        .admin-reply-box {
+            background: #E0F2F1; padding: 20px; border-radius: 12px; border-left: 5px solid var(--btn-teal);
+            color: #004D40; font-size: 15px; line-height: 1.5;
+        }
+        
+        .reply-header { display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 8px; color: #00695C; }
+        .waiting-text { font-style: italic; color: #888; text-align: center; margin-top: 10px; }
 
     </style>
 </head>
@@ -154,11 +171,42 @@
                 </div>
             </div>
 
-            <div class="action-area">
-                <a href="${pageContext.request.contextPath}/counseling/history/feedback?id=${app.id}" class="btn-feedback">
-                    <i class="far fa-comment-dots"></i> Write Feedback
-                </a>
-            </div>
+            <c:choose>
+                
+                <%-- CASE 1: Feedback already exists -> Show Student Msg & Admin Reply --%>
+                <c:when test="${not empty feedback}">
+                    <div class="feedback-container">
+                        <div class="feedback-title"><i class="fas fa-comments"></i> Session Feedback</div>
+                        
+                        <div class="student-msg">
+                            <strong>Your Review (${feedback.rating}/5):</strong><br>
+                            "${feedback.message}"
+                        </div>
+
+                        <c:if test="${not empty feedback.adminReply}">
+                            <div class="admin-reply-box">
+                                <div class="reply-header">
+                                    <i class="fas fa-check-circle"></i> Admin Response
+                                </div>
+                                "${feedback.adminReply}"
+                            </div>
+                        </c:if>
+
+                        <c:if test="${empty feedback.adminReply}">
+                            <p class="waiting-text">Your feedback has been submitted. Waiting for admin response...</p>
+                        </c:if>
+                    </div>
+                </c:when>
+
+                <%-- CASE 2: No Feedback yet -> Show Button --%>
+                <c:otherwise>
+                    <div class="action-area">
+                        <a href="${pageContext.request.contextPath}/counseling/history/feedback?id=${app.id}" class="btn-feedback">
+                            <i class="far fa-comment-dots"></i> Write Feedback
+                        </a>
+                    </div>
+                </c:otherwise>
+            </c:choose>
 
         </div>
     </div>
