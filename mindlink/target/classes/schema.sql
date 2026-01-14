@@ -287,7 +287,8 @@ CREATE TABLE IF NOT EXISTS feedback (
     subject VARCHAR(255),
     message TEXT,
     rating INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    admin_reply TEXT
 );
 
 -- Sample Data for Assessment (Stress Test)

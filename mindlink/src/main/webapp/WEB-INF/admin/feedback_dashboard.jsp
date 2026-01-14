@@ -4,62 +4,77 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Feedback Portal | MindLink</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Feedback Management | MindLink Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary: #003049;
-            --teal: #48C9B0;
-            --bg-gray: #f4f7f6;
-            --white: #ffffff;
+            --bg-color: #FFF3E0; /* Admin Beige */
+            --text-dark: #003049;
+            --card-bg: #FFFFFF;
+            --btn-teal: #48C9B0;
             --pending-border: #F497AA;
             --completed-border: #48C9B0;
         }
 
-        body { font-family: 'Inter', sans-serif; background: var(--bg-gray); padding: 40px; margin: 0; color: #333; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-color); 
+            padding: 40px; margin: 0; 
+            color: var(--text-dark); 
+        }
+        
         .container { max-width: 900px; margin: 0 auto; }
         
-        h1 { color: var(--primary); margin-bottom: 30px; font-weight: 800; font-size: 28px; }
+        /* 🟢 MATCHED: Back Button Style (Same as Analytics) */
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 10px;
+            text-decoration: none; color: #666; font-weight: 600; font-size: 16px;
+            margin-bottom: 20px; transition: 0.2s;
+        }
+        .btn-back:hover { color: var(--text-dark); transform: translateX(-5px); }
 
-        /* --- FILTER BAR --- */
+        h1 { margin: 0 0 30px 0; font-weight: 800; font-size: 32px; color: var(--text-dark); }
+
+        /* FILTER BAR */
         .filter-bar {
-            background: var(--white); padding: 15px 20px; border-radius: 12px;
+            background: var(--card-bg); padding: 15px 25px; border-radius: 16px;
             display: flex; gap: 20px; align-items: center; margin-bottom: 30px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.03);
         }
         .filter-select {
             padding: 10px 15px; border: 1px solid #e0e0e0; border-radius: 8px;
             font-size: 14px; color: #333; outline: none; cursor: pointer; transition: 0.2s;
-            background-color: #fff;
+            background-color: #fff; font-family: inherit;
         }
-        .filter-select:hover { border-color: var(--primary); }
-        .filter-label { font-weight: 600; color: #555; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .filter-select:hover { border-color: var(--text-dark); }
+        .filter-label { font-weight: 700; color: #555; font-size: 14px; display: flex; align-items: center; gap: 8px; }
 
-        /* --- TABS --- */
-        .tabs { display: flex; gap: 20px; margin-bottom: 25px; border-bottom: 2px solid #e0e0e0; padding-bottom: 0; }
+        /* TABS */
+        .tabs { display: flex; gap: 20px; margin-bottom: 25px; border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 0; }
         .tab-btn {
             background: none; border: none; padding: 12px 5px;
             font-size: 16px; font-weight: 600; color: #888; cursor: pointer;
             border-bottom: 3px solid transparent; transition: all 0.2s; position: relative; top: 2px;
+            font-family: inherit;
         }
-        .tab-btn:hover { color: var(--primary); }
-        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-btn:hover { color: var(--text-dark); }
+        .tab-btn.active { color: var(--text-dark); border-bottom-color: var(--text-dark); }
         .badge { 
-            background: #eee; padding: 2px 8px; border-radius: 12px; 
+            background: #e0e0e0; padding: 2px 8px; border-radius: 12px; 
             font-size: 12px; margin-left: 6px; vertical-align: middle;
         }
-        .tab-btn.active .badge { background: var(--primary); color: white; }
+        .tab-btn.active .badge { background: var(--text-dark); color: white; }
 
-        /* --- TAB CONTENT --- */
+        /* TAB CONTENT */
         .tab-content { display: none; animation: fadeIn 0.4s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- FEEDBACK CARD --- */
+        /* FEEDBACK CARD */
         .feedback-card {
-            background: var(--white); border-radius: 16px; margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden;
+            background: var(--card-bg); border-radius: 16px; margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03); overflow: hidden;
             border-left: 6px solid transparent; cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -68,18 +83,17 @@
         .pending-card { border-left-color: var(--pending-border); }
         .completed-card { border-left-color: var(--completed-border); }
 
-        /* CARD HEADER */
         .card-header {
             padding: 20px 25px; display: flex; justify-content: space-between; align-items: center;
         }
         .subject { font-weight: 700; font-size: 17px; color: #222; }
         .category-badge { 
-            background: #f0f4f8; padding: 5px 12px; border-radius: 20px; 
-            font-size: 12px; margin-left: 12px; color: #555; font-weight: 600; letter-spacing: 0.3px;
+            background: #f4f6f8; padding: 5px 12px; border-radius: 20px; 
+            font-size: 12px; margin-left: 12px; color: #555; font-weight: 600;
         }
         .meta-info { display: flex; align-items: center; gap: 20px; font-size: 13px; color: #777; font-weight: 500; }
         .chevron { transition: transform 0.3s; color: #ccc; }
-        .feedback-card.active .chevron { transform: rotate(180deg); color: var(--primary); }
+        .feedback-card.active .chevron { transform: rotate(180deg); color: var(--text-dark); }
 
         /* DETAILS (HIDDEN) */
         .card-details {
@@ -90,22 +104,14 @@
             background: white; padding: 20px; border-radius: 12px; border: 1px solid #eee;
         }
         
-        /* --- IMPROVED REPLY SECTION --- */
+        /* REPLY SECTION */
         .reply-section { margin-top: 20px; }
         
         .reply-container {
-            position: relative;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            background: white;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            padding: 5px;
+            position: relative; border: 1px solid #ddd; border-radius: 12px;
+            background: white; transition: border-color 0.2s; padding: 5px;
         }
-        
-        .reply-container:focus-within {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(0, 48, 73, 0.1);
-        }
+        .reply-container:focus-within { border-color: var(--text-dark); box-shadow: 0 0 0 4px rgba(0, 48, 73, 0.1); }
 
         .reply-form textarea {
             width: 100%; padding: 15px; border: none; border-radius: 12px;
@@ -113,25 +119,19 @@
             outline: none; font-size: 14px; min-height: 80px;
         }
         
-        .form-footer {
-            display: flex; justify-content: flex-end; padding: 0 10px 10px 10px;
-        }
-
         .btn-reply {
-            background: var(--primary); color: white; border: none; 
+            background: var(--text-dark); color: white; border: none; 
             padding: 10px 24px; border-radius: 8px; cursor: pointer; 
             font-weight: 600; font-size: 14px; transition: 0.2s;
-            display: flex; align-items: center; gap: 8px;
+            display: flex; align-items: center; gap: 8px; margin-left: auto; margin-right: 10px; margin-bottom: 10px;
         }
         .btn-reply:hover { background: #004d73; transform: translateY(-1px); }
 
-        /* COMPLETED REPLY DISPLAY */
         .reply-display { 
             background: #E0F2F1; color: #004D40; padding: 20px; border-radius: 12px; 
             font-size: 14px; border: 1px solid #B2DFDB; line-height: 1.6;
         }
         
-        /* Helper for Empty State */
         .empty-state { text-align: center; color: #999; margin-top: 60px; font-style: italic; }
 
     </style>
@@ -139,6 +139,11 @@
 <body>
 
 <div class="container">
+    
+    <a href="${pageContext.request.contextPath}/admin/home" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+
     <h1>Feedback Management</h1>
 
     <div class="filter-bar">
@@ -156,7 +161,7 @@
             <option value="4">4 Stars</option>
             <option value="3">3 Stars</option>
             <option value="2">2 Stars</option>
-            <option value="1">1 Stars</option>
+            <option value="1">1 Star</option>
         </select>
     </div>
 
@@ -173,7 +178,6 @@
         <c:forEach items="${pendingList}" var="fb">
             <div class="feedback-card pending-card" onclick="toggleCard(this)"
                  data-category="${fb.category}" data-rating="${fb.rating}">
-                
                 <div class="card-header">
                     <div>
                         <span class="subject">${fb.subject}</span>
@@ -185,40 +189,30 @@
                         <i class="fas fa-chevron-down chevron"></i>
                     </div>
                 </div>
-
                 <div class="card-details" onclick="event.stopPropagation()">
                     <div class="message-box">
                         <strong style="display:block; margin-bottom: 5px; color: #000;">Student Feedback</strong>
                         "${fb.message}"
                     </div>
-                    
                     <div class="reply-section">
                         <form action="${pageContext.request.contextPath}/admin/feedback/reply" method="post" class="reply-form">
                             <input type="hidden" name="id" value="${fb.id}">
-                            
                             <div class="reply-container">
-                                <textarea name="reply" placeholder="Type your response to the student here..." required></textarea>
-                                <div class="form-footer">
-                                    <button type="submit" class="btn-reply">
-                                        <i class="fas fa-paper-plane"></i> Send Reply
-                                    </button>
-                                </div>
+                                <textarea name="reply" placeholder="Type your response here..." required></textarea>
+                                <button type="submit" class="btn-reply"><i class="fas fa-paper-plane"></i> Send Reply</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </c:forEach>
-        <c:if test="${empty pendingList}">
-            <p class="empty-state">All caught up! No pending reviews.</p>
-        </c:if>
+        <c:if test="${empty pendingList}"><p class="empty-state">All caught up! No pending reviews.</p></c:if>
     </div>
 
     <div id="completed" class="tab-content">
         <c:forEach items="${completedList}" var="fb">
             <div class="feedback-card completed-card" onclick="toggleCard(this)"
                  data-category="${fb.category}" data-rating="${fb.rating}">
-                
                 <div class="card-header">
                     <div>
                         <span class="subject">${fb.subject}</span>
@@ -230,7 +224,6 @@
                         <i class="fas fa-chevron-down chevron"></i>
                     </div>
                 </div>
-
                 <div class="card-details" onclick="event.stopPropagation()">
                     <div class="message-box">
                         <strong style="display:block; margin-bottom: 5px; color: #000;">Student Feedback</strong>
@@ -245,44 +238,33 @@
                 </div>
             </div>
         </c:forEach>
-        <c:if test="${empty completedList}">
-            <p class="empty-state">No completed reviews yet.</p>
-        </c:if>
+        <c:if test="${empty completedList}"><p class="empty-state">No completed reviews yet.</p></c:if>
     </div>
-
 </div>
 
 <script>
     function toggleCard(card) {
         card.classList.toggle('active');
         let details = card.querySelector('.card-details');
-        
-        // Smoother Toggle
         if (details.style.display === "block") {
             details.style.display = "none";
         } else {
-            // Close other open cards (Optional: nicer UX)
             document.querySelectorAll('.card-details').forEach(d => d.style.display = 'none');
             document.querySelectorAll('.feedback-card').forEach(c => c.classList.remove('active'));
-            
-            // Open this one
             card.classList.add('active');
             details.style.display = "block";
         }
     }
-
     function openTab(tabName) {
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(tabName).classList.add('active');
         event.currentTarget.classList.add('active');
     }
-
     function applyFilters() {
         let category = document.getElementById('filterCategory').value.toLowerCase();
         let rating = document.getElementById('filterRating').value;
         let cards = document.querySelectorAll('.feedback-card');
-
         cards.forEach(card => {
             let cardCat = card.getAttribute('data-category').toLowerCase();
             let cardRate = card.getAttribute('data-rating');
