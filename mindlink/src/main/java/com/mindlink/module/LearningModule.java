@@ -1,37 +1,98 @@
 package com.mindlink.module;
 
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class LearningModule {
-    private String id;
+    private int moduleId;
     private String title;
     private String description;
-    private String imagePath; // e.g., "mental-health-intro.png"
+    private String imagePath;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private List<ModuleQuestion> questions;
 
-    // Constructor for creating new modules
-    public LearningModule(String title, String description, String imagePath) {
-        this.id = UUID.randomUUID().toString(); // Auto-generate ID
+    // Transient field for UI
+    private int progressPercentage;
+
+    public LearningModule() {
+    }
+
+    // Getters and Setters
+    public int getModuleId() {
+        return moduleId;
+    }
+
+    public void setModuleId(int moduleId) {
+        this.moduleId = moduleId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
 
-    // Constructor for updating existing modules
-    public LearningModule(String id, String title, String description, String imagePath) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.imagePath = imagePath;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public String getId() { return id; }
-    public String getTitle() { return title; }
-    public String getDescription() { return description; }
-    public String getImagePath() { return imagePath; }
-    
-    // Setters needed for form binding
-    public void setId(String id) { this.id = id; }
-    public void setTitle(String title) { this.title = title; }
-    public void setDescription(String description) { this.description = description; }
-    public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public List<ModuleQuestion> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<ModuleQuestion> questions) {
+        this.questions = questions;
+    }
+
+    // For backward compatibility with existing code
+    public String getId() {
+        return String.valueOf(moduleId);
+    }
+
+    public void setId(String id) {
+        try {
+            this.moduleId = Integer.parseInt(id);
+        } catch (NumberFormatException e) {
+            // Ignore if not a number
+        }
+    }
+
+    public int getProgressPercentage() {
+        return progressPercentage;
+    }
+
+    public void setProgressPercentage(int progressPercentage) {
+        this.progressPercentage = progressPercentage;
+    }
 }

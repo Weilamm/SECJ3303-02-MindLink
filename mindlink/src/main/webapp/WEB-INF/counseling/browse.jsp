@@ -1,173 +1,237 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Find Your Counselor</title>
+    <title>Find Your Counselor | MindLink</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
         :root {
+            --primary: #003049;
+            --accent-pink: #F497AA;
+            --accent-orange: #F77F00;
             --bg-color: #FFF3E0;
-            --text-dark: #003049;
-            --card-bg: #FFFFFF;
+            --glass-white: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --text-grey: #666;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
-            margin: 0; padding: 20px;
-            color: var(--text-dark);
-        }
-
-        /* Header Navigation */
-        .header {
-            padding: 20px 100px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-        }
-
-        .nav-left,
-        .nav-right {
-            display: flex;
-            align-items: center;
-            justify-content: space-evenly;
-            flex: 1;
-            gap: 0;
-        }
-
-        .nav-left a, .nav-right a {
-            text-decoration: none;
-            color: #00313e;
-            font-size: 16px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-left a:hover, .nav-right a:hover {
-            color: #0d4e57;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            color: #00313e;
-            font-size: 32px;
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .container { max-width: 1100px; margin: 40px auto; }
-        
-        h1 { font-size: 32px; font-weight: 800; margin-bottom: 5px; }
-        .subtitle { color: #666; font-size: 16px; margin-bottom: 40px; }
-
-        /* SEARCH BAR */
-        .search-container {
-            margin-bottom: 50px;
+            /* 🟢 Pink & Orange Gradient Background */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(244, 151, 170, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(247, 127, 0, 0.1) 0%, transparent 50%);
+            margin: 0;
+            padding: 40px 20px; 
+            color: var(--primary);
+            min-height: 100vh;
             position: relative;
-        }
-        .search-input {
-            width: 100%;
-            padding: 15px 20px;
-            padding-right: 50px; /* Space for icon */
-            border-radius: 30px;
-            border: 1px solid #AAA;
-            background: transparent;
-            font-size: 16px;
-            outline: none;
-            font-family: inherit;
-        }
-        .search-icon {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 20px;
-            color: #555;
-            cursor: pointer;
+            overflow-x: hidden;
         }
 
-        /* CARD GRID */
-        .counselor-grid {
+        /* 🟢 ANIMATED BLOBS */
+        .blob {
+            position: absolute; filter: blur(60px); z-index: -1; opacity: 0.7;
+            animation: float 10s ease-in-out infinite;
+        }
+        .blob-1 { top: -50px; left: -50px; width: 400px; height: 400px; background: rgba(244, 151, 170, 0.2); border-radius: 40% 60% 70% 30%; }
+        .blob-2 { bottom: 100px; right: -50px; width: 500px; height: 500px; background: rgba(247, 127, 0, 0.15); border-radius: 60% 40% 30% 70%; animation-direction: reverse; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(20px, 20px) rotate(5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 🟢 BACK BUTTON */
+        .btn-back { 
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 45px; height: 45px; border-radius: 50%;
+            background: white; color: var(--primary);
+            font-size: 18px; text-decoration: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: 0.2s; margin-bottom: 20px;
+        }
+        .btn-back:hover { background: var(--accent-pink); color: white; transform: translateX(-5px); }
+
+        /* HEADER */
+        .header-section { text-align: center; margin-bottom: 40px; }
+        h1 { font-size: 36px; font-weight: 800; margin: 0 0 10px 0; color: var(--primary); }
+        .subtitle { color: var(--text-grey); font-size: 16px; margin: 0; }
+
+        /* 🟢 SEARCH BAR */
+        .search-container { text-align: center; margin-bottom: 50px; }
+        .search-wrapper {
+            position: relative; max-width: 500px; margin: 0 auto;
+        }
+        .search-box {
+            padding: 18px 50px 18px 25px;
+            width: 100%; box-sizing: border-box;
+            border: 2px solid transparent;
+            border-radius: 50px;
+            font-size: 16px;
+            background: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            outline: none; transition: 0.3s;
+            color: var(--primary);
+        }
+        .search-box:focus { border-color: var(--accent-pink); box-shadow: 0 8px 30px rgba(244, 151, 170, 0.2); }
+        
+        .search-btn {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            background: var(--accent-orange); color: white;
+            border: none; width: 40px; height: 40px; border-radius: 50%;
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;
+        }
+        .search-btn:hover { background: var(--primary); }
+
+        /* 🟢 COUNSELOR GRID */
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Responsive Grid */
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
         }
 
         .card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-            cursor: pointer;
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            padding: 30px 20px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            text-decoration: none; color: inherit;
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center;
+            position: relative; overflow: hidden;
         }
-        .card:hover { transform: translateY(-5px); }
+        
+        .card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1); 
+            border-color: var(--accent-pink);
+        }
 
-        .counselor-name { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #000; }
-        .counselor-loc { font-size: 14px; color: #666; }
+        /* Avatar */
+        .avatar-wrapper {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            padding: 4px;
+            background: linear-gradient(135deg, #F497AA, #F77F00);
+            margin-bottom: 15px;
+        }
+        
+        .avatar {
+            width: 100%; height: 100%;
+            background: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; font-weight: 800; color: var(--accent-orange);
+            overflow: hidden;
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .info h3 { margin: 0 0 5px 0; font-size: 20px; font-weight: 700; color: var(--primary); }
+        .location { color: #888; font-size: 13px; font-weight: 500; margin-bottom: 15px; display: block; }
+        
+        /* Tags */
+        .tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
+        .tag { 
+            background: #FFF0F3; color: #D81B60; 
+            padding: 5px 12px; border-radius: 15px; 
+            font-size: 12px; font-weight: 600;
+        }
+        
+        /* Action Button (Visible on Hover) */
+        .btn-view {
+            background: var(--primary); color: white;
+            padding: 10px 25px; border-radius: 50px;
+            font-size: 14px; font-weight: 600;
+            margin-top: auto; transition: 0.3s;
+            opacity: 0.8;
+        }
+        .card:hover .btn-view { background: var(--accent-orange); opacity: 1; }
+
+        /* Empty State */
+        .empty-state { grid-column: 1/-1; text-align: center; color: #888; padding: 40px; background: rgba(255,255,255,0.5); border-radius: 20px; }
 
     </style>
 </head>
 <body>
-<!-- Header Navigation -->
-    <div class="header">
-        <div class="nav-left">
-            <a href="${pageContext.request.contextPath}/home">Home</a>
-            <a href="${pageContext.request.contextPath}/learning">Learning</a>
-        </div>
-        
-        <a href="${pageContext.request.contextPath}/home" class="logo">
-            <div class="logo-icon">
-                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
-            </div>
-            <span>MindLink</span>
-        </a>
-        
-        <div class="nav-right">
-            <a href="${pageContext.request.contextPath}/forum/welcome">Forum</a>
-            <a href="${pageContext.request.contextPath}/profile">Profile</a>
-        </div>
-    </div>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
 
     <div class="container">
-        <h1>Find Your Counselor</h1>
-        <p class="subtitle">Connect with experienced mental health professionals who care</p>
+        
+        <a href="${pageContext.request.contextPath}/counseling/home" class="btn-back" title="Back to Dashboard">
+            <i class="fas fa-arrow-left"></i>
+        </a>
 
-        <form action="/counseling/browse" method="get" class="search-container">
-            <input type="text" name="search" class="search-input" placeholder="Type your counselor name" value="${param.search}">
-            <span class="search-icon">🔍</span> </form>
+        <div class="header-section">
+            <h1>Find Your Counselor</h1>
+            <p class="subtitle">Connect with experienced professionals dedicated to your well-being.</p>
+        </div>
 
-        <div class="counselor-grid">
+        <form action="${pageContext.request.contextPath}/counseling/browse" method="get" class="search-container">
+            <div class="search-wrapper">
+                <input type="text" name="search" class="search-box" placeholder="Search by name or specialty..." value="${param.search}">
+                <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+
+        <div class="grid">
             <c:forEach items="${counselors}" var="c">
-                <a href="/counseling/counselor?id=${c.id}" style="text-decoration: none;">
-                    <div class="card">
-                        <div class="counselor-name">${c.name}</div>
-                        <div class="counselor-loc">${c.location}</div>
+                
+                <a href="${pageContext.request.contextPath}/counseling/counselor?id=${c.id}" class="card">
+                    <div class="avatar-wrapper">
+                        <div class="avatar">
+                            <c:choose>
+                                <c:when test="${not empty c.imageUrl}">
+                                    <img src="${pageContext.request.contextPath}${c.imageUrl}" alt="${c.name}">
+                                </c:when>
+                                <c:otherwise>
+                                    
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
                     </div>
+                    
+                    <div class="info">
+                        <h3>${c.name}</h3>
+                        <span class="location"><i class="fas fa-map-marker-alt"></i> ${not empty c.location ? c.location : 'MindLink Center'}</span>
+                        
+                        <div class="tags">
+                            <span class="tag">Anxiety</span>
+                            <span class="tag">Stress</span>
+                            <span class="tag">Academic</span>
+                        </div>
+                    </div>
+
+                    <div class="btn-view">View Profile</div>
                 </a>
+
             </c:forEach>
             
             <c:if test="${empty counselors}">
-                <p style="color: #666;">No counselors found matching that name.</p>
+                <div class="empty-state">
+                    <i class="fas fa-user-slash" style="font-size: 40px; margin-bottom: 10px;"></i>
+                    <p>No counselors found matching your search.</p>
+                </div>
             </c:if>
         </div>
     </div>
