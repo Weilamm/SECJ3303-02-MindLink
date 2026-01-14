@@ -33,6 +33,20 @@ public class ForumPostDAOImpl implements ForumPostDAO {
             post.setContent(rs.getString("content"));
             post.setStatus(rs.getString("status") != null ? rs.getString("status") : "normal");
             
+            // Handle is_anonymous field (may not exist in old databases)
+            try {
+                post.setAnonymous(rs.getBoolean("is_anonymous"));
+            } catch (SQLException e) {
+                post.setAnonymous(false); // Default to false if column doesn't exist
+            }
+            
+            // Handle report_reason field (may not exist in old databases)
+            try {
+                post.setReportReason(rs.getString("report_reason"));
+            } catch (SQLException e) {
+                post.setReportReason(null); // Default to null if column doesn't exist
+            }
+            
             Timestamp createdAt = rs.getTimestamp("created_at");
             if (createdAt != null) {
                 post.setCreatedAt(createdAt.toLocalDateTime());
@@ -49,14 +63,14 @@ public class ForumPostDAOImpl implements ForumPostDAO {
 
     @Override
     public List<ForumPost> findByForumId(int forumId) {
-        String sql = "SELECT id, forum_id, user_id, user_name, content, status, created_at, updated_at " +
-                     "FROM forum_post WHERE forum_id = ? ORDER BY created_at ASC";
+        String sql = "SELECT id, forum_id, user_id, user_name, content, status, is_anonymous, report_reason, created_at, updated_at " +
+                     "FROM forum_post WHERE forum_id = ? ORDER BY created_at DESC";
         return jdbcTemplate.query(sql, forumPostRowMapper, forumId);
     }
 
     @Override
     public ForumPost findById(int id) {
-        String sql = "SELECT id, forum_id, user_id, user_name, content, status, created_at, updated_at " +
+        String sql = "SELECT id, forum_id, user_id, user_name, content, status, is_anonymous, report_reason, created_at, updated_at " +
                      "FROM forum_post WHERE id = ?";
         List<ForumPost> posts = jdbcTemplate.query(sql, forumPostRowMapper, id);
         return posts.isEmpty() ? null : posts.get(0);
@@ -66,7 +80,7 @@ public class ForumPostDAOImpl implements ForumPostDAO {
      * Find all reported posts
      */
     public List<ForumPost> findReportedPosts() {
-        String sql = "SELECT id, forum_id, user_id, user_name, content, status, created_at, updated_at " +
+        String sql = "SELECT id, forum_id, user_id, user_name, content, status, is_anonymous, report_reason, created_at, updated_at " +
                      "FROM forum_post WHERE status = 'reported' ORDER BY created_at DESC";
         return jdbcTemplate.query(sql, forumPostRowMapper);
     }
@@ -77,6 +91,14 @@ public class ForumPostDAOImpl implements ForumPostDAO {
     public int updateStatus(int id, String status) {
         String sql = "UPDATE forum_post SET status = ? WHERE id = ?";
         return jdbcTemplate.update(sql, status, id);
+    }
+    
+    /**
+     * Update post status with report reason
+     */
+    public int updateStatusWithReason(int id, String status, String reportReason) {
+        String sql = "UPDATE forum_post SET status = ?, report_reason = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, status, reportReason, id);
     }
 
     @Override
@@ -89,8 +111,17 @@ public class ForumPostDAOImpl implements ForumPostDAO {
 
     @Override
     public int create(int forumId, String userId, String userName, String content) {
-        String sql = "INSERT INTO forum_post (forum_id, user_id, user_name, content, status) VALUES (?, ?, ?, ?, 'normal')";
+        String sql = "INSERT INTO forum_post (forum_id, user_id, user_name, content, status, is_anonymous) VALUES (?, ?, ?, ?, 'normal', FALSE)";
         return jdbcTemplate.update(sql, forumId, userId, userName, content);
+    }
+    
+    /**
+     * Create post with anonymous flag
+     */
+    @Override
+    public int create(int forumId, String userId, String userName, String content, boolean isAnonymous) {
+        String sql = "INSERT INTO forum_post (forum_id, user_id, user_name, content, status, is_anonymous) VALUES (?, ?, ?, ?, 'normal', ?)";
+        return jdbcTemplate.update(sql, forumId, userId, userName, content, isAnonymous);
     }
 
     @Override
@@ -116,6 +147,14 @@ public class ForumPostDAOImpl implements ForumPostDAO {
         String sql = "SELECT COUNT(*) FROM forum_post WHERE forum_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, forumId);
         return count != null ? count : 0;
+    }
+
+    @Override
+    public List<ForumPost> searchByContent(int forumId, String searchTerm) {
+        String sql = "SELECT id, forum_id, user_id, user_name, content, status, is_anonymous, report_reason, created_at, updated_at " +
+                     "FROM forum_post WHERE forum_id = ? AND LOWER(content) LIKE ? ORDER BY created_at DESC";
+        String term = "%" + searchTerm.toLowerCase() + "%";
+        return jdbcTemplate.query(sql, forumPostRowMapper, forumId, term);
     }
 }
 

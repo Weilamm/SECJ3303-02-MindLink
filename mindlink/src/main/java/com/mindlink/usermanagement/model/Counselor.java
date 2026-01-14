@@ -12,6 +12,8 @@ public class Counselor {
     private String university;
     private String languages;
     private String specialization;
+    private String certId;
+    private String status;
 
     public Counselor() {
     }
@@ -110,5 +112,21 @@ public class Counselor {
 
     public void setSpecialization(String specialization) {
         this.specialization = specialization;
+    }
+
+    public String getCertId() {
+        return certId;
+    }
+
+    public void setCertId(String certId) {
+        this.certId = certId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

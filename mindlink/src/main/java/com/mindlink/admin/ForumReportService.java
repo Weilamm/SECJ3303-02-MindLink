@@ -27,16 +27,26 @@ public class ForumReportService {
         
         for (ForumPost post : reportedPosts) {
             // Create ReportedPost from ForumPost
-            // Using post ID as report ID, and default reason as "Reported" (can be enhanced later)
             String date = post.getCreatedAt() != null ? post.getCreatedAt().format(formatter) : "N/A";
             String status = "Pending"; // All reported posts are pending until admin action
+            
+            // Get display name - admins always see real names, even for anonymous posts
+            String displayName = post.getUserName() + " (" + post.getUserId() + ")";
+            if (post.isAnonymous()) {
+                displayName += " [Anonymous to users]";
+            }
+            
+            // Get report reason from database, or default message
+            String reportReason = (post.getReportReason() != null && !post.getReportReason().trim().isEmpty()) 
+                ? post.getReportReason() 
+                : "No reason provided";
             
             ReportedPost report = new ReportedPost(
                 String.valueOf(post.getId()),
                 date,
-                post.getUserName() + " (" + post.getUserId() + ")",
+                displayName,
                 post.getContent(),
-                "Reported", // Default reason - can be enhanced to store actual reason
+                reportReason,
                 status
             );
             reports.add(report);
@@ -58,12 +68,12 @@ public class ForumReportService {
     }
 
     /**
-     * Dismiss the report - change status back to normal
+     * Dismiss the report - change status back to normal and clear report reason
      */
     public void dismissReport(String id) {
         try {
             int postId = Integer.parseInt(id);
-            forumPostDAO.updateStatus(postId, "normal");
+            forumPostDAO.updateStatusWithReason(postId, "normal", null);
         } catch (NumberFormatException e) {
             // Invalid ID, ignore
         }

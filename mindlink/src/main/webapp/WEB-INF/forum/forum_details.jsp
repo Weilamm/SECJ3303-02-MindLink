@@ -291,6 +291,48 @@
             text-decoration: underline;
         }
 
+        .comment-menu-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #666;
+            padding: 4px 8px;
+            transition: color 0.2s;
+        }
+
+        .comment-menu-btn:hover {
+            color: #00313e;
+        }
+
+        .comment-menu {
+            position: absolute;
+            right: 0;
+            top: 25px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+            min-width: 120px;
+        }
+
+        .comment-menu button {
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-size: 13px;
+            color: #00313e;
+            transition: background-color 0.2s;
+        }
+
+        .comment-menu button:hover {
+            background-color: #f5f5f5;
+        }
+
         /* Report Modal Overlay */
         .report-modal,
         .report-success-modal {
@@ -496,7 +538,6 @@
                         <span>Forum Guidelines &amp; Support Resources</span>
                     </div>
                     <div class="pinned-meta">
-                        Created by: ${forum.createdBy}<br>
                         • Please read before posting<br>
                         • Be kind, respectful, and keep conversations supportive.
                     </div>
@@ -513,14 +554,50 @@
                 </c:if>
             </div>
 
+            <!-- Search Bar -->
+            <form method="get" action="${pageContext.request.contextPath}/forum/detail" style="margin-bottom: 20px; display: flex; gap: 12px; align-items: center; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                <input type="hidden" name="id" value="${forum.id}">
+                <input type="text" 
+                       name="search" 
+                       placeholder="Search posts by content..." 
+                       value="${searchQuery != null ? searchQuery : ''}" 
+                       style="flex: 1; padding: 12px 18px; border: 1px solid #ddd; border-radius: 25px; font-size: 14px; outline: none; font-family: 'Poppins', sans-serif;">
+                <button type="submit" 
+                        style="padding: 12px 25px; background-color: #003B46; color: white; border: none; border-radius: 25px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color 0.3s;">
+                    🔍 Search
+                </button>
+                <c:if test="${searchQuery != null && !searchQuery.isEmpty()}">
+                    <a href="${pageContext.request.contextPath}/forum/detail?id=${forum.id}" 
+                       style="padding: 12px 20px; background-color: #f0f0f0; color: #666; text-decoration: none; border-radius: 25px; font-size: 14px; font-weight: 500; transition: background-color 0.3s;">
+                        Clear
+                    </a>
+                </c:if>
+            </form>
+
             <c:choose>
                 <c:when test="${empty posts || postCount == 0}">
                     <div class="discussion-card">
-                        <div class="discussion-title" style="color: #999; font-weight: 400;">No posts yet</div>
-                        <div class="discussion-body" style="color: #999;">
-                            Be the first to start a discussion in this forum!
+                        <div class="discussion-title" style="color: #999; font-weight: 400;">
+                            <c:choose>
+                                <c:when test="${searchQuery != null && !searchQuery.isEmpty()}">
+                                    No posts found matching "${searchQuery}"
+                                </c:when>
+                                <c:otherwise>
+                                    No posts yet
+                                </c:otherwise>
+                            </c:choose>
                         </div>
-                        <c:if test="${not empty forum}">
+                        <div class="discussion-body" style="color: #999;">
+                            <c:choose>
+                                <c:when test="${searchQuery != null && !searchQuery.isEmpty()}">
+                                    Try a different search term or <a href="${pageContext.request.contextPath}/forum/detail?id=${forum.id}" style="color: #003B46; text-decoration: underline;">view all posts</a>.
+                                </c:when>
+                                <c:otherwise>
+                                    Be the first to start a discussion in this forum!
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                        <c:if test="${not empty forum && (searchQuery == null || searchQuery.isEmpty())}">
                             <div style="text-align: center; margin-top: 20px;">
                                 <a href="${pageContext.request.contextPath}/forum/create?forumId=${forum.id}" class="new-discussion-btn">Create First Post</a>
                             </div>
@@ -530,9 +607,9 @@
                 <c:otherwise>
                     <c:forEach var="post" items="${posts}">
                         <div class="discussion-card" style="margin-bottom: 20px;">
-                            <div class="discussion-title">${post.userName}</div>
+                            <div class="discussion-title">${post.anonymous ? 'Anonymous' : post.userName}</div>
                             <div class="discussion-meta">
-                                By: ${post.userName} (${post.userId})
+                                By: ${post.anonymous ? 'Anonymous' : post.userName}${post.anonymous ? '' : ' ('}${post.anonymous ? '' : post.userId}${post.anonymous ? '' : ')'}
                                 <c:if test="${not empty post.createdAt}">
                                     • 
                                     <c:catch var="dateError">
@@ -551,7 +628,6 @@
 
                             <div class="discussion-stats">
                                 <span class="stat">💬 ${commentsMap[post.id] != null ? commentsMap[post.id].size() : 0} comments</span>
-                                <span class="stat">Post #${post.id}</span>
                             </div>
 
                             <!-- Comments Section -->
@@ -562,23 +638,33 @@
                                 <c:if test="${not empty commentsMap[post.id]}">
                                     <div style="margin-bottom: 15px;">
                                         <c:forEach var="comment" items="${commentsMap[post.id]}">
-                                            <div style="background: #f9f9f9; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
-                                                <div style="font-weight: 600; font-size: 13px; color: #00313e; margin-bottom: 5px;">
-                                                    ${comment.userName} (${comment.userId})
-                                                </div>
-                                                <div style="font-size: 13px; color: #555; margin-bottom: 5px;">
-                                                    ${comment.content}
-                                                </div>
-                                                <div style="font-size: 11px; color: #999;">
-                                                    <c:if test="${not empty comment.createdAt}">
-                                                        <c:catch var="dateError">
-                                                            <fmt:parseDate value="${comment.createdAt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDate" />
-                                                            <fmt:formatDate value="${parsedDate}" pattern="MMM dd, yyyy HH:mm" />
-                                                        </c:catch>
-                                                        <c:if test="${not empty dateError}">
-                                                            ${comment.createdAt}
-                                                        </c:if>
-                                                    </c:if>
+                                            <div style="background: #f9f9f9; padding: 12px; border-radius: 8px; margin-bottom: 10px; position: relative;">
+                                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                                    <div style="flex: 1;">
+                                                        <div style="font-weight: 600; font-size: 13px; color: #00313e; margin-bottom: 5px;">
+                                                            ${comment.userName} (${comment.userId})
+                                                        </div>
+                                                        <div style="font-size: 13px; color: #555; margin-bottom: 5px;">
+                                                            ${comment.content}
+                                                        </div>
+                                                        <div style="font-size: 11px; color: #999;">
+                                                            <c:if test="${not empty comment.createdAt}">
+                                                                <c:catch var="dateError">
+                                                                    <fmt:parseDate value="${comment.createdAt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDate" />
+                                                                    <fmt:formatDate value="${parsedDate}" pattern="MMM dd, yyyy HH:mm" />
+                                                                </c:catch>
+                                                                <c:if test="${not empty dateError}">
+                                                                    ${comment.createdAt}
+                                                                </c:if>
+                                                            </c:if>
+                                                        </div>
+                                                    </div>
+                                                    <div style="position: relative;">
+                                                        <button class="comment-menu-btn" onclick="toggleCommentMenu(${comment.id})" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #666; padding: 4px 8px;">⋯</button>
+                                                        <div id="commentMenu${comment.id}" class="comment-menu" style="display: none; position: absolute; right: 0; top: 25px; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100; min-width: 120px;">
+                                                            <button onclick="openCommentReportModal(${comment.id})" style="width: 100%; padding: 10px 15px; border: none; background: white; text-align: left; cursor: pointer; font-size: 13px; color: #00313e; border-radius: 8px 8px 0 0;">Report</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </c:forEach>
@@ -613,7 +699,7 @@
         </div>
     </div>
 
-    <!-- Report reason modal -->
+    <!-- Report reason modal for posts -->
     <div class="report-modal" id="reportModal">
         <div class="report-card">
             <div class="report-title">Please select a reason for reporting this post:</div>
@@ -641,6 +727,34 @@
         </div>
     </div>
 
+    <!-- Report reason modal for comments -->
+    <div class="report-modal" id="commentReportModal">
+        <div class="report-card">
+            <div class="report-title">Please select a reason for reporting this comment:</div>
+            <div class="report-options">
+                <label class="report-option">
+                    <input type="checkbox" name="commentReason" value="spam">
+                    <span>Spam or advertisement</span>
+                </label>
+                <label class="report-option">
+                    <input type="checkbox" name="commentReason" value="harassment">
+                    <span>Harassment or bullying</span>
+                </label>
+                <label class="report-option">
+                    <input type="checkbox" name="commentReason" value="language">
+                    <span>Inappropriate language</span>
+                </label>
+                <label class="report-option">
+                    <input type="checkbox" name="commentReason" value="misinformation">
+                    <span>Misinformation</span>
+                </label>
+            </div>
+            <div style="font-size: 13px; margin-bottom: 6px;">Other:</div>
+            <textarea class="report-textarea" id="commentReportOther" placeholder="Type here..."></textarea>
+            <button class="report-confirm-btn" onclick="submitCommentReport()">Confirm</button>
+        </div>
+    </div>
+
     <!-- Success modal -->
     <div class="report-success-modal" id="reportSuccessModal">
         <div class="success-card">
@@ -658,10 +772,90 @@
     </a>
     <script>
         let currentPostId = null;
+        let currentCommentId = null;
 
         function openReportModal(postId) {
             currentPostId = postId;
             document.getElementById('reportModal').classList.add('active');
+        }
+
+        function toggleCommentMenu(commentId) {
+            // Close all other menus
+            document.querySelectorAll('.comment-menu').forEach(menu => {
+                if (menu.id !== 'commentMenu' + commentId) {
+                    menu.style.display = 'none';
+                }
+            });
+            // Toggle current menu
+            const menu = document.getElementById('commentMenu' + commentId);
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function openCommentReportModal(commentId) {
+            currentCommentId = commentId;
+            // Close the dropdown menu
+            document.getElementById('commentMenu' + commentId).style.display = 'none';
+            // Open the report modal
+            document.getElementById('commentReportModal').classList.add('active');
+        }
+
+        function submitCommentReport() {
+            if (!currentCommentId) {
+                return;
+            }
+
+            // Get all selected reasons with their labels
+            const selectedReasons = Array.from(document.querySelectorAll('input[name="commentReason"]:checked')).map(cb => {
+                const labelElement = cb.closest('label');
+                if (labelElement) {
+                    const spanElement = labelElement.querySelector('span');
+                    if (spanElement) {
+                        return spanElement.textContent.trim();
+                    }
+                }
+                return cb.value;
+            });
+            
+            const otherReason = document.getElementById('commentReportOther').value.trim();
+            
+            // Combine all reasons
+            let reason = '';
+            if (selectedReasons.length > 0) {
+                reason = selectedReasons.join(', ');
+            }
+            if (otherReason) {
+                reason += (reason ? '; ' : '') + 'Other: ' + otherReason;
+            }
+            if (!reason) {
+                reason = 'No reason provided';
+            }
+
+            // Submit report to server
+            const formData = new FormData();
+            formData.append('commentId', currentCommentId);
+            formData.append('reason', reason);
+
+            fetch('${pageContext.request.contextPath}/forum/comment/report', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('commentReportModal').classList.remove('active');
+                    document.getElementById('reportSuccessModal').classList.add('active');
+                    // Reset form
+                    document.querySelectorAll('input[name="commentReason"]').forEach(input => input.checked = false);
+                    document.getElementById('commentReportOther').value = '';
+                } else {
+                    alert('Error submitting report. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Network error. Please try again.');
+            });
+
+            currentCommentId = null;
         }
 
         function submitReport() {
@@ -669,10 +863,34 @@
                 return;
             }
 
-            // Get selected reason
-            const selectedReason = document.querySelector('input[name="reason"]:checked');
+            // Get all selected reasons with their labels
+            const selectedReasons = Array.from(document.querySelectorAll('input[name="reason"]:checked')).map(cb => {
+                const labelElement = cb.closest('label');
+                if (labelElement) {
+                    const spanElement = labelElement.querySelector('span');
+                    if (spanElement) {
+                        return spanElement.textContent.trim();
+                    }
+                }
+                // Fallback to value if label structure is different
+                return cb.value;
+            });
+            
             const otherReason = document.getElementById('reportOther').value.trim();
-            const reason = selectedReason ? selectedReason.value : (otherReason || 'Other');
+            
+            // Combine all reasons
+            let reason = '';
+            if (selectedReasons.length > 0) {
+                reason = selectedReasons.join(', ');
+            }
+            if (otherReason) {
+                reason += (reason ? '; ' : '') + 'Other: ' + otherReason;
+            }
+            if (!reason) {
+                reason = 'No reason provided';
+            }
+            
+            console.log('Report reason:', reason); // Debug log
 
             // Submit report to server
             const formData = new FormData();
@@ -713,8 +931,23 @@
                 currentPostId = null;
             }
         });
+        document.getElementById('commentReportModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+                currentCommentId = null;
+            }
+        });
         document.getElementById('reportSuccessModal').addEventListener('click', function (e) {
             if (e.target === this) this.classList.remove('active');
+        });
+
+        // Close comment menus when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.comment-menu-btn') && !e.target.closest('.comment-menu')) {
+                document.querySelectorAll('.comment-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                });
+            }
         });
     </script>
 </body>

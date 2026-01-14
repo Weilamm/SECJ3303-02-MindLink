@@ -21,13 +21,24 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
-            margin: 0; padding: 20px;
+            margin: 0; padding: 40px 20px; /* Increased top padding since header is gone */
             color: var(--text-dark);
         }
 
+        /* CONTAINER (Controls the width) */
+        .container { max-width: 1000px; margin: 0 auto; }
+
         /* BACK BUTTON */
-        .btn-back { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #666; font-weight: 600; margin-bottom: 20px; transition: 0.2s; }
+        .btn-back { 
+            display: inline-flex; align-items: center; gap: 8px; 
+            text-decoration: none; color: #666; font-weight: 600; 
+            margin-bottom: 20px; transition: 0.2s; 
+        }
         .btn-back:hover { color: var(--text-dark); transform: translateX(-5px); }
+
+        /* CENTERED TITLE & SUBTITLE */
+        h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; text-align: center; }
+        .subtitle { color: var(--gray); margin-bottom: 40px; font-size: 16px; text-align: center; }
 
         /* HISTORY LIST */
         .history-list { display: flex; flex-direction: column; gap: 20px; }
@@ -38,7 +49,7 @@
             padding: 25px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             display: grid;
-            grid-template-columns: 1fr auto; /* Left content takes space, Right button is auto */
+            grid-template-columns: 1fr auto;
             align-items: center;
             transition: transform 0.2s;
             border-left: 5px solid var(--btn-teal);
@@ -80,7 +91,7 @@
         </a>
 
         <h1>Appointment History</h1>
-        <p class="subtitle">View details of your past and upcoming sessions.</p>
+        <p class="subtitle">View details of your past sessions.</p>
 
         <div class="history-list">
             

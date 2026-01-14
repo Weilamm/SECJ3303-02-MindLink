@@ -14,4 +14,8 @@ public interface StudentDao {
     void update(Student student);
 
     void deleteById(String id);
+
+    void updateStatus(String id, String status);
+
+    List<Student> searchByIdOrName(String keyword);
 }

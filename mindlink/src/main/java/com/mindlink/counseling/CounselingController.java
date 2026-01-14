@@ -154,13 +154,17 @@ public class CounselingController {
 
     @GetMapping("/history/view")
     public String viewAppointment(@RequestParam("id") String id, Model model) {
-        Appointment app = appointmentService.getAppointmentById(id);
-        if (app == null)
-            return "redirect:/counseling/history";
         
+        // 1. Get Appointment Details
+        Appointment app = appointmentService.getAppointmentById(id);
+        if (app == null) return "redirect:/counseling/history";
         model.addAttribute("app", app);
-        // Points to the STUDENT version of the details page
-        return "counseling/appointment_details"; 
+
+        // 🟢 2. NEW: Fetch Feedback for this specific appointment
+        Feedback fb = sessionFeedbackService.getFeedbackByAppointmentId(id);
+        model.addAttribute("feedback", fb); // Pass it to the JSP
+
+        return "counseling/appointment_details";
     }
 
     @GetMapping("/history/feedback")

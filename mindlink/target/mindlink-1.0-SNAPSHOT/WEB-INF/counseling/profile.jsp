@@ -18,12 +18,6 @@
         }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: var(--primary); }
         
-        /* HEADER */
-        .header { padding: 20px 100px; display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .nav-links a { text-decoration: none; color: #00313e; font-weight: 500; margin: 0 15px; transition: 0.3s; }
-        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; color: #00313e; font-size: 24px; text-decoration: none; }
-        .logo img { height: 40px; }
-
         .container { max-width: 950px; margin: 40px auto; }
 
         /* BACK BUTTON */
@@ -84,22 +78,7 @@
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/home">Home</a>
-            <a href="${pageContext.request.contextPath}/learning">Learning</a>
-        </div>
-        <a href="${pageContext.request.contextPath}/home" class="logo">
-            <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
-            <span>MindLink</span>
-        </a>
-        <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/forum/welcome">Forum</a>
-            <a href="${pageContext.request.contextPath}/profile">Profile</a>
-        </div>
-    </div>
-
+    
     <div class="container">
         <a href="${pageContext.request.contextPath}/counseling/browse" class="btn-back">
             <i class="fas fa-arrow-left"></i> Back to Counselors

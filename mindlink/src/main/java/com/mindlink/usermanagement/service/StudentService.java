@@ -1,6 +1,5 @@
 package com.mindlink.usermanagement.service;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -30,34 +29,35 @@ public class StudentService {
     }
 
     public void saveStudent(Student student) {
-        if (student.getStudentId() != null && !student.getStudentId().isEmpty()) {
-            Student existing = studentDao.findById(student.getStudentId()).orElse(null);
-            if (existing != null) {
-                // Restore creation timestamp
-                student.setCreatedAt(existing.getCreatedAt());
-                // Update timestamp
-                student.setUpdatedAt(LocalDateTime.now());
+        if (student.getStudentId() == null || student.getStudentId().trim().isEmpty()) {
+            throw new IllegalArgumentException("Student ID is required.");
+        }
 
-                // Handle password
-                if (student.getPassword() == null || student.getPassword().isEmpty()) {
-                    student.setPassword(existing.getPassword());
-                }
-                studentDao.update(student);
-            } else {
-                // Should not happen usually, but treat as new
-                createStudent(student);
+        String studentId = student.getStudentId().trim();
+        student.setStudentId(studentId);
+
+        Student existing = studentDao.findById(studentId).orElse(null);
+        if (existing != null) {
+            // Update
+            student.setCreatedAt(existing.getCreatedAt());
+            student.setUpdatedAt(LocalDateTime.now());
+
+            if (student.getPassword() == null || student.getPassword().isEmpty()) {
+                student.setPassword(existing.getPassword());
             }
+            studentDao.update(student);
         } else {
+            // Create (requires provided ID)
             createStudent(student);
         }
     }
 
     private void createStudent(Student student) {
-        // Generate student ID in format S001, S002, etc.
-        String newStudentId = generateNextStudentId();
-        student.setStudentId(newStudentId);
         student.setCreatedAt(LocalDateTime.now());
         student.setUpdatedAt(LocalDateTime.now());
+        if (student.getStatus() == null || student.getStatus().isEmpty()) {
+            student.setStatus("PENDING");
+        }
         // Plain text password
         studentDao.save(student);
     }
@@ -80,5 +80,26 @@ public class StudentService {
 
     public void deleteStudent(String id) {
         studentDao.deleteById(id);
+    }
+
+    public List<Student> searchStudents(String keyword) {
+        if (keyword == null || keyword.isEmpty()) {
+            return getAllStudents();
+        }
+        return studentDao.searchByIdOrName(keyword);
+    }
+
+    public void approveStudent(String id) {
+        studentDao.updateStatus(id, "APPROVED");
+    }
+
+    public List<Student> getPendingStudents() {
+        // Since we don't have a specific DAO method for implementation simplicity and
+        // time,
+        // we can filter all students. For 50+ students preferably add a DAO method
+        // "findByStatus".
+        return getAllStudents().stream()
+                .filter(s -> "PENDING".equalsIgnoreCase(s.getStatus()))
+                .toList();
     }
 }

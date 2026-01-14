@@ -1,6 +1,9 @@
 -- MindLink Database Schema
 -- Virtual Assistant & Support Module Tables
 
+-- Drop Database if exists (for clean setup)
+DROP DATABASE IF EXISTS mindlink_db;
+
 -- Create Database
 CREATE DATABASE IF NOT EXISTS mindlink_db;
 USE mindlink_db;
@@ -14,6 +17,7 @@ CREATE TABLE IF NOT EXISTS student (
     phone VARCHAR(20),
     faculty VARCHAR(255),
     year INT,
+    status VARCHAR(20) DEFAULT 'PENDING',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_email (email)
@@ -48,7 +52,13 @@ CREATE TABLE counselor (
     quote VARCHAR(255),
     image_url VARCHAR(255),
     phone_number VARCHAR(20),
-    specialization VARCHAR(255)
+    specialization VARCHAR(255),
+    cert_id VARCHAR(100),
+    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_status (status),
+    INDEX idx_email (email)
 );
 
 -- Chatbot Table: Stores keyword-response pairs for rule-based chatbot
@@ -91,6 +101,8 @@ CREATE TABLE IF NOT EXISTS forum_post (
     user_name VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     status ENUM('normal', 'reported') DEFAULT 'normal',
+    is_anonymous BOOLEAN DEFAULT FALSE,
+    report_reason TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (forum_id) REFERENCES forum(id) ON DELETE CASCADE,
@@ -106,11 +118,14 @@ CREATE TABLE IF NOT EXISTS forum_comment (
     user_id VARCHAR(100) NOT NULL,
     user_name VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
+    status ENUM('normal', 'reported') DEFAULT 'normal',
+    report_reason TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (post_id) REFERENCES forum_post(id) ON DELETE CASCADE,
     INDEX idx_post_id (post_id),
-    INDEX idx_user_id (user_id)
+    INDEX idx_user_id (user_id),
+    INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Appointment Table: Stores counseling appointment details
@@ -128,11 +143,11 @@ CREATE TABLE IF NOT EXISTS appointment (
 );
 
 -- Sample Data for Students (Student IDs start from S001)
-INSERT INTO student (student_id, name, email, password, phone, faculty, year) VALUES
-('S001', 'Karen Voon Xiu Wen', 'karen@utm.my', 'password123', '+60123456789', 'Faculty of Computing', 3),
-('S002', 'Siti Nurhaliza', 'siti.s002@utm.my', 'password123', '+60123456790', 'Faculty of Computing', 2),
-('S003', 'Muhammad Ali', 'ali.s003@utm.myutm.my', 'password123', '+60123456792', 'Faculty of Computing', 1),
-('S005', 'Hassan bin Ismail', 'hassan.s005@utm.my', 'password123', '+60123456793', 'Faculty of Engineering', 2);
+INSERT INTO student (student_id, name, email, password, phone, faculty, year, status) VALUES
+('S001', 'Karen Voon Xiu Wen', 'karen@utm.my', 'password123', '+60123456789', 'Faculty of Computing', 3, 'APPROVED'),
+('S002', 'Siti Nurhaliza', 'siti.s002@utm.my', 'password123', '+60123456790', 'Faculty of Computing', 2, 'APPROVED'),
+('S003', 'Muhammad Ali', 'ali.s003@utm.myutm.my', 'password123', '+60123456792', 'Faculty of Computing', 1, 'APPROVED'),
+('S005', 'Hassan bin Ismail', 'hassan.s005@utm.my', 'password123', '+60123456793', 'Faculty of Engineering', 2, 'PENDING');
 
 -- Sample Data for Admins (Admin IDs start from A001)
 INSERT INTO admin (admin_id, name, email, password, phone, department, role) VALUES
@@ -154,12 +169,14 @@ INSERT INTO counselor (
     bio, 
     quote, 
     image_url, 
-    phone_number
+    phone_number,
+    cert_id,
+    status
 ) VALUES 
-('C001', 'Ms. Tan Mei Ling', 'tan.meiling@utm.my', 'counselor123', 'Block A Room 209', 'M.A. Clinical Psychology', 'Universiti Sains Malaysia', 'English, Mandarin, Malay', 'Academic stress management, motivation building, emotional resilience', 'Experienced clinical psychologist dedicated to student well-being.', 'Empowering your journey.', 'tan.jpg', '012-3456789'),
-('C002', 'Mr. Ryan Lin', 'ryan.lin@utm.my', 'counselor123', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English, Hokkien', 'Cognitive behavioral therapy', 'Focused on behavioral adjustments and mental clarity.', 'Change starts within.', 'ryan.jpg', '013-9876543'),
-('C003', 'Ms. Nur Alya', 'nur.alya@utm.my', 'counselor123', 'Block B Room 314', 'PhD in Psychology', 'UKM', 'Malay, English', 'Anxiety and mood disorders', 'Expert in helping students manage anxiety and mood fluctuations.', 'Healing takes time.', 'nur.jpg', '014-5678901'),
-('C004', 'Ms. Evelyn Reed', 'evelyn.reed@utm.my', 'counselor123', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English', 'Adjustment issues', 'Helping students navigate campus life transitions.', 'Guidance for every step.', 'evelyn.jpg', '016-1122334');
+('C001', 'Ms. Tan Mei Ling', 'tan.meiling@utm.my', 'counselor123', 'Block A Room 209', 'M.A. Clinical Psychology', 'Universiti Sains Malaysia', 'English, Mandarin, Malay', 'Academic stress management, motivation building, emotional resilience', 'Experienced clinical psychologist dedicated to student well-being.', 'Empowering your journey.', 'tan.jpg', '012-3456789', 'CERT-2024-001', 'approved'),
+('C002', 'Mr. Ryan Lin', 'ryan.lin@utm.my', 'counselor123', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English, Hokkien', 'Cognitive behavioral therapy', 'Focused on behavioral adjustments and mental clarity.', 'Change starts within.', 'ryan.jpg', '013-9876543', 'CERT-2024-002', 'approved'),
+('C003', 'Ms. Nur Alya', 'nur.alya@utm.my', 'counselor123', 'Block B Room 314', 'PhD in Psychology', 'UKM', 'Malay, English', 'Anxiety and mood disorders', 'Expert in helping students manage anxiety and mood fluctuations.', 'Healing takes time.', 'nur.jpg', '014-5678901', 'CERT-2024-003', 'approved'),
+('C004', 'Ms. Evelyn Reed', 'evelyn.reed@utm.my', 'counselor123', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English', 'Adjustment issues', 'Helping students navigate campus life transitions.', 'Guidance for every step.', 'evelyn.jpg', '016-1122334', 'CERT-2024-004', 'approved');
 
 -- Sample Data for Appointments
 INSERT INTO appointment (id, student_id, counselor_name, date, time, type, venue, status) VALUES
@@ -202,6 +219,166 @@ INSERT INTO forum (title, description, created_by, status) VALUES
 ('Building Healthy Relationships', 'Discuss ways to maintain and improve relationships with friends, family, and partners.', 'A001', 'active'),
 ('Work-Life Balance', 'Tips and discussions about balancing academic work, personal life, and self-care.', 'A001', 'active'),
 ('Self-Care Practices', 'Share and discover different self-care activities that work for you.', 'A002', 'active');
+
+-- Sample Data for Forum Posts
+-- Forum 1: Coping with Exam Stress
+INSERT INTO forum_post (forum_id, user_id, user_name, content, status, is_anonymous, created_at) VALUES
+(1, 'S001', 'Karen Voon Xiu Wen', 'I find that creating a study schedule really helps me manage exam stress. Breaking down my revision into smaller chunks makes everything feel more manageable. What strategies work for you all?', 'normal', FALSE, '2026-01-10 09:15:00'),
+(1, 'S002', 'Siti Nurhaliza', 'Deep breathing exercises before exams have been a game changer for me! I do 4-7-8 breathing and it really calms my nerves.', 'normal', FALSE, '2026-01-11 14:30:00'),
+(1, 'S003', 'Muhammad Ali', 'I used to panic during exams, but now I practice mindfulness meditation daily. It has helped me stay calm and focused during tests.', 'normal', FALSE, '2026-01-12 16:45:00'),
+(1, 'S001', 'Karen Voon Xiu Wen', 'Has anyone tried the Pomodoro technique? I''ve been using it and it helps me stay focused without burning out.', 'normal', FALSE, '2026-01-13 10:20:00'),
+(1, 'S005', 'Hassan bin Ismail', 'I struggle with exam anxiety a lot. Sometimes I feel like I know the material but my mind goes blank during the exam. Any advice?', 'normal', TRUE, '2026-01-14 11:00:00');
+
+-- Forum 2: Building Healthy Relationships
+INSERT INTO forum_post (forum_id, user_id, user_name, content, status, is_anonymous, created_at) VALUES
+(2, 'S001', 'Karen Voon Xiu Wen', 'Communication is key! I''ve learned that being open and honest with friends, even when it''s difficult, strengthens our relationships.', 'normal', FALSE, '2026-01-08 13:20:00'),
+(2, 'S002', 'Siti Nurhaliza', 'Setting boundaries has been really important for me. It''s okay to say no sometimes and prioritize your own well-being.', 'normal', FALSE, '2026-01-09 15:10:00'),
+(2, 'S003', 'Muhammad Ali', 'I find that active listening makes a huge difference. When I truly listen to my friends without thinking about what to say next, our conversations become much more meaningful.', 'normal', FALSE, '2026-01-10 09:30:00'),
+(2, 'S001', 'Karen Voon Xiu Wen', 'How do you all handle conflicts in friendships? I sometimes avoid confrontation but I know that''s not always healthy.', 'normal', FALSE, '2026-01-11 17:45:00'),
+(2, 'S005', 'Hassan bin Ismail', 'I''ve been having trouble maintaining long-distance friendships since coming to university. Any tips on staying connected?', 'normal', TRUE, '2026-01-12 12:15:00');
+
+-- Forum 3: Work-Life Balance
+INSERT INTO forum_post (forum_id, user_id, user_name, content, status, is_anonymous, created_at) VALUES
+(3, 'S001', 'Karen Voon Xiu Wen', 'I try to follow the 8-8-8 rule: 8 hours for work/study, 8 hours for sleep, and 8 hours for personal time. It''s not always perfect but it helps me maintain balance.', 'normal', FALSE, '2026-01-07 10:00:00'),
+(3, 'S002', 'Siti Nurhaliza', 'Taking breaks is so important! I used to study for hours without stopping, but now I take 15-minute breaks every hour and I''m actually more productive.', 'normal', FALSE, '2026-01-08 14:25:00'),
+(3, 'S003', 'Muhammad Ali', 'I schedule my "me time" just like I schedule my classes. If it''s in my calendar, I''m more likely to actually do it!', 'normal', FALSE, '2026-01-09 11:40:00'),
+(3, 'S001', 'Karen Voon Xiu Wen', 'Does anyone else struggle with feeling guilty when taking time for themselves? I feel like I should always be studying.', 'normal', FALSE, '2026-01-10 16:20:00'),
+(3, 'S005', 'Hassan bin Ismail', 'I''m overwhelmed with assignments and can''t find time for anything else. How do you all manage your time effectively?', 'normal', TRUE, '2026-01-11 13:50:00'),
+(3, 'S002', 'Siti Nurhaliza', 'Remember that rest is productive too! Your brain needs downtime to process information and recharge.', 'normal', FALSE, '2026-01-12 15:30:00');
+
+-- Forum 4: Self-Care Practices
+INSERT INTO forum_post (forum_id, user_id, user_name, content, status, is_anonymous, created_at) VALUES
+(4, 'S001', 'Karen Voon Xiu Wen', 'I love starting my day with a 10-minute meditation. It sets a positive tone for the rest of the day. What''s your morning self-care routine?', 'normal', FALSE, '2026-01-06 08:00:00'),
+(4, 'S002', 'Siti Nurhaliza', 'Journaling has been amazing for me! Writing down my thoughts and feelings helps me process everything and feel more grounded.', 'normal', FALSE, '2026-01-07 19:15:00'),
+(4, 'S003', 'Muhammad Ali', 'Going for a walk in nature is my go-to self-care activity. Even just 20 minutes outside makes me feel refreshed and recharged.', 'normal', FALSE, '2026-01-08 17:00:00'),
+(4, 'S001', 'Karen Voon Xiu Wen', 'I''ve been trying to practice gratitude daily. Before bed, I write down three things I''m grateful for. It really shifts my perspective!', 'normal', FALSE, '2026-01-09 21:30:00'),
+(4, 'S005', 'Hassan bin Ismail', 'I struggle with self-care because I feel like I don''t have time. What are some quick self-care activities that don''t take much time?', 'normal', TRUE, '2026-01-10 12:45:00'),
+(4, 'S002', 'Siti Nurhaliza', 'Taking a warm bath with some calming music is my favorite way to unwind after a stressful day. Highly recommend!', 'normal', FALSE, '2026-01-11 20:00:00'),
+(4, 'S003', 'Muhammad Ali', 'Reading for pleasure (not textbooks!) is one of my favorite self-care practices. It helps me escape and relax.', 'normal', FALSE, '2026-01-12 18:20:00');
+
+-- Sample Data for Forum Comments
+-- Comments for Forum 1: Coping with Exam Stress
+-- Post 1: Karen's study schedule post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(1, 'S002', 'Siti Nurhaliza', 'That''s a great approach! I also break down my study sessions into 2-hour blocks with breaks in between. It really helps!', 'normal', '2026-01-10 10:30:00'),
+(1, 'S003', 'Muhammad Ali', 'I do something similar! I use a weekly planner and assign specific topics to each day. It makes everything less overwhelming.', 'normal', '2026-01-10 14:20:00'),
+(1, 'C001', 'Ms. Tan Mei Ling', 'Excellent strategy! Creating a structured plan can significantly reduce anxiety. Remember to also schedule time for rest and relaxation.', 'normal', '2026-01-10 16:45:00');
+
+-- Post 2: Siti's breathing exercises post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(2, 'S001', 'Karen Voon Xiu Wen', 'I''ve heard about this technique! Can you explain the 4-7-8 method? I''d love to try it before my next exam.', 'normal', '2026-01-11 15:00:00'),
+(2, 'S003', 'Muhammad Ali', 'Breathing exercises are so underrated! I combine them with visualization - imagining myself doing well in the exam.', 'normal', '2026-01-11 16:15:00');
+
+-- Post 3: Muhammad's mindfulness meditation post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(3, 'S001', 'Karen Voon Xiu Wen', 'How long do you meditate each day? I''m interested in starting but not sure where to begin.', 'normal', '2026-01-12 17:30:00'),
+(3, 'S002', 'Siti Nurhaliza', 'Meditation has helped me too! I started with just 5 minutes a day and gradually increased. There are great apps like Headspace that can guide you.', 'normal', '2026-01-12 18:00:00');
+
+-- Post 4: Karen's Pomodoro technique post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(4, 'S002', 'Siti Nurhaliza', 'I love the Pomodoro technique! 25 minutes of focused work followed by a 5-minute break works perfectly for me.', 'normal', '2026-01-13 11:00:00'),
+(4, 'S005', 'Hassan bin Ismail', 'I''ve been meaning to try this. Do you use any specific timer app or just a regular timer?', 'normal', '2026-01-13 12:30:00'),
+(4, 'C002', 'Mr. Ryan Lin', 'The Pomodoro technique is excellent for maintaining focus and preventing burnout. I recommend starting with shorter intervals if 25 minutes feels too long initially.', 'normal', '2026-01-13 14:15:00');
+
+-- Post 5: Hassan's exam anxiety post (anonymous)
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(5, 'S001', 'Karen Voon Xiu Wen', 'I''ve experienced this too. What helps me is writing down key points on a scrap paper as soon as I get the exam paper - it helps me organize my thoughts.', 'normal', '2026-01-14 12:00:00'),
+(5, 'C003', 'Ms. Nur Alya', 'This is a common experience. Practice relaxation techniques before exams, and remember that it''s okay to take a moment to breathe during the exam if you feel overwhelmed.', 'normal', '2026-01-14 13:30:00');
+
+-- Comments for Forum 2: Building Healthy Relationships
+-- Post 6: Karen's communication post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(6, 'S002', 'Siti Nurhaliza', 'Communication is definitely key! I''ve learned that being honest, even when it''s uncomfortable, usually leads to better understanding.', 'normal', '2026-01-08 14:30:00'),
+(6, 'S003', 'Muhammad Ali', 'I agree completely. I used to avoid difficult conversations, but I''ve found that addressing issues early prevents bigger problems later.', 'normal', '2026-01-08 16:00:00');
+
+-- Post 7: Siti's boundaries post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(7, 'S001', 'Karen Voon Xiu Wen', 'Setting boundaries was hard for me at first, but it''s made my relationships much healthier. Learning to say no is a skill!', 'normal', '2026-01-09 16:30:00'),
+(7, 'C001', 'Ms. Tan Mei Ling', 'Boundaries are essential for healthy relationships. They''re not about being selfish - they''re about respecting yourself and others.', 'normal', '2026-01-09 17:45:00');
+
+-- Post 8: Muhammad's active listening post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(8, 'S001', 'Karen Voon Xiu Wen', 'Active listening is something I''m still working on. It''s harder than it sounds, but it really does make conversations more meaningful.', 'normal', '2026-01-10 10:30:00'),
+(8, 'S002', 'Siti Nurhaliza', 'I try to practice this with my friends. Putting away my phone and giving them my full attention makes such a difference!', 'normal', '2026-01-10 11:15:00');
+
+-- Post 9: Karen's conflict handling post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(9, 'S002', 'Siti Nurhaliza', 'I used to avoid conflicts too, but I''ve learned that addressing issues calmly and directly is usually better than letting resentment build up.', 'normal', '2026-01-11 18:30:00'),
+(9, 'C002', 'Mr. Ryan Lin', 'Conflict is natural in relationships. The key is to approach it with respect, listen to the other person''s perspective, and focus on finding a solution together.', 'normal', '2026-01-11 19:00:00');
+
+-- Post 10: Hassan's long-distance friendships post (anonymous)
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(10, 'S001', 'Karen Voon Xiu Wen', 'I maintain my long-distance friendships through regular video calls and sending each other updates about our lives. It takes effort but it''s worth it!', 'normal', '2026-01-12 13:30:00'),
+(10, 'S002', 'Siti Nurhaliza', 'Scheduling regular catch-ups helps! Even if it''s just a quick text or sharing memes, staying in touch regularly makes a big difference.', 'normal', '2026-01-12 14:00:00');
+
+-- Comments for Forum 3: Work-Life Balance
+-- Post 11: Karen's 8-8-8 rule post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(11, 'S002', 'Siti Nurhaliza', 'The 8-8-8 rule sounds great! I struggle with this balance, especially during exam season. How do you stick to it?', 'normal', '2026-01-07 11:30:00'),
+(11, 'S003', 'Muhammad Ali', 'I''ve tried this too! It''s not always perfect, but having a framework helps me stay aware of how I''m spending my time.', 'normal', '2026-01-07 13:00:00');
+
+-- Post 12: Siti's breaks post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(12, 'S001', 'Karen Voon Xiu Wen', 'Taking breaks is so important! I used to think I was being lazy, but I''m actually more productive when I take regular breaks.', 'normal', '2026-01-08 15:30:00'),
+(12, 'C003', 'Ms. Nur Alya', 'Research shows that regular breaks actually improve productivity and focus. Your brain needs time to process and recharge!', 'normal', '2026-01-08 16:00:00');
+
+-- Post 13: Muhammad's scheduling me-time post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(13, 'S001', 'Karen Voon Xiu Wen', 'Scheduling me-time is brilliant! I''m going to try this. What activities do you usually schedule for yourself?', 'normal', '2026-01-09 12:30:00'),
+(13, 'S002', 'Siti Nurhaliza', 'I do this too! I schedule things like reading, going for walks, or just doing nothing. It helps me actually follow through.', 'normal', '2026-01-09 13:15:00');
+
+-- Post 14: Karen's guilt about taking time post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(14, 'S002', 'Siti Nurhaliza', 'I feel this too! But remember, taking care of yourself is not selfish - it''s necessary. You can''t pour from an empty cup.', 'normal', '2026-01-10 17:00:00'),
+(14, 'C001', 'Ms. Tan Mei Ling', 'It''s completely normal to feel this way, but self-care is essential for your well-being and academic success. Rest is productive!', 'normal', '2026-01-10 17:30:00');
+
+-- Post 15: Hassan's time management post (anonymous)
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(15, 'S001', 'Karen Voon Xiu Wen', 'I use a priority matrix - urgent and important tasks first, then important but not urgent. It helps me focus on what really matters.', 'normal', '2026-01-11 14:30:00'),
+(15, 'S002', 'Siti Nurhaliza', 'Breaking tasks into smaller chunks and using a timer helps me stay focused. Also, don''t forget to say no to things that aren''t essential!', 'normal', '2026-01-11 15:00:00'),
+(15, 'C002', 'Mr. Ryan Lin', 'Time management is a skill that takes practice. Start by tracking how you spend your time for a week, then identify areas where you can be more efficient.', 'normal', '2026-01-11 16:00:00');
+
+-- Post 16: Siti's rest is productive post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(16, 'S001', 'Karen Voon Xiu Wen', 'This is such an important reminder! I needed to hear this today. Thank you for sharing!', 'normal', '2026-01-12 16:00:00'),
+(16, 'S003', 'Muhammad Ali', 'Absolutely! Rest is when our brains consolidate learning. It''s not wasted time - it''s essential for memory and understanding.', 'normal', '2026-01-12 16:30:00');
+
+-- Comments for Forum 4: Self-Care Practices
+-- Post 17: Karen's meditation post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(17, 'S002', 'Siti Nurhaliza', 'I''ve been wanting to start a morning meditation practice! Do you use any guided meditations or do you do it on your own?', 'normal', '2026-01-06 09:30:00'),
+(17, 'S003', 'Muhammad Ali', 'Meditation in the morning sets such a positive tone for the day. I do 10 minutes of mindfulness meditation every morning too!', 'normal', '2026-01-06 10:00:00');
+
+-- Post 18: Siti's journaling post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(18, 'S001', 'Karen Voon Xiu Wen', 'Journaling has been so helpful for me too! I write about my day, my feelings, and things I''m grateful for. It''s like therapy!', 'normal', '2026-01-07 20:00:00'),
+(18, 'C001', 'Ms. Tan Mei Ling', 'Journaling is an excellent self-care practice. It helps process emotions and gain clarity. There are many different journaling styles you can explore!', 'normal', '2026-01-07 20:30:00');
+
+-- Post 19: Muhammad's nature walk post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(19, 'S001', 'Karen Voon Xiu Wen', 'Nature walks are amazing! I love going to the campus park. Being in nature really does help clear my mind.', 'normal', '2026-01-08 18:00:00'),
+(19, 'S002', 'Siti Nurhaliza', 'I agree! Even a short walk outside makes me feel so much better. Fresh air and movement are underrated!', 'normal', '2026-01-08 18:30:00');
+
+-- Post 20: Karen's gratitude practice post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(20, 'S002', 'Siti Nurhaliza', 'Gratitude practice is so powerful! I do this too and it really shifts my mindset. Sometimes I write them in a journal, sometimes I just think about them.', 'normal', '2026-01-09 22:00:00'),
+(20, 'S003', 'Muhammad Ali', 'I''ve been doing this for a few months now and it''s amazing how it changes your perspective. Even on tough days, there''s always something to be grateful for.', 'normal', '2026-01-09 22:30:00');
+
+-- Post 21: Hassan's quick self-care post (anonymous)
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(21, 'S001', 'Karen Voon Xiu Wen', 'Some quick self-care ideas: 5-minute breathing exercises, listening to your favorite song, stretching, drinking a glass of water mindfully, or calling a friend.', 'normal', '2026-01-10 13:30:00'),
+(21, 'S002', 'Siti Nurhaliza', 'Even small things count! Taking a few deep breaths, stepping outside for fresh air, or doing a quick skincare routine can make a difference.', 'normal', '2026-01-10 14:00:00'),
+(21, 'C003', 'Ms. Nur Alya', 'Self-care doesn''t have to be time-consuming. Even 5-10 minutes of intentional self-care can be beneficial. The key is consistency!', 'normal', '2026-01-10 14:30:00');
+
+-- Post 22: Siti's warm bath post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(22, 'S001', 'Karen Voon Xiu Wen', 'Warm baths are the best! I add some Epsom salts and light a candle. It''s my favorite way to unwind after a stressful day.', 'normal', '2026-01-11 21:00:00'),
+(22, 'S003', 'Muhammad Ali', 'I''m going to try this! Sounds so relaxing. Do you have any music recommendations for a calming bath experience?', 'normal', '2026-01-11 21:30:00');
+
+-- Post 23: Muhammad's reading post
+INSERT INTO forum_comment (post_id, user_id, user_name, content, status, created_at) VALUES
+(23, 'S001', 'Karen Voon Xiu Wen', 'Reading for pleasure is such a great escape! What genres do you enjoy? I love fiction - it helps me disconnect from academic stress.', 'normal', '2026-01-12 19:00:00'),
+(23, 'S002', 'Siti Nurhaliza', 'I love reading too! Even just 20-30 minutes before bed helps me relax and sleep better. It''s my favorite form of self-care.', 'normal', '2026-01-12 19:30:00');
 
 -- Module Table: Stores learning modules
 CREATE TABLE IF NOT EXISTS module (
@@ -287,7 +464,8 @@ CREATE TABLE IF NOT EXISTS feedback (
     subject VARCHAR(255),
     message TEXT,
     rating INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    admin_reply TEXT
 );
 
 -- Sample Data for Assessment (Stress Test)

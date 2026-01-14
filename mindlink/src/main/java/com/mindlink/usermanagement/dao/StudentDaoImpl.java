@@ -29,6 +29,7 @@ public class StudentDaoImpl implements StudentDao {
             student.setPhone(rs.getString("phone"));
             student.setFaculty(rs.getString("faculty"));
             student.setYear(rs.getObject("year") != null ? rs.getInt("year") : null);
+            student.setStatus(rs.getString("status"));
 
             Timestamp createdAt = rs.getTimestamp("created_at");
             if (createdAt != null)
@@ -57,7 +58,7 @@ public class StudentDaoImpl implements StudentDao {
 
     @Override
     public void save(Student student) {
-        String sql = "INSERT INTO student (student_id, name, email, password, phone, faculty, year, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO student (student_id, name, email, password, phone, faculty, year, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
                 student.getStudentId(),
                 student.getName(),
@@ -66,13 +67,14 @@ public class StudentDaoImpl implements StudentDao {
                 student.getPhone(),
                 student.getFaculty(),
                 student.getYear(),
+                student.getStatus() != null ? student.getStatus() : "PENDING",
                 student.getCreatedAt(),
                 student.getUpdatedAt());
     }
 
     @Override
     public void update(Student student) {
-        String sql = "UPDATE student SET name=?, email=?, password=?, phone=?, faculty=?, year=?, updated_at=? WHERE student_id=?";
+        String sql = "UPDATE student SET name=?, email=?, password=?, phone=?, faculty=?, year=?, status=?, updated_at=? WHERE student_id=?";
         jdbcTemplate.update(sql,
                 student.getName(),
                 student.getEmail(),
@@ -80,13 +82,27 @@ public class StudentDaoImpl implements StudentDao {
                 student.getPhone(),
                 student.getFaculty(),
                 student.getYear(),
+                student.getStatus(),
                 student.getUpdatedAt(),
                 student.getStudentId());
+    }
+
+    @Override
+    public void updateStatus(String id, String status) {
+        String sql = "UPDATE student SET status = ? WHERE student_id = ?";
+        jdbcTemplate.update(sql, status, id);
     }
 
     @Override
     public void deleteById(String id) {
         String sql = "DELETE FROM student WHERE student_id = ?";
         jdbcTemplate.update(sql, id);
+    }
+
+    @Override
+    public List<Student> searchByIdOrName(String keyword) {
+        String sql = "SELECT * FROM student WHERE LOWER(student_id) LIKE ? OR LOWER(name) LIKE ?";
+        String term = "%" + keyword.toLowerCase() + "%";
+        return jdbcTemplate.query(sql, rowMapper, term, term);
     }
 }
