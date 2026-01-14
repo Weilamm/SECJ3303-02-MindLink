@@ -218,7 +218,7 @@
                                 <span>Created by: <b>${forum.createdBy}</b></span>
                                 <c:if test="${not empty forum.createdAt}">
                                     <span>• 
-                                        <fmt:formatDate value="${forum.createdAt}" pattern="MMM dd, yyyy" />
+                                        ${post.createdAt.toString().replace("T", " ").substring(0, 16)}
                                     </span>
                                 </c:if>
                                 <span class="forum-status status-${forum.status}">${forum.status}</span>

@@ -1,134 +1,219 @@
-<style>
-    body {
-        background-color: #FFF8E1; /* Your current beige background */
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    .profile-container {
-        max-width: 800px;
-        margin: 50px auto;
-        background: white;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
-    .profile-header {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-    .profile-icon {
-        width: 100px;
-        height: 100px;
-        background-color: #004D40; /* Dark Teal */
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 40px;
-        margin: 0 auto 15px;
-    }
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-    }
-    .form-group {
-        margin-bottom: 15px;
-    }
-    .form-group label {
-        display: block;
-        color: #666;
-        margin-bottom: 5px;
-        font-size: 0.9em;
-        font-weight: bold;
-    }
-    .form-group input {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-size: 1em;
-        background-color: #f9f9f9;
-    }
-    .form-group input:focus {
-        border-color: #004D40;
-        outline: none;
-        background-color: white;
-    }
-    .btn-container {
-        margin-top: 30px;
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-    }
-    .btn {
-        padding: 12px 30px;
-        border: none;
-        border-radius: 25px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: transform 0.2s;
-        text-decoration: none; /* For links */
-        display: inline-block;
-    }
-    .btn-save {
-        background-color: #004D40;
-        color: white;
-    }
-    .btn-logout {
-        background-color: #dc3545; /* Red for logout */
-        color: white;
-    }
-    .btn:hover {
-        transform: scale(1.05);
-        opacity: 0.9;
-    }
-</style>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #FFF3E0;
+            --text-dark: #003049;
+            --text-blue: #2F80ED;
+            --card-bg: #FDF3E7;
+            --btn-dark: #013B46;
+        }
 
-<div class="profile-container">
-    <div class="profile-header">
-        <div class="profile-icon">
-            <i class="fas fa-user"></i> </div>
-        <h2>Admin Profile</h2>
-        <p style="color: #888;">Manage your personal information</p>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0; padding: 0;
+            color: var(--text-dark);
+        }
+
+        /* Header Navigation */
+        .header {
+            padding: 20px 100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+        }
+
+        .nav-left,
+        .nav-right {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            flex: 1;
+            gap: 0;
+        }
+
+        .nav-left a, .nav-right a {
+            text-decoration: none;
+            color: #00313e;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-left a:hover, .nav-right a:hover {
+            color: #0d4e57;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: #00313e;
+            font-size: 32px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background-color: var(--card-bg);
+            border-radius: 50px;
+            padding: 60px 80px;
+            position: relative;
+            min-height: 500px;
+        }
+
+        /* Back Button */
+        .back-btn {
+            position: absolute; top: 40px; left: 40px;
+            font-size: 32px; text-decoration: none; color: #000;
+        }
+
+        /* Grid Layout */
+        .profile-layout {
+            display: flex; gap: 60px; align-items: flex-start; margin-top: 20px;
+        }
+
+        /* Profile Icon */
+        .profile-icon {
+            width: 150px; height: 150px;
+            border: 6px solid #000; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+        }
+        
+        .profile-icon svg { width: 80px; height: 80px; }
+
+        /* Details */
+        .details-section { flex: 1; display: flex; flex-direction: column; gap: 25px; }
+        .row { display: flex; align-items: center; font-size: 20px; }
+        .label { font-weight: 800; color: var(--text-dark); margin-right: 10px; }
+        .value { font-weight: 700; color: var(--text-blue); }
+
+        .top-row { display: flex; justify-content: space-between; width: 100%; }
+
+        /* Edit Button */
+        .btn-edit {
+            background-color: var(--btn-dark);
+            color: white; width: 300px; padding: 15px;
+            border-radius: 30px; font-size: 18px; font-weight: 600;
+            border: none; cursor: pointer;
+            display: block; margin: 60px auto 0 auto;
+            transition: 0.2s;
+        }
+        .btn-edit:hover { opacity: 0.9; }
+
+    </style>
+</head>
+<body>
+
+  <!-- Header Navigation -->
+    <div class="header">
+        <div class="nav-left">
+            <a href="${pageContext.request.contextPath}/admin/home">Home</a>
+            <a href="${pageContext.request.contextPath}/admin/modules">Module</a>
+            <a href="${pageContext.request.contextPath}/admin/tips">Tips</a>
+        </div>
+        
+        <a href="${pageContext.request.contextPath}/admin/home" class="logo">
+            <div class="logo-icon">
+                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
+            </div>
+            <span>MindLink</span>
+        </a>
+        
+        <div class="nav-right">
+            <a href="${pageContext.request.contextPath}/admin/chatbot">Chatbot</a>
+            <a href="${pageContext.request.contextPath}/admin/forum/posts">Manage Forums</a>
+            <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
+        </div>
     </div>
+    <div class="container">
+        <a href="${pageContext.request.contextPath}/admin/home" class="back-btn">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 14L4 9l5-5"/>
+                <path d="M4 9h10c4 0 7 3 7 7v1"/>
+            </svg>
+        </a>
 
-    <form action="/admin/profile/update" method="post">
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Admin ID</label>
-                <input type="text" name="adminId" value="${admin.adminId}" readonly style="background-color: #e9ecef;">
+        <c:if test="${not empty successMessage}">
+            <div style="text-align: center; padding: 15px; background: #e8f5e9; color: #2e7d32; border-radius: 10px; margin-bottom: 20px;">
+                <strong>Success:</strong> ${successMessage}
             </div>
+        </c:if>
+        <c:if test="${not empty errorMessage}">
+            <div style="text-align: center; padding: 15px; background: #ffebee; color: #c62828; border-radius: 10px; margin-bottom: 20px;">
+                <strong>Error:</strong> ${errorMessage}
+            </div>
+        </c:if>
 
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" name="name" value="${admin.name}" required>
-            </div>
-
-            <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" name="email" value="${admin.email}" required>
-            </div>
-
-            <div class="form-group">
-                <label>Phone Number</label>
-                <input type="text" name="phone" value="${admin.phone}">
-            </div>
-
-            <div class="form-group">
-                <label>Department</label>
-                <input type="text" name="department" value="${admin.department}">
-            </div>
+        <div class="profile-layout">
             
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-            <div class="form-group">
-            <label>Password</label>
-            <div style="position: relative;">
-                <input type="password" id="passwordField" name="password" value="${admin.password}" required 
-                        style="padding-right: 40px;"> <span onclick="togglePassword()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666;">
-                    <i id="toggleIcon" class="fas fa-eye"></i>
-                </span>
+            <div>
+                <div class="profile-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
             </div>
+
+            <div class="details-section">
+                
+                <div class="top-row">
+                    <div class="row">
+                        <span class="label">Full Name :</span>
+                        <span class="value">${p.name}</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Admin ID :</span>
+                        <span class="value">${p.adminId}</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <span class="label">Email Address :</span>
+                    <span class="value">${p.email}</span>
+                </div>
+
+                <div class="row">
+                    <span class="label">Phone Number :</span>
+                    <span class="value">${p.phone != null && !p.phone.isEmpty() ? p.phone : 'Not provided'}</span>
+                </div>
+
+                <div class="row">
+                    <span class="label">Department :</span>
+                    <span class="value">${p.department != null && !p.department.isEmpty() ? p.department : 'Not provided'}</span>
+                </div>
+
+                <div class="row">
+                    <span class="label">Role :</span>
+                    <span class="value">${p.role != null ? p.role : 'admin'}</span>
+                </div>
+
             </div>
             <script>
             function togglePassword() {
@@ -148,9 +233,9 @@
             </script>
         </div>
 
-        <div class="btn-container">
-            <button type="submit" class="btn btn-save">Save Changes</button>
-            <a href="/logout" class="btn btn-logout">Logout</a>
-        </div>
-    </form>
-</div>
+        <a href="${pageContext.request.contextPath}/admin/profile/edit" class="btn-edit" style="text-decoration: none; text-align: center;">Edit</a>
+
+    </div>
+
+</body>
+</html>

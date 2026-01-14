@@ -55,16 +55,15 @@ public class CounselingController {
     }
 
     // --- 3. HANDLE BOOKING SUBMISSION ---
-    // Suppress warning because we are casting Session Object to Map
     @SuppressWarnings("unchecked") 
     @PostMapping("/booking/submit")
     public String processBooking(
             @RequestParam(value = "existingId", required = false) String existingId,
             @RequestParam("date") String date,
             @RequestParam("time") String time,
-            @RequestParam("counselor") String counselor,
-            @RequestParam(value = "mode", defaultValue = "Online") String mode, 
-            HttpSession session, 
+            @RequestParam("counselor") String counselorName, // Renamed to avoid confusion with class name
+            @RequestParam(value = "mode", defaultValue = "Online") String mode,
+            HttpSession session,
             Model model) {
         
         // 1. Get Student ID from Session
@@ -81,14 +80,14 @@ public class CounselingController {
         if (mode.equalsIgnoreCase("Physical")) {
             venue = "Block B Room 314";
         } else {
-            String cleanName = counselor.toLowerCase().replace(" ", "").replace(".", "");
+            String cleanName = counselorName.toLowerCase().replace(" ", "").replace(".", "");
             venue = "https://utm.webex.com/utm/" + cleanName;
         }
 
         // 3. Create Appointment Object
         Appointment app = new Appointment();
         app.setStudentId(studentId);
-        app.setCounselorName(counselor);
+        app.setCounselorName(counselorName);
         app.setDate(date);
         app.setTime(time);
         app.setType(mode);
@@ -106,7 +105,7 @@ public class CounselingController {
 
         // 5. Success Page Data
         model.addAttribute("bookingId", app.getId()); 
-        model.addAttribute("counselorName", counselor);
+        model.addAttribute("counselorName", counselorName);
         model.addAttribute("sessionType", mode);
         model.addAttribute("venue", venue);
         model.addAttribute("date", date);
@@ -119,7 +118,7 @@ public class CounselingController {
     @GetMapping("/booking/cancel")
     public String cancelBooking(@RequestParam("id") String id) {
         appointmentService.deleteAppointment(id);
-        return "redirect:/counseling/home"; 
+        return "redirect:/counseling/home";
     }
 
     // --- 5. BROWSE ---
@@ -136,8 +135,12 @@ public class CounselingController {
     // --- 6. PROFILE ---
     @GetMapping("/counselor")
     public String showCounselorProfile(@RequestParam("id") String id, Model model) {
+        // FIX: Removed .orElse(null) because getCounselorById returns the object directly
         Counselor c = counselorService.getCounselorById(id);
-        if (c == null) return "redirect:/counseling/browse";
+        
+        if (c == null)
+            return "redirect:/counseling/browse";
+        
         model.addAttribute("c", c);
         return "counseling/profile";
     }
@@ -151,9 +154,16 @@ public class CounselingController {
 
     @GetMapping("/history/view")
     public String viewAppointment(@RequestParam("id") String id, Model model) {
+        
+        // 1. Get Appointment Details
         Appointment app = appointmentService.getAppointmentById(id);
         if (app == null) return "redirect:/counseling/history";
         model.addAttribute("app", app);
+
+        // 🟢 2. NEW: Fetch Feedback for this specific appointment
+        Feedback fb = sessionFeedbackService.getFeedbackByAppointmentId(id);
+        model.addAttribute("feedback", fb); // Pass it to the JSP
+
         return "counseling/appointment_details";
     }
 
@@ -165,12 +175,12 @@ public class CounselingController {
 
     @PostMapping("/history/feedback/submit")
     public String processFeedback(@RequestParam("bookingId") String id,
-                                  @RequestParam("category") String category,
-                                  @RequestParam("subject") String subject,
-                                  @RequestParam("message") String message,
-                                  @RequestParam("rating") int rating,
-                                  Model model) {
-        
+            @RequestParam("category") String category,
+            @RequestParam("subject") String subject,
+            @RequestParam("message") String message,
+            @RequestParam("rating") int rating,
+            Model model) {
+
         Feedback fb = new Feedback(id, category, subject, message, rating);
         sessionFeedbackService.saveFeedback(fb);
 
@@ -179,7 +189,7 @@ public class CounselingController {
         return "counseling/submit_feedback";
     }
 
-    // --- 8. VIEW DETAILS ---
+    // --- 8. VIEW DETAILS (Success Page Reuse) ---
     @GetMapping("/view")
     public String viewAppointmentDetails(@RequestParam("id") String id, Model model) {
         Appointment app = appointmentService.getAppointmentById(id);

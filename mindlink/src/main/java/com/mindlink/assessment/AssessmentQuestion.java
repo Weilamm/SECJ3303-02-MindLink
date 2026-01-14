@@ -1,7 +1,9 @@
+//student view assessment question
 package com.mindlink.assessment;
 
 import java.util.UUID;
 
+//assessment question java
 public class AssessmentQuestion {
     private String id;
     private String questionText;
