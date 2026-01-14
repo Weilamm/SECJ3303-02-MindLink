@@ -328,8 +328,12 @@
         <div class="container">
             <div class="page-header">
                 <h2>Students</h2>
-                <a href="${pageContext.request.contextPath}/admin/user-management/students/new" class="btn btn-teal">Add
-                    New Student</a>
+                <div>
+                    <a href="${pageContext.request.contextPath}/admin/user-management/students/pending"
+                        class="btn btn-yellow" style="margin-right: 10px;">Approve Sign Up</a>
+                    <a href="${pageContext.request.contextPath}/admin/user-management/students/new"
+                        class="btn btn-teal">Add New Student</a>
+                </div>
             </div>
 
             <c:if test="${not empty success}">
@@ -346,14 +350,17 @@
                 </div>
             </c:if>
 
-            <form method="get" action="${pageContext.request.contextPath}/admin/user-management/students" class="search-container">
-                <input type="text" name="search" placeholder="Search by Student ID or name..." value="${searchQuery != null ? searchQuery : ''}" class="search-input">
+            <form method="get" action="${pageContext.request.contextPath}/admin/user-management/students"
+                class="search-container">
+                <input type="text" name="search" placeholder="Search by Student ID or name..."
+                    value="${searchQuery != null ? searchQuery : ''}" class="search-input">
                 <c:if test="${param.counselorSearch != null && !param.counselorSearch.isEmpty()}">
                     <input type="hidden" name="counselorSearch" value="${param.counselorSearch}">
                 </c:if>
                 <button type="submit" class="search-button">Search</button>
                 <c:if test="${searchQuery != null && !searchQuery.isEmpty()}">
-                    <a href="${pageContext.request.contextPath}/admin/user-management/students${param.counselorSearch != null && !param.counselorSearch.isEmpty() ? '?counselorSearch=' : ''}${param.counselorSearch != null && !param.counselorSearch.isEmpty() ? param.counselorSearch : ''}" class="clear-btn">Clear</a>
+                    <a href="${pageContext.request.contextPath}/admin/user-management/students${param.counselorSearch != null && !param.counselorSearch.isEmpty() ? '?counselorSearch=' : ''}${param.counselorSearch != null && !param.counselorSearch.isEmpty() ? param.counselorSearch : ''}"
+                        class="clear-btn">Clear</a>
                 </c:if>
             </form>
 
@@ -368,6 +375,7 @@
                                 <th>Faculty</th>
                                 <th>Year</th>
                                 <th>Created At</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -381,6 +389,19 @@
                                     <td>${student.year}</td>
                                     <td>${student.createdAt != null ? student.createdAt.toString().substring(0, 16) :
                                         'N/A'}</td>
+                                    <td>
+                                        <span style="
+                                            padding: 4px 12px; 
+                                            border-radius: 12px; 
+                                            font-size: 12px; 
+                                            font-weight: 600;
+                                            text-transform: uppercase;
+                                            background-color: ${student.status == 'APPROVED' ? '#d4edda' : (student.status == 'REJECTED' ? '#f8d7da' : '#fff3cd')};
+                                            color: ${student.status == 'APPROVED' ? '#155724' : (student.status == 'REJECTED' ? '#721c24' : '#856404')};
+                                        ">
+                                            ${student.status}
+                                        </span>
+                                    </td>
                                     <td>
                                         <a href="${pageContext.request.contextPath}/admin/user-management/students/edit/${student.studentId}"
                                             class="btn btn-sm btn-yellow" style="margin-right: 5px;">Edit</a>
@@ -405,6 +426,7 @@
             <!-- Import Counselor List Fragment -->
             <c:import url="/admin/user-management/counselors/fragment">
                 <c:param name="search" value="${param.counselorSearch != null ? param.counselorSearch : ''}" />
+                <c:param name="mainSearch" value="${param.search != null ? param.search : ''}" />
             </c:import>
         </div>
 

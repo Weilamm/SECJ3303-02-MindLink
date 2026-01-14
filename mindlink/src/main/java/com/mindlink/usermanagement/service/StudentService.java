@@ -1,6 +1,5 @@
 package com.mindlink.usermanagement.service;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -56,6 +55,9 @@ public class StudentService {
     private void createStudent(Student student) {
         student.setCreatedAt(LocalDateTime.now());
         student.setUpdatedAt(LocalDateTime.now());
+        if (student.getStatus() == null || student.getStatus().isEmpty()) {
+            student.setStatus("PENDING");
+        }
         // Plain text password
         studentDao.save(student);
     }
@@ -85,5 +87,19 @@ public class StudentService {
             return getAllStudents();
         }
         return studentDao.searchByIdOrName(keyword);
+    }
+
+    public void approveStudent(String id) {
+        studentDao.updateStatus(id, "APPROVED");
+    }
+
+    public List<Student> getPendingStudents() {
+        // Since we don't have a specific DAO method for implementation simplicity and
+        // time,
+        // we can filter all students. For 50+ students preferably add a DAO method
+        // "findByStatus".
+        return getAllStudents().stream()
+                .filter(s -> "PENDING".equalsIgnoreCase(s.getStatus()))
+                .toList();
     }
 }

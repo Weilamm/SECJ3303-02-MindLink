@@ -327,13 +327,11 @@
 
         <div class="container">
             <div class="page-header">
-                <h2>Students</h2>
-                <div>
-                    <a href="${pageContext.request.contextPath}/admin/user-management/students/pending"
-                        class="btn btn-yellow" style="margin-right: 10px;">Approve Sign Up</a>
-                    <a href="${pageContext.request.contextPath}/admin/user-management/students/new"
-                        class="btn btn-teal">Add New Student</a>
-                </div>
+                <h2 style="display: flex; align-items: center; gap: 10px;">
+                    <a href="${pageContext.request.contextPath}/admin/user-management/students"
+                        style="color: var(--text-dark); text-decoration: none; font-size: 24px;">&larr;</a>
+                    Pending Student Approvals
+                </h2>
             </div>
 
             <c:if test="${not empty success}">
@@ -374,8 +372,7 @@
                                 <th>Email</th>
                                 <th>Faculty</th>
                                 <th>Year</th>
-                                <th>Created At</th>
-                                <th>Status</th>
+                                <th>Requested At</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -385,49 +382,29 @@
                                     <td>${student.studentId}</td>
                                     <td>${student.name}</td>
                                     <td>${student.email}</td>
-                                    <td>${student.faculty}</td>
-                                    <td>${student.year}</td>
+                                    <td>${student.faculty != null ? student.faculty : '-'}</td>
+                                    <td>${student.year != null ? student.year : '-'}</td>
                                     <td>${student.createdAt != null ? student.createdAt.toString().substring(0, 16) :
                                         'N/A'}</td>
                                     <td>
-                                        <span style="
-                                            padding: 4px 12px; 
-                                            border-radius: 12px; 
-                                            font-size: 12px; 
-                                            font-weight: 600;
-                                            text-transform: uppercase;
-                                            background-color: ${student.status == 'APPROVED' ? '#d4edda' : (student.status == 'REJECTED' ? '#f8d7da' : '#fff3cd')};
-                                            color: ${student.status == 'APPROVED' ? '#155724' : (student.status == 'REJECTED' ? '#721c24' : '#856404')};
-                                        ">
-                                            ${student.status}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="${pageContext.request.contextPath}/admin/user-management/students/edit/${student.studentId}"
-                                            class="btn btn-sm btn-yellow" style="margin-right: 5px;">Edit</a>
-                                        <a href="${pageContext.request.contextPath}/admin/user-management/students/delete/${student.studentId}"
-                                            class="btn btn-sm btn-pink"
-                                            onclick="return confirm('Are you sure you want to delete this student?')">Delete</a>
+                                        <form
+                                            action="${pageContext.request.contextPath}/admin/user-management/students/approve/${student.studentId}"
+                                            method="post" style="display:inline;">
+                                            <button type="submit" class="btn btn-sm btn-teal">Approve</button>
+                                        </form>
                                     </td>
                                 </tr>
                             </c:forEach>
                             <c:if test="${empty students}">
                                 <tr>
-                                    <td colspan="7" style="text-align: center; padding: 40px; color: #888;">No students
-                                        found.</td>
+                                    <td colspan="7" style="text-align: center; padding: 40px; color: #888;">No pending
+                                        approvals found.</td>
                                 </tr>
                             </c:if>
                         </tbody>
                     </table>
                 </div>
             </div>
-
-
-            <!-- Import Counselor List Fragment -->
-            <c:import url="/admin/user-management/counselors/fragment">
-                <c:param name="search" value="${param.counselorSearch != null ? param.counselorSearch : ''}" />
-                <c:param name="mainSearch" value="${param.search != null ? param.search : ''}" />
-            </c:import>
         </div>
 
     </body>

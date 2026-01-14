@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS student (
     phone VARCHAR(20),
     faculty VARCHAR(255),
     year INT,
+    status VARCHAR(20) DEFAULT 'PENDING',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_email (email)
@@ -142,11 +143,11 @@ CREATE TABLE IF NOT EXISTS appointment (
 );
 
 -- Sample Data for Students (Student IDs start from S001)
-INSERT INTO student (student_id, name, email, password, phone, faculty, year) VALUES
-('S001', 'Karen Voon Xiu Wen', 'karen@utm.my', 'password123', '+60123456789', 'Faculty of Computing', 3),
-('S002', 'Siti Nurhaliza', 'siti.s002@utm.my', 'password123', '+60123456790', 'Faculty of Computing', 2),
-('S003', 'Muhammad Ali', 'ali.s003@utm.myutm.my', 'password123', '+60123456792', 'Faculty of Computing', 1),
-('S005', 'Hassan bin Ismail', 'hassan.s005@utm.my', 'password123', '+60123456793', 'Faculty of Engineering', 2);
+INSERT INTO student (student_id, name, email, password, phone, faculty, year, status) VALUES
+('S001', 'Karen Voon Xiu Wen', 'karen@utm.my', 'password123', '+60123456789', 'Faculty of Computing', 3, 'APPROVED'),
+('S002', 'Siti Nurhaliza', 'siti.s002@utm.my', 'password123', '+60123456790', 'Faculty of Computing', 2, 'APPROVED'),
+('S003', 'Muhammad Ali', 'ali.s003@utm.myutm.my', 'password123', '+60123456792', 'Faculty of Computing', 1, 'APPROVED'),
+('S005', 'Hassan bin Ismail', 'hassan.s005@utm.my', 'password123', '+60123456793', 'Faculty of Engineering', 2, 'PENDING');
 
 -- Sample Data for Admins (Admin IDs start from A001)
 INSERT INTO admin (admin_id, name, email, password, phone, department, role) VALUES

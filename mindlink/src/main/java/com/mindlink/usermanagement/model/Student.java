@@ -1,6 +1,5 @@
 package com.mindlink.usermanagement.model;
 
-
 import java.time.LocalDateTime;
 
 public class Student {
@@ -12,6 +11,7 @@ public class Student {
     private String phone;
     private String faculty;
     private Integer year;
+    private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -74,6 +74,14 @@ public class Student {
 
     public void setYear(Integer year) {
         this.year = year;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public LocalDateTime getCreatedAt() {

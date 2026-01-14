@@ -21,10 +21,10 @@ public class CounselorDaoImpl implements CounselorDao {
         @Override
         public Counselor mapRow(ResultSet rs, int rowNum) throws SQLException {
             Counselor counselor = new Counselor();
-            
+
             // Matches the database column name
-            counselor.setCounselorId(rs.getString("id")); 
-            
+            counselor.setCounselorId(rs.getString("id"));
+
             counselor.setName(rs.getString("name"));
             counselor.setEmail(rs.getString("email"));
             counselor.setPassword(rs.getString("password"));

@@ -1,6 +1,5 @@
 package com.mindlink.usermanagement;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,6 +47,26 @@ public class UserManagementController {
         return "admin/userCRUD/student-list";
     }
 
+    // List pending students for approval
+    @GetMapping("/students/pending")
+    public String listPendingStudents(Model model) {
+        List<Student> pendingStudents = studentService.getPendingStudents();
+        model.addAttribute("students", pendingStudents);
+        return "admin/userCRUD/student-approval-list";
+    }
+
+    // Approve student
+    @PostMapping("/students/approve/{id}")
+    public String approveStudent(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        try {
+            studentService.approveStudent(id);
+            redirectAttributes.addFlashAttribute("success", "Student " + id + " approved successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error approving student: " + e.getMessage());
+        }
+        return "redirect:/admin/user-management/students/pending";
+    }
+
     // Show form for new student
     @GetMapping("/students/new")
     public String showNewStudentForm(Model model) {
@@ -90,7 +109,8 @@ public class UserManagementController {
                             ? "Student updated successfully"
                             : "Student created successfully");
         } catch (DataIntegrityViolationException e) {
-            redirectAttributes.addFlashAttribute("error", "Student ID already exists. Please use a different Student ID.");
+            redirectAttributes.addFlashAttribute("error",
+                    "Student ID already exists. Please use a different Student ID.");
             return "redirect:/admin/user-management/students/new";
         } catch (Exception e) {
             // If create failed, send back to create form; if update failed, return to edit.
@@ -116,5 +136,3 @@ public class UserManagementController {
         return "redirect:/admin/user-management/students";
     }
 }
-
-
