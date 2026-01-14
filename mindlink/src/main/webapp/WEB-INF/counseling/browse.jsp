@@ -20,7 +20,6 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             margin: 0;
-            /* 🟢 FIX: Added top padding so the button isn't stuck to the roof */
             padding: 40px 20px; 
             color: var(--text-dark);
             text-align: center;
@@ -29,7 +28,7 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            text-align: left; /* Keep internal content aligned left */
+            text-align: left; 
         }
 
         /* BACK BUTTON STYLE */
@@ -40,12 +39,11 @@
             text-decoration: none; 
             color: #666; 
             font-weight: 600; 
-            margin-bottom: 30px; /* Space below button */
+            margin-bottom: 30px; 
             transition: 0.2s; 
         }
         .btn-back:hover { color: var(--text-dark); transform: translateX(-5px); }
 
-        /* HEADER TEXT */
         h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; text-align: center; }
         .subtitle { color: #666; margin-bottom: 40px; text-align: center; }
 
@@ -114,13 +112,17 @@
 
         <div class="grid">
             <c:forEach items="${counselors}" var="c">
-                <a href="${pageContext.request.contextPath}/counseling/booking?preselected=${c.name}" style="text-decoration: none; color: inherit;">
+                
+                <a href="${pageContext.request.contextPath}/counseling/counselor?id=${c.id}" style="text-decoration: none; color: inherit;">
+                    
                     <div class="card">
                         <div class="avatar">
-                            ${c.name.substring(4, 5)} </div>
+                            ${c.name.substring(4, 5)} 
+                        </div>
                         <div class="info">
                             <h3>${c.name}</h3>
-                            <p><i class="fas fa-map-marker-alt"></i> Block A Room 209</p> <div class="tags">
+                            <p><i class="fas fa-map-marker-alt"></i> Block A Room 209</p> 
+                            <div class="tags">
                                 <span class="tag">Anxiety</span>
                                 <span class="tag">Stress</span>
                                 <span class="tag">Academic</span>

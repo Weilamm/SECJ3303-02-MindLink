@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS admin (
 -- Counselor Table: Stores counselor user information
 DROP TABLE IF EXISTS counselor;
 CREATE TABLE counselor (
-    counselor_id VARCHAR(50) PRIMARY KEY,
+    id VARCHAR(50) PRIMARY KEY, 
     name VARCHAR(100),
     password VARCHAR(255) NOT NULL,
     location VARCHAR(100),
@@ -47,8 +47,7 @@ CREATE TABLE counselor (
     bio TEXT,
     quote VARCHAR(255),
     image_url VARCHAR(255),
-    password VARCHAR(255),
-    phone VARCHAR(20),
+    phone_number VARCHAR(20),
     specialization VARCHAR(255)
 );
 
@@ -142,11 +141,25 @@ INSERT INTO admin (admin_id, name, email, password, phone, department, role) VAL
 ('A003', 'Dr. Lee Mei Ling', 'lee.a003@utm.my', 'admin123', '+60198765434', 'Faculty of Engineering', 'admin');
 
 -- Sample Data for Counselors (Counselor IDs start from C001)
-INSERT INTO counselor (id, name, email, password, location, education, university, languages, bio, quote, image_url) VALUES
-('C001', 'Ms. Tan Mei Ling', 'tan.meiling@utm.my', 'counselor123', 'Block A Room 209', 'M.A. Clinical Psychology', 'Universiti Sains Malaysia', 'English, Mandarin, Malay', 'Specialization: Academic stress management, motivation building, emotional resilience', 'Empowering your journey.', 'tan.jpg'),
-('C002', 'Mr. Ryan Lin', 'ryan.lin@utm.my', 'counselor123', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English, Hokkien', 'Specialization: Cognitive behavioral therapy', 'Change starts within.', 'ryan.jpg'),
-('C003', 'Ms. Nur Alya', 'nur.alya@utm.my', 'counselor123', 'Block B Room 314', 'PhD in Psychology', 'UKM', 'Malay, English', 'Specialization: Anxiety and mood disorders', 'Healing takes time.', 'nur.jpg'),
-('C004', 'Ms. Evelyn Reed', 'evelyn.reed@utm.my', 'counselor123', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English', 'Specialization: Adjustment issues', 'Guidance for every step.', 'evelyn.jpg');
+INSERT INTO counselor (
+    id, 
+    name, 
+    email, 
+    password, 
+    location, 
+    education, 
+    university, 
+    languages, 
+    specialization, 
+    bio, 
+    quote, 
+    image_url, 
+    phone_number
+) VALUES 
+('C001', 'Ms. Tan Mei Ling', 'tan.meiling@utm.my', 'counselor123', 'Block A Room 209', 'M.A. Clinical Psychology', 'Universiti Sains Malaysia', 'English, Mandarin, Malay', 'Academic stress management, motivation building, emotional resilience', 'Experienced clinical psychologist dedicated to student well-being.', 'Empowering your journey.', 'tan.jpg', '012-3456789'),
+('C002', 'Mr. Ryan Lin', 'ryan.lin@utm.my', 'counselor123', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English, Hokkien', 'Cognitive behavioral therapy', 'Focused on behavioral adjustments and mental clarity.', 'Change starts within.', 'ryan.jpg', '013-9876543'),
+('C003', 'Ms. Nur Alya', 'nur.alya@utm.my', 'counselor123', 'Block B Room 314', 'PhD in Psychology', 'UKM', 'Malay, English', 'Anxiety and mood disorders', 'Expert in helping students manage anxiety and mood fluctuations.', 'Healing takes time.', 'nur.jpg', '014-5678901'),
+('C004', 'Ms. Evelyn Reed', 'evelyn.reed@utm.my', 'counselor123', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English', 'Adjustment issues', 'Helping students navigate campus life transitions.', 'Guidance for every step.', 'evelyn.jpg', '016-1122334');
 
 -- Sample Data for Appointments
 INSERT INTO appointment (id, student_id, counselor_name, date, time, type, venue, status) VALUES
@@ -267,6 +280,16 @@ CREATE TABLE IF NOT EXISTS ass_question (
     INDEX idx_assessment_id (assessment_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS feedback (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    booking_id VARCHAR(50),
+    category VARCHAR(100),
+    subject VARCHAR(255),
+    message TEXT,
+    rating INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Sample Data for Assessment (Stress Test)
 INSERT INTO assessment (assessment_title, question_text) VALUES 
 ('Stress Test', 'How often do you feel overwhelmed by your workload?'),
@@ -300,3 +323,5 @@ INSERT INTO ass_question (assessment_id, option_text, score_value) VALUES
 INSERT INTO ass_question (assessment_id, option_text, score_value) VALUES 
 (5, 'Rarely', 0), (5, 'Sometimes', 5), (5, 'Always', 10);
 
+INSERT INTO feedback (id, booking_id, category, subject, message, rating, created_at) VALUES 
+(2, 'BK003', 'Counselor Behavior', 'Nice Counselor', 'I love this counselor!', 5, '2026-01-14 07:29:20');

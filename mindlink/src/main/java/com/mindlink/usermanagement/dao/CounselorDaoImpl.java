@@ -21,11 +21,14 @@ public class CounselorDaoImpl implements CounselorDao {
         @Override
         public Counselor mapRow(ResultSet rs, int rowNum) throws SQLException {
             Counselor counselor = new Counselor();
-            counselor.setCounselorId(rs.getString("counselor_id"));
+            
+            // Matches the database column name
+            counselor.setCounselorId(rs.getString("id")); 
+            
             counselor.setName(rs.getString("name"));
             counselor.setEmail(rs.getString("email"));
             counselor.setPassword(rs.getString("password"));
-            counselor.setPhone(rs.getString("phone"));
+            counselor.setPhone(rs.getString("phone_number"));
             counselor.setLocation(rs.getString("location"));
             counselor.setEducation(rs.getString("education"));
             counselor.setUniversity(rs.getString("university"));
@@ -43,14 +46,16 @@ public class CounselorDaoImpl implements CounselorDao {
 
     @Override
     public Optional<Counselor> findById(String id) {
-        String sql = "SELECT * FROM counselor WHERE counselor_id = ?";
+        // --- FIX 2: Change WHERE clause to use 'id' ---
+        String sql = "SELECT * FROM counselor WHERE id = ?";
         List<Counselor> counselors = jdbcTemplate.query(sql, rowMapper, id);
         return counselors.stream().findFirst();
     }
 
     @Override
     public void save(Counselor counselor) {
-        String sql = "INSERT INTO counselor (counselor_id, name, email, password, phone, location, education, university, languages, specialization) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        // --- FIX 3: Change INSERT column to 'id' ---
+        String sql = "INSERT INTO counselor (id, name, email, password, phone, location, education, university, languages, specialization) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
                 counselor.getCounselorId(),
                 counselor.getName(),
@@ -66,7 +71,8 @@ public class CounselorDaoImpl implements CounselorDao {
 
     @Override
     public void update(Counselor counselor) {
-        String sql = "UPDATE counselor SET name=?, email=?, password=?, phone=?, location=?, education=?, university=?, languages=?, specialization=? WHERE counselor_id=?";
+        // --- FIX 4: Change WHERE clause to use 'id' ---
+        String sql = "UPDATE counselor SET name=?, email=?, password=?, phone=?, location=?, education=?, university=?, languages=?, specialization=? WHERE id=?";
         jdbcTemplate.update(sql,
                 counselor.getName(),
                 counselor.getEmail(),
@@ -82,7 +88,8 @@ public class CounselorDaoImpl implements CounselorDao {
 
     @Override
     public void deleteById(String id) {
-        String sql = "DELETE FROM counselor WHERE counselor_id = ?";
+        // --- FIX 5: Change WHERE clause to use 'id' ---
+        String sql = "DELETE FROM counselor WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
 
