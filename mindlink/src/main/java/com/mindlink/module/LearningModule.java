@@ -12,6 +12,9 @@ public class LearningModule {
     private LocalDateTime updatedAt;
     private List<ModuleQuestion> questions;
 
+    // Transient field for UI
+    private int progressPercentage;
+
     public LearningModule() {
     }
 
@@ -83,5 +86,13 @@ public class LearningModule {
         } catch (NumberFormatException e) {
             // Ignore if not a number
         }
+    }
+
+    public int getProgressPercentage() {
+        return progressPercentage;
+    }
+
+    public void setProgressPercentage(int progressPercentage) {
+        this.progressPercentage = progressPercentage;
     }
 }

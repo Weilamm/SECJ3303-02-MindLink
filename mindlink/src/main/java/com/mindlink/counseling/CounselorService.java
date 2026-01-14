@@ -44,6 +44,7 @@ public class CounselorService {
 
     // 4. UPDATE (For Edit Profile - SAVES PERMANENTLY)
     public void updateCounselor(Counselor c) {
+        // Note: usually we don't update password here unless you have a separate change password form
         String sql = "UPDATE counselor SET name=?, education=?, university=?, languages=?, location=?, email=?, bio=?, quote=?, image_url=? WHERE id=?";
         
         jdbcTemplate.update(sql,
@@ -64,9 +65,11 @@ public class CounselorService {
     private static class CounselorRowMapper implements RowMapper<Counselor> {
         @Override
         public Counselor mapRow(ResultSet rs, int rowNum) throws SQLException {
+            // FIX: Added 'password' as the 3rd argument to match your Counselor.java class
             return new Counselor(
                 rs.getString("id"),
                 rs.getString("name"),
+                rs.getString("password"), // <--- ADDED THIS LINE
                 rs.getString("location"),
                 rs.getString("education"),
                 rs.getString("university"),

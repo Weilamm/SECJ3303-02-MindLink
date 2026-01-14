@@ -4,14 +4,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Appointment Details</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Session Details | MindLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
         :root {
             --bg-color: #FFF3E0;
             --text-dark: #003049;
             --card-bg: #FFFFFF;
-            --btn-teal: #48C9B0; /* Teal color from your screenshot */
+            --btn-teal: #48C9B0;
+            --accent: #F497AA;
+            --gray: #666;
         }
 
         body {
@@ -21,173 +25,138 @@
             color: var(--text-dark);
         }
 
-        /* Header Navigation */
-        .header {
-            padding: 20px 100px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-        }
+        /* HEADER */
+        .header { padding: 20px 100px; display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .nav-links a { text-decoration: none; color: #00313e; font-weight: 500; margin: 0 15px; transition: 0.3s; }
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; color: #00313e; font-size: 24px; text-decoration: none; }
+        .logo img { height: 40px; }
 
-        .nav-left,
-        .nav-right {
-            display: flex;
-            align-items: center;
-            justify-content: space-evenly;
-            flex: 1;
-            gap: 0;
-        }
-
-        .nav-left a, .nav-right a {
-            text-decoration: none;
-            color: #00313e;
-            font-size: 16px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-left a:hover, .nav-right a:hover {
-            color: #0d4e57;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            color: #00313e;
-            font-size: 32px;
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .container { max-width: 900px; margin: 40px auto; }
+        .container { max-width: 800px; margin: 40px auto; }
         
-        h1 { font-size: 32px; font-weight: 800; margin-bottom: 30px; }
+        /* BACK BUTTON */
+        .btn-back { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #666; font-weight: 600; margin-bottom: 20px; transition: 0.2s; }
+        .btn-back:hover { color: var(--text-dark); transform: translateX(-5px); }
 
+        h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; }
+        .status-badge {
+            display: inline-block; background: #E0F2F1; color: #00695C; 
+            padding: 5px 12px; border-radius: 20px; font-size: 14px; font-weight: 600; margin-bottom: 30px;
+        }
+
+        /* MAIN CARD */
         .card {
             background: var(--card-bg);
-            border-radius: 12px;
-            padding: 50px;
+            border-radius: 16px;
+            padding: 40px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            min-height: 400px; /* Gives it that spacious look */
-            position: relative;
         }
 
-        /* GRID LAYOUT */
         .details-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 Columns */
-            gap: 40px; /* Bigger gap */
-            margin-bottom: 80px; /* Space before the button */
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 30px;
         }
         
-        .detail-row { margin-bottom: 25px; font-size: 16px; }
-        .label { font-weight: 400; color: #333; display: inline-block; width: 140px; }
-        .value { font-weight: 500; color: #000; }
+        .detail-item { margin-bottom: 20px; }
+        .label { display: block; font-size: 13px; color: #888; margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .value { font-size: 18px; font-weight: 600; color: #222; display: flex; align-items: center; gap: 10px; }
+        .value i { color: var(--btn-teal); width: 20px; }
 
         /* BUTTONS */
-        .action-area {
-            display: flex;
-            justify-content: center;
-        }
+        .action-area { display: flex; justify-content: center; gap: 20px; }
 
         .btn-feedback {
-            background-color: var(--btn-teal);
+            background-color: var(--text-dark); /* Dark Blue */
             color: white;
-            padding: 12px 30px;
-            border-radius: 6px; /* Slightly squared corners */
-            border: none;
-            font-weight: 500;
-            font-size: 16px;
-            cursor: pointer;
+            padding: 15px 35px;
+            border-radius: 50px;
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-weight: 600;
+            font-size: 16px;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 48, 73, 0.2);
             transition: 0.2s;
         }
-        
-        .btn-feedback:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-feedback:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0, 48, 73, 0.3); }
 
     </style>
 </head>
 <body>
-<!-- Header Navigation -->
+
     <div class="header">
-        <div class="nav-left">
+        <div class="nav-links">
             <a href="${pageContext.request.contextPath}/home">Home</a>
             <a href="${pageContext.request.contextPath}/learning">Learning</a>
         </div>
-        
         <a href="${pageContext.request.contextPath}/home" class="logo">
-            <div class="logo-icon">
-                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
-            </div>
+            <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
             <span>MindLink</span>
         </a>
-        
-        <div class="nav-right">
+        <div class="nav-links">
             <a href="${pageContext.request.contextPath}/forum/welcome">Forum</a>
             <a href="${pageContext.request.contextPath}/profile">Profile</a>
         </div>
     </div>
 
     <div class="container">
-        <h1>Appointment Details</h1>
+        <a href="${pageContext.request.contextPath}/counseling/history" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back to History
+        </a>
+
+        <h1>Session Details</h1>
+        <div class="status-badge"><i class="fas fa-check-circle"></i> Completed</div>
 
         <div class="card">
 
             <div class="details-grid">
                 <div>
-                    <div class="detail-row">
-                        <span class="label">Booking ID:</span>
-                        <span class="value">${app.id}</span>
+                    <div class="detail-item">
+                        <span class="label">Counselor</span>
+                        <span class="value"><i class="fas fa-user-md"></i> ${app.counselorName}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">Session Type:</span>
-                        <span class="value">${app.type}</span>
+                    <div class="detail-item">
+                        <span class="label">Date</span>
+                        <span class="value"><i class="far fa-calendar-alt"></i> ${app.date}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">Date:</span>
-                        <span class="value">${app.date}</span>
+                    <div class="detail-item">
+                        <span class="label">Session Type</span>
+                        <span class="value"><i class="fas fa-laptop-medical"></i> ${app.type}</span>
                     </div>
                 </div>
 
                 <div>
-                    <div class="detail-row">
-                        <span class="label">Counselor Name:</span>
-                        <span class="value">${app.counselorName}</span>
+                    <div class="detail-item">
+                        <span class="label">Booking ID</span>
+                        <span class="value" style="font-family: monospace; font-size: 16px;">#${app.id}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">Venue:</span>
-                        <span class="value">${app.venue}</span>
+                    <div class="detail-item">
+                        <span class="label">Time</span>
+                        <span class="value"><i class="far fa-clock"></i> ${app.time}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">Time:</span>
-                        <span class="value">${app.time}</span>
+                    <div class="detail-item">
+                        <span class="label">Venue / Link</span>
+                        <span class="value">
+                            <c:choose>
+                                <c:when test="${app.venue.startsWith('http')}">
+                                    <a href="${app.venue}" target="_blank" style="color: #007bff; text-decoration: underline; font-size: 16px;">
+                                        Open Link <i class="fas fa-external-link-alt" style="width: auto; font-size: 12px;"></i>
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                    <i class="fas fa-map-marker-alt"></i> ${app.venue}
+                                </c:otherwise>
+                            </c:choose>
+                        </span>
                     </div>
                 </div>
             </div>
 
             <div class="action-area">
-                <a href="/counseling/history/feedback?id=${app.id}" class="btn-feedback" onclick="alert('Feedback form coming soon!')">
-                    Write a Feedback ✏️
+                <a href="${pageContext.request.contextPath}/counseling/history/feedback?id=${app.id}" class="btn-feedback">
+                    <i class="far fa-comment-dots"></i> Write Feedback
                 </a>
             </div>
 
