@@ -1,50 +1,122 @@
 package com.mindlink.module;
 
-import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.mindlink.module.dao.ModuleDao;
+import com.mindlink.module.dao.ModuleQuestionDao;
 
 @Service
 public class ModuleService {
-    
-    private List<LearningModule> modules = new ArrayList<>();
 
-    public ModuleService() {
-        // Pre-load your existing modules
-        modules.add(new LearningModule("Introduction to Mental Health", 
-            "Learn the basics of mental health, reduce stigma, and understand emotional well-being.", 
-            "mental-health-intro.png"));
-            
-        modules.add(new LearningModule("Emotional Awareness", 
-            "Recognize your emotions and develop healthy strategies to manage them.", 
-            "emotional-awareness.png"));
-    }
+    @Autowired
+    private ModuleDao moduleDao;
+
+    @Autowired
+    private ModuleQuestionDao moduleQuestionDao;
+
+    @Autowired
+    private com.mindlink.module.dao.ModuleProgressDao moduleProgressDao;
 
     // READ
-    public List<LearningModule> getAllModules() { return modules; }
+    public List<LearningModule> getAllModules() {
+        List<LearningModule> modules = moduleDao.findAll();
+        // Load questions for each module
+        for (LearningModule module : modules) {
+            List<ModuleQuestion> questions = moduleQuestionDao.findByModuleId(module.getModuleId());
+            module.setQuestions(questions);
+        }
+        return modules;
+    }
 
     public LearningModule getModuleById(String id) {
-        return modules.stream().filter(m -> m.getId().equals(id)).findFirst().orElse(null);
+        try {
+            int moduleId = Integer.parseInt(id);
+            Optional<LearningModule> moduleOpt = moduleDao.findById(moduleId);
+            if (moduleOpt.isPresent()) {
+                LearningModule module = moduleOpt.get();
+                List<ModuleQuestion> questions = moduleQuestionDao.findByModuleId(moduleId);
+                module.setQuestions(questions);
+                return module;
+            }
+        } catch (NumberFormatException e) {
+            // Invalid ID format
+        }
+        return null;
     }
 
     // CREATE / UPDATE
     public void saveModule(LearningModule module) {
-        if (module.getId() == null || module.getId().isEmpty()) {
+        if (module.getModuleId() == 0) {
             // New Module
-            modules.add(new LearningModule(module.getTitle(), module.getDescription(), module.getImagePath()));
+            module.setCreatedAt(LocalDateTime.now());
+            module.setUpdatedAt(LocalDateTime.now());
+            moduleDao.save(module);
         } else {
             // Update Existing
-            for (int i = 0; i < modules.size(); i++) {
-                if (modules.get(i).getId().equals(module.getId())) {
-                    modules.set(i, module);
-                    return;
-                }
-            }
+            module.setUpdatedAt(LocalDateTime.now());
+            moduleDao.update(module);
         }
     }
 
     // DELETE
     public void deleteModule(String id) {
-        modules.removeIf(m -> m.getId().equals(id));
+        try {
+            int moduleId = Integer.parseInt(id);
+            moduleQuestionDao.deleteByModuleId(moduleId);
+            moduleDao.deleteById(moduleId);
+        } catch (NumberFormatException e) {
+            // Invalid ID format
+        }
+    }
+
+    // QUESTION MANAGEMENT
+    public ModuleQuestion getQuestionById(int questionId) {
+        return moduleQuestionDao.findById(questionId).orElse(null);
+    }
+
+    public void saveQuestion(ModuleQuestion question) {
+        if (question.getQuestionId() == 0) {
+            // New Question
+            question.setCreatedAt(LocalDateTime.now());
+            question.setUpdatedAt(LocalDateTime.now());
+            moduleQuestionDao.save(question);
+        } else {
+            // Update Existing
+            question.setUpdatedAt(LocalDateTime.now());
+            moduleQuestionDao.update(question);
+        }
+    }
+
+    public void deleteQuestion(int questionId) {
+        moduleQuestionDao.deleteById(questionId);
+    }
+
+    // --- PROGRESS TRACKING ---
+
+    public void markQuestionAsDone(String studentId, int moduleId, int questionId) {
+        UserProgress progress = new UserProgress(studentId, moduleId, questionId);
+        moduleProgressDao.saveProgress(progress);
+    }
+
+    public int getModuleProgressPercentage(String studentId, int moduleId) {
+        List<ModuleQuestion> allQuestions = moduleQuestionDao.findByModuleId(moduleId);
+        if (allQuestions.isEmpty()) {
+            return 0;
+        }
+        List<UserProgress> completed = moduleProgressDao.findByStudentAndModule(studentId, moduleId);
+
+        int total = allQuestions.size();
+        int done = completed.size();
+
+        return (int) Math.round(((double) done / total) * 100);
+    }
+
+    public List<UserProgress> getStudentProgressForModule(String studentId, int moduleId) {
+        return moduleProgressDao.findByStudentAndModule(studentId, moduleId);
     }
 }

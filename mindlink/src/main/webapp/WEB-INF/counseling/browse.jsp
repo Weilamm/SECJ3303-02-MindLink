@@ -4,170 +4,136 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Find Your Counselor</title>
+    <title>Find Your Counselor | MindLink</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
         :root {
             --bg-color: #FFF3E0;
             --text-dark: #003049;
             --card-bg: #FFFFFF;
+            --btn-teal: #48C9B0;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
-            margin: 0; padding: 20px;
+            margin: 0;
+            padding: 40px 20px; 
             color: var(--text-dark);
+            text-align: center;
         }
 
-        /* Header Navigation */
-        .header {
-            padding: 20px 100px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: left; 
         }
 
-        .nav-left,
-        .nav-right {
-            display: flex;
-            align-items: center;
-            justify-content: space-evenly;
-            flex: 1;
-            gap: 0;
+        /* BACK BUTTON STYLE */
+        .btn-back { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            text-decoration: none; 
+            color: #666; 
+            font-weight: 600; 
+            margin-bottom: 30px; 
+            transition: 0.2s; 
         }
+        .btn-back:hover { color: var(--text-dark); transform: translateX(-5px); }
 
-        .nav-left a, .nav-right a {
-            text-decoration: none;
-            color: #00313e;
-            font-size: 16px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-left a:hover, .nav-right a:hover {
-            color: #0d4e57;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            color: #00313e;
-            font-size: 32px;
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .container { max-width: 1100px; margin: 40px auto; }
-        
-        h1 { font-size: 32px; font-weight: 800; margin-bottom: 5px; }
-        .subtitle { color: #666; font-size: 16px; margin-bottom: 40px; }
+        h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; text-align: center; }
+        .subtitle { color: #666; margin-bottom: 40px; text-align: center; }
 
         /* SEARCH BAR */
-        .search-container {
-            margin-bottom: 50px;
-            position: relative;
-        }
-        .search-input {
-            width: 100%;
+        .search-container { text-align: center; margin-bottom: 40px; }
+        .search-box {
             padding: 15px 20px;
-            padding-right: 50px; /* Space for icon */
-            border-radius: 30px;
-            border: 1px solid #AAA;
-            background: transparent;
+            width: 100%;
+            max-width: 500px;
+            border: none;
+            border-radius: 50px;
             font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             outline: none;
-            font-family: inherit;
-        }
-        .search-icon {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 20px;
-            color: #555;
-            cursor: pointer;
         }
 
-        /* CARD GRID */
-        .counselor-grid {
+        /* COUNSELOR GRID */
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Responsive Grid */
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
         }
 
         .card {
-            background: var(--card-bg);
-            border-radius: 8px;
+            background: white;
             padding: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             transition: transform 0.2s;
-            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-        .card:hover { transform: translateY(-5px); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
 
-        .counselor-name { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #000; }
-        .counselor-loc { font-size: 14px; color: #666; }
+        .avatar {
+            width: 60px; height: 60px;
+            background: #E0F7FA;
+            color: #006064;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; font-weight: bold;
+        }
+
+        .info h3 { margin: 0 0 5px 0; font-size: 18px; }
+        .info p { margin: 0; color: #666; font-size: 14px; }
+        
+        .tags { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+        .tag { background: #f0f0f0; padding: 4px 10px; border-radius: 15px; font-size: 11px; color: #555; }
 
     </style>
 </head>
 <body>
-<!-- Header Navigation -->
-    <div class="header">
-        <div class="nav-left">
-            <a href="${pageContext.request.contextPath}/home">Home</a>
-            <a href="${pageContext.request.contextPath}/learning">Learning</a>
-        </div>
-        
-        <a href="${pageContext.request.contextPath}/home" class="logo">
-            <div class="logo-icon">
-                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
-            </div>
-            <span>MindLink</span>
-        </a>
-        
-        <div class="nav-right">
-            <a href="${pageContext.request.contextPath}/forum/welcome">Forum</a>
-            <a href="${pageContext.request.contextPath}/profile">Profile</a>
-        </div>
-    </div>
 
     <div class="container">
+        <a href="${pageContext.request.contextPath}/counseling/home" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+
         <h1>Find Your Counselor</h1>
-        <p class="subtitle">Connect with experienced mental health professionals who care</p>
+        <p class="subtitle">Connect with experienced professionals dedicated to your well-being.</p>
 
-        <form action="/counseling/browse" method="get" class="search-container">
-            <input type="text" name="search" class="search-input" placeholder="Type your counselor name" value="${param.search}">
-            <span class="search-icon">🔍</span> </form>
+        <form action="${pageContext.request.contextPath}/counseling/browse" method="get" class="search-container">
+            <input type="text" name="search" class="search-box" placeholder="Search by name or specialty..." value="${param.search}">
+        </form>
 
-        <div class="counselor-grid">
+        <div class="grid">
             <c:forEach items="${counselors}" var="c">
-                <a href="/counseling/counselor?id=${c.id}" style="text-decoration: none;">
+                
+                <a href="${pageContext.request.contextPath}/counseling/counselor?id=${c.id}" style="text-decoration: none; color: inherit;">
+                    
                     <div class="card">
-                        <div class="counselor-name">${c.name}</div>
-                        <div class="counselor-loc">${c.location}</div>
+                        <div class="avatar">
+                            ${c.name.substring(4, 5)} 
+                        </div>
+                        <div class="info">
+                            <h3>${c.name}</h3>
+                            <p><i class="fas fa-map-marker-alt"></i> Block A Room 209</p> 
+                            <div class="tags">
+                                <span class="tag">Anxiety</span>
+                                <span class="tag">Stress</span>
+                                <span class="tag">Academic</span>
+                            </div>
+                        </div>
                     </div>
                 </a>
             </c:forEach>
             
             <c:if test="${empty counselors}">
-                <p style="color: #666;">No counselors found matching that name.</p>
+                <p style="text-align: center; grid-column: 1/-1; color: #888;">No counselors found.</p>
             </c:if>
         </div>
     </div>

@@ -1,4 +1,24 @@
+# --- 1. COMPILED CODE (Junk files) ---
 target/
-**/target/
 *.class
+*.jar
+*.war
+*.log
 
+# --- 2. IDE SETTINGS (Personal user settings) ---
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+bin/
+
+# --- 3. SECRETS (HIDE PASSWORDS) ---
+
+# If you used Method 2 (Secret Properties File)
+src/main/resources/application.properties
+
+# --- 4. OS JUNK ---
+.DS_Store
+Thumbs.db

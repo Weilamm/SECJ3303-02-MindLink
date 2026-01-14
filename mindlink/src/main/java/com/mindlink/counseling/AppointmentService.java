@@ -1,44 +1,210 @@
 package com.mindlink.counseling;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 @Service
 public class AppointmentService {
-    
-    private List<Appointment> appointments = new ArrayList<>();
 
-    // CONSTRUCTOR: Pre-load the history data matching your screenshot
-    public AppointmentService() {
-        // 1. Future appointment (June)
-        appointments.add(new Appointment("BK20250610-045", "Ms Nur Alya", "Saturday, 10 June 2025", "12.30PM", "Physical", "Block B Room 314"));
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    // --- 1. BOOKING (Create New Appointment) ---
+    public void bookAppointment(Appointment appt) {
+        // Auto-generate ID like "BK001"
+        String newId = generateNextBookingId();
+        appt.setId(newId);
         
-        // 2. Past appointment (March)
-        appointments.add(new Appointment("BK20250312-034", "Mr. Ryan Lin", "Wednesday, 12 March 2025", "10.00AM", "Online", "Google Meet"));
+        String sql = "INSERT INTO appointment (id, student_id, counselor_name, date, time, type, venue, status) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                     
+        jdbcTemplate.update(sql, 
+            appt.getId(), 
+            appt.getStudentId(), 
+            appt.getCounselorName(), 
+            appt.getDate(), 
+            appt.getTime(), 
+            appt.getType(), 
+            appt.getVenue(), 
+            "Booked" // Default status
+        );
+    }
+
+    // --- 2. RESCHEDULE (Update Existing Appointment) ---
+    public void rescheduleAppointment(Appointment appt) {
+        // Only updates the changeable details, keeps the ID same
+        String sql = "UPDATE appointment SET date = ?, time = ?, type = ?, venue = ?, status = 'Rescheduled' WHERE id = ?";
         
-        // 3. Past appointment (February)
-        appointments.add(new Appointment("BK20250228-055", "Ms. Cindy Leong", "Friday, 28 February 2025", "02.00PM", "Physical", "Block A Room 217"));
+        jdbcTemplate.update(sql, 
+            appt.getDate(), 
+            appt.getTime(), 
+            appt.getType(), 
+            appt.getVenue(), 
+            appt.getId()
+        );
     }
 
-    public void addAppointment(Appointment app) {
-        // Add new appointments to the TOP of the list (index 0)
-        appointments.add(0, app);
+    // --- 3. HELPER: Generate ID (BK001, BK002...) ---
+    private String generateNextBookingId() {
+        String sql = "SELECT id FROM appointment ORDER BY id DESC LIMIT 1";
+        try {
+            String lastId = jdbcTemplate.queryForObject(sql, String.class);
+            if (lastId == null || !lastId.startsWith("BK")) {
+                return "BK001"; 
+            }
+            String numberPart = lastId.substring(2); 
+            int nextId = Integer.parseInt(numberPart) + 1;
+            return String.format("BK%03d", nextId);
+        } catch (Exception e) {
+            return "BK001";
+        }
     }
 
-    public void deleteAppointment(String id) {
-        appointments.removeIf(app -> app.getId().equals(id));
-    }
-
+    // --- 4. READ ALL (Join with Student Table) ---
     public List<Appointment> getAllAppointments() {
-        return appointments;
+        // Updated to include Student Name
+        String sql = "SELECT a.*, s.name AS student_name FROM appointment a " +
+                     "LEFT JOIN student s ON a.student_id = s.student_id";
+        return jdbcTemplate.query(sql, new AppointmentRowMapper());
     }
-    
-    // Helper to find specific appointment for the "View" button
+
+    // --- 5. READ ONE (Find by ID) ---
     public Appointment getAppointmentById(String id) {
-        return appointments.stream()
-                .filter(a -> a.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        // Updated to include Student Name
+        String sql = "SELECT a.*, s.name AS student_name FROM appointment a " +
+                     "LEFT JOIN student s ON a.student_id = s.student_id " +
+                     "WHERE a.id = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new AppointmentRowMapper(), id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    // --- 6. FILTERED SEARCH (For Counselor Dashboard) ---
+    public List<Appointment> getAppointmentsForCounselor(String counselorName, String search, String status) {
+        StringBuilder sql = new StringBuilder(
+            "SELECT a.*, s.name AS student_name " +
+            "FROM appointment a " +
+            "LEFT JOIN student s ON a.student_id = s.student_id " +
+            "WHERE a.counselor_name = ?"
+        );
+        
+        List<Object> params = new ArrayList<>();
+        params.add(counselorName);
+
+        if (search != null && !search.trim().isEmpty()) {
+            sql.append(" AND (a.student_id LIKE ? OR a.date LIKE ? OR s.name LIKE ?)"); 
+            params.add("%" + search + "%");
+            params.add("%" + search + "%");
+            params.add("%" + search + "%");
+        }
+
+        if (status != null && !status.trim().isEmpty() && !status.equals("All")) {
+            sql.append(" AND a.status = ?");
+            params.add(status);
+        }
+
+        sql.append(" ORDER BY a.date DESC, a.time ASC"); 
+
+        return jdbcTemplate.query(sql.toString(), new AppointmentRowMapper(), params.toArray());
+    }
+
+    // --- 7. DELETE ---
+    public void deleteAppointment(String id) {
+        String sql = "DELETE FROM appointment WHERE id = ?";
+        jdbcTemplate.update(sql, id);
+    }
+
+    // --- 8. HELPER METHODS (Past/Upcoming Filtering in Java) ---
+    // Note: It's often better to filter in SQL, but keeping your logic here is fine for now.
+    public List<Appointment> getPastAppointments() {
+        List<Appointment> allAppointments = getAllAppointments();
+        List<Appointment> pastAppointments = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        for (Appointment app : allAppointments) {
+            try {
+                LocalDate appDate = LocalDate.parse(app.getDate(), formatter);
+                if (appDate.isBefore(today)) {
+                    pastAppointments.add(app);
+                }
+            } catch (Exception e) { /* Ignore invalid dates */ }
+        }
+        return pastAppointments;
+    }
+
+    public List<Appointment> getUpcomingAppointments() {
+        // Fetch all appointments (ensure this query includes JOIN for student_name)
+        List<Appointment> allAppointments = getAllAppointments();
+        List<Appointment> upcoming = new ArrayList<>();
+
+        for (Appointment app : allAppointments) {
+            // Use the shared helper method we just created
+            if (app.isUpcoming()) {
+                upcoming.add(app);
+            }
+        }
+        
+        // Sort: Nearest date first
+        upcoming.sort((a1, a2) -> {
+            int dateCompare = a1.getDate().compareTo(a2.getDate());
+            if (dateCompare != 0) return dateCompare;
+            return a1.getTime().compareTo(a2.getTime());
+        });
+        
+        return upcoming;
+    }
+
+    public void updateSessionNotes(String id, String notes, boolean markCompleted) {
+        String sql;
+        
+        if (markCompleted) {
+            // Update Notes AND Status
+            sql = "UPDATE appointment SET notes = ?, status = 'Completed' WHERE id = ?";
+            jdbcTemplate.update(sql, notes, id);
+        } else {
+            // Update Notes ONLY (keep existing status)
+            sql = "UPDATE appointment SET notes = ? WHERE id = ?";
+            jdbcTemplate.update(sql, notes, id);
+        }
+    }
+
+    // --- ROW MAPPER (Handles 'student_name' mapping) ---
+    private static class AppointmentRowMapper implements RowMapper<Appointment> {
+        @Override
+        public Appointment mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Appointment appt = new Appointment();
+            
+            appt.setId(rs.getString("id"));
+            appt.setCounselorName(rs.getString("counselor_name"));
+            appt.setDate(rs.getString("date"));
+            appt.setTime(rs.getString("time"));
+            appt.setType(rs.getString("type"));
+            appt.setVenue(rs.getString("venue"));
+            appt.setStatus(rs.getString("status"));
+            appt.setStudentId(rs.getString("student_id"));
+            
+            try {
+                appt.setNotes(rs.getString("notes")); 
+            } catch (SQLException e) { /* Ignore if column missing */ }
+
+            try {
+                appt.setStudentName(rs.getString("student_name")); 
+            } catch (SQLException e) { }
+            
+            return appt;
+        }
     }
 }

@@ -1,11 +1,11 @@
---MindLink Database Schema
---Virtual Assistant & Support Module Tables
+-- MindLink Database Schema
+-- Virtual Assistant & Support Module Tables
 
---Create Database
+-- Create Database
 CREATE DATABASE IF NOT EXISTS mindlink_db;
 USE mindlink_db;
 
---Student Table: Stores student user information
+-- Student Table: Stores student user information
 CREATE TABLE IF NOT EXISTS student (
     student_id VARCHAR(100) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -34,21 +34,22 @@ CREATE TABLE IF NOT EXISTS admin (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Counselor Table: Stores counselor user information
-CREATE TABLE IF NOT EXISTS counselor (
-    counselor_id VARCHAR(100) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
+DROP TABLE IF EXISTS counselor;
+CREATE TABLE counselor (
+    id VARCHAR(50) PRIMARY KEY, 
+    name VARCHAR(100),
     password VARCHAR(255) NOT NULL,
-    phone VARCHAR(20),
-    location VARCHAR(255),
-    education VARCHAR(255),
-    university VARCHAR(255),
-    languages VARCHAR(255),
-    specialization TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    location VARCHAR(100),
+    education VARCHAR(100),
+    university VARCHAR(100),
+    languages VARCHAR(100),
+    email VARCHAR(100),
+    bio TEXT,
+    quote VARCHAR(255),
+    image_url VARCHAR(255),
+    phone_number VARCHAR(20),
+    specialization VARCHAR(255)
+);
 
 -- Chatbot Table: Stores keyword-response pairs for rule-based chatbot
 CREATE TABLE IF NOT EXISTS chatbot (
@@ -112,6 +113,20 @@ CREATE TABLE IF NOT EXISTS forum_comment (
     INDEX idx_user_id (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Appointment Table: Stores counseling appointment details
+CREATE TABLE IF NOT EXISTS appointment (
+    id VARCHAR(50) PRIMARY KEY,
+    student_id VARCHAR(50),      -- Who booked it
+    counselor_name VARCHAR(100), -- Who they booked with
+    date VARCHAR(20),
+    time VARCHAR(20),
+    type VARCHAR(20),            -- Online/Physical
+    venue VARCHAR(100),
+    status VARCHAR(20) DEFAULT 'Confirmed',
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Sample Data for Students (Student IDs start from S001)
 INSERT INTO student (student_id, name, email, password, phone, faculty, year) VALUES
 ('S001', 'Karen Voon Xiu Wen', 'karen@utm.my', 'password123', '+60123456789', 'Faculty of Computing', 3),
@@ -126,11 +141,33 @@ INSERT INTO admin (admin_id, name, email, password, phone, department, role) VAL
 ('A003', 'Dr. Lee Mei Ling', 'lee.a003@utm.my', 'admin123', '+60198765434', 'Faculty of Engineering', 'admin');
 
 -- Sample Data for Counselors (Counselor IDs start from C001)
-INSERT INTO counselor (counselor_id, name, email, password, phone, location, education, university, languages, specialization) VALUES
-('C001', 'Ms. Tan Mei Ling', 'tan.meiling@utm.my', 'counselor123', '+60198765440', 'Block A Room 209', 'M.A. Clinical Psychology', 'Universiti Sains Malaysia', 'English, Mandarin, Malay', 'Academic stress management, motivation building, emotional resilience'),
-('C002', 'Mr. Ryan Lin', 'ryan.lin@utm.my', 'counselor123', '+60198765441', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English, Hokkien', 'Cognitive behavioral therapy'),
-('C003', 'Ms. Nur Alya', 'nur.alya@utm.my', 'counselor123', '+60198765442', 'Block B Room 314', 'PhD in Psychology', 'UKM', 'Malay, English', 'Anxiety and mood disorders'),
-('C004', 'Ms. Evelyn Reed', 'evelyn.reed@utm.my', 'counselor123', '+60198765443', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English', 'Adjustment issues');
+INSERT INTO counselor (
+    id, 
+    name, 
+    email, 
+    password, 
+    location, 
+    education, 
+    university, 
+    languages, 
+    specialization, 
+    bio, 
+    quote, 
+    image_url, 
+    phone_number
+) VALUES 
+('C001', 'Ms. Tan Mei Ling', 'tan.meiling@utm.my', 'counselor123', 'Block A Room 209', 'M.A. Clinical Psychology', 'Universiti Sains Malaysia', 'English, Mandarin, Malay', 'Academic stress management, motivation building, emotional resilience', 'Experienced clinical psychologist dedicated to student well-being.', 'Empowering your journey.', 'tan.jpg', '012-3456789'),
+('C002', 'Mr. Ryan Lin', 'ryan.lin@utm.my', 'counselor123', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English, Hokkien', 'Cognitive behavioral therapy', 'Focused on behavioral adjustments and mental clarity.', 'Change starts within.', 'ryan.jpg', '013-9876543'),
+('C003', 'Ms. Nur Alya', 'nur.alya@utm.my', 'counselor123', 'Block B Room 314', 'PhD in Psychology', 'UKM', 'Malay, English', 'Anxiety and mood disorders', 'Expert in helping students manage anxiety and mood fluctuations.', 'Healing takes time.', 'nur.jpg', '014-5678901'),
+('C004', 'Ms. Evelyn Reed', 'evelyn.reed@utm.my', 'counselor123', 'Block A Room 301', 'M.Sc. Counseling', 'UPM', 'English', 'Adjustment issues', 'Helping students navigate campus life transitions.', 'Guidance for every step.', 'evelyn.jpg', '016-1122334');
+
+-- Sample Data for Appointments
+INSERT INTO appointment (id, student_id, counselor_name, date, time, type, venue, status) VALUES
+('BK001', 'S001', 'Mr. Ryan Lin', '2026-01-31', '04:00 PM', 'Physical', 'Block B Room 314', 'Booked'),
+('BK002', 'S001', 'Ms. Tan Mei Ling', '2026-01-31', '09:00 AM', 'Online', 'https://utm.webex.com/utm/mstanmeiling', 'Booked'),
+('BK003', 'S001', 'Ms. Tan Mei Ling', '2025-12-10', '10:00 AM', 'Physical', 'Block B Room 314', 'Booked'),
+('BK004', 'S001', 'Mr. Ryan Lin', '2025-01-05', '02:00 PM', 'Online', 'https://utm.webex.com/utm/ryanlin', 'Booked');
+('BK005', 'S001', 'Ms. Nur Alya', '2025-11-20', '09:00 AM', 'Online', 'https://utm.webex.com/utm/nuralya', 'Booked');
 
 -- Sample Data for Chatbot (Rule-based responses)
 INSERT INTO chatbot (keyword, response) VALUES
@@ -166,3 +203,125 @@ INSERT INTO forum (title, description, created_by, status) VALUES
 ('Work-Life Balance', 'Tips and discussions about balancing academic work, personal life, and self-care.', 'A001', 'active'),
 ('Self-Care Practices', 'Share and discover different self-care activities that work for you.', 'A002', 'active');
 
+-- Module Table: Stores learning modules
+CREATE TABLE IF NOT EXISTS module (
+    module_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    image_path VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_title (title)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Module Question Table: Stores questions/lessons for each module
+CREATE TABLE IF NOT EXISTS module_question (
+    question_id INT AUTO_INCREMENT PRIMARY KEY,
+    module_id INT NOT NULL,
+    chapter_number INT NOT NULL,
+    question_number VARCHAR(50) NOT NULL,
+    question_text TEXT NOT NULL,
+    question_type VARCHAR(50) DEFAULT 'PDF',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (module_id) REFERENCES module(module_id) ON DELETE CASCADE,
+    INDEX idx_module_id (module_id),
+    INDEX idx_chapter (module_id, chapter_number)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Sample Data for Modules
+INSERT INTO module (title, description, image_path) VALUES
+('Introduction to Mental Health', 'Learn the basics of mental health, reduce stigma, and understand emotional well-being.', 'mental-health-intro.png'),
+('Emotional Awareness and Regulation', 'Recognize your emotions, understand their causes, and develop healthy strategies to manage them effectively in daily and social situations.', 'emotional-awareness.png');
+
+-- Sample Data for Module Questions (Introduction to Mental Health - Module ID 1)
+INSERT INTO module_question (module_id, chapter_number, question_number, question_text, question_type) VALUES
+(1, 1, '1.1', 'Definition and Key Concepts PDF', 'PDF'),
+(1, 1, '1.2', 'Mental Health vs Mental Illness PDF', 'PDF'),
+(1, 1, '1.3', 'Mental Health Spectrum PDF', 'PDF'),
+(1, 2, '2.1', 'What is Stigma? PDF', 'PDF'),
+(1, 2, '2.2', 'Media and Cultural Misconceptions PDF', 'PDF');
+
+-- Sample Data for Module Questions (Emotional Awareness - Module ID 2)
+INSERT INTO module_question (module_id, chapter_number, question_number, question_text, question_type) VALUES
+(2, 1, '1.1', 'Understanding Your Emotions PDF', 'PDF'),
+(2, 1, '1.2', 'Emotional Triggers and Responses PDF', 'PDF'),
+(2, 2, '2.1', 'Emotion Regulation Techniques PDF', 'PDF'),
+(2, 2, '2.2', 'Mindfulness and Emotional Awareness PDF', 'PDF');
+
+-- User Module Progress Table: Stores which questions a student has completed
+CREATE TABLE IF NOT EXISTS user_module_progress (
+    progress_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id VARCHAR(100) NOT NULL,
+    module_id INT NOT NULL,
+    question_id INT NOT NULL,
+    completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES student(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (module_id) REFERENCES module(module_id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES module_question(question_id) ON DELETE CASCADE,
+    UNIQUE KEY unique_progress (student_id, question_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Assessment Table: Stores questions for assessments
+CREATE TABLE IF NOT EXISTS assessment (
+    assessment_id INT AUTO_INCREMENT PRIMARY KEY,
+    assessment_title VARCHAR(255) NOT NULL,
+    question_text TEXT NOT NULL,
+    question_type VARCHAR(50) DEFAULT 'Multiple Choice'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Assessment Question/Option Table: Stores options for each question
+CREATE TABLE IF NOT EXISTS ass_question (
+    option_id INT AUTO_INCREMENT PRIMARY KEY,
+    assessment_id INT NOT NULL,
+    option_text VARCHAR(255) NOT NULL,
+    score_value INT NOT NULL,
+    FOREIGN KEY (assessment_id) REFERENCES assessment(assessment_id) ON DELETE CASCADE,
+    INDEX idx_assessment_id (assessment_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS feedback (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    booking_id VARCHAR(50),
+    category VARCHAR(100),
+    subject VARCHAR(255),
+    message TEXT,
+    rating INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Sample Data for Assessment (Stress Test)
+INSERT INTO assessment (assessment_title, question_text) VALUES 
+('Stress Test', 'How often do you feel overwhelmed by your workload?'),
+('Stress Test', 'Do you find it difficult to relax after work/study?'),
+('Stress Test', 'How often do you get headaches or physical tension?');
+
+-- Options for Question 1 (IDs will assume 1, 2, 3 based on auto-increment, but for safety in scripts usually we'd need to look them up. 
+-- For this demo, assuming sequential insertion starting at 1).
+-- Q1: Overwhelmed
+INSERT INTO ass_question (assessment_id, option_text, score_value) VALUES 
+(1, 'Never', 0), (1, 'Sometimes', 5), (1, 'Often', 10);
+
+-- Q2: Difficult to relax
+INSERT INTO ass_question (assessment_id, option_text, score_value) VALUES 
+(2, 'No, I relax easily', 0), (2, 'Sometimes', 5), (2, 'Yes, very difficult', 10);
+
+-- Q3: Physical tension
+INSERT INTO ass_question (assessment_id, option_text, score_value) VALUES 
+(3, 'Rarely', 0), (3, 'Occasionally', 5), (3, 'Frequently', 10);
+
+-- Sample Data for Assessment (Happiness Check)
+INSERT INTO assessment (assessment_title, question_text) VALUES 
+('Happiness Check', 'I feel satisfied with my life currently.'),
+('Happiness Check', 'I find joy in small things.');
+
+-- Q4: Satisfied (ID 4)
+INSERT INTO ass_question (assessment_id, option_text, score_value) VALUES 
+(4, 'Strongly Disagree', 0), (4, 'Neutral', 5), (4, 'Strongly Agree', 10);
+
+-- Q5: Joy (ID 5)
+INSERT INTO ass_question (assessment_id, option_text, score_value) VALUES 
+(5, 'Rarely', 0), (5, 'Sometimes', 5), (5, 'Always', 10);
+
+INSERT INTO feedback (id, booking_id, category, subject, message, rating, created_at) VALUES 
+(2, 'BK003', 'Counselor Behavior', 'Nice Counselor', 'I love this counselor!', 5, '2026-01-14 07:29:20');
