@@ -137,4 +137,26 @@ public class AssessmentDaoImpl implements AssessmentDao {
         String sql = "DELETE FROM assessment WHERE assessment_id = ?";
         jdbcTemplate.update(sql, id);
     }
+
+    @Override
+    public List<String> findAllAssessmentTitles() {
+        return jdbcTemplate.queryForList("SELECT DISTINCT assessment_title FROM assessment", String.class);
+    }
+
+    @Override
+    public List<Assessment> findByTitlePaged(String title, int offset, int limit) {
+        String sql = "SELECT * FROM assessment WHERE assessment_title = ? LIMIT ? OFFSET ?";
+        List<Assessment> questions = jdbcTemplate.query(sql, assessmentRowMapper, title, limit, offset);
+        for (Assessment q : questions) {
+            q.setOptions(jdbcTemplate.query("SELECT * FROM ass_question WHERE assessment_id = ?", 
+                        optionRowMapper, q.getId()));
+        }
+        return questions;
+    }
+
+    @Override
+    public int countByTitle(String title) {
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM assessment WHERE assessment_title = ?", 
+                                        Integer.class, title);
+    }
 }

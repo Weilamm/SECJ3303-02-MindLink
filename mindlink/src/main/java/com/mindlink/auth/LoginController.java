@@ -40,13 +40,21 @@ public class LoginController {
             List<Map<String, Object>> students = jdbcTemplate.queryForList(sql, username, username, password);
             
             if (!students.isEmpty()) {
-                session.setAttribute("loggedInStudent", students.get(0)); 
+                Map<String, Object> studentMap = students.get(0);
+                
+                // Save the full map for general use
+                session.setAttribute("loggedInStudent", studentMap); 
+                
+                // SAVE THIS SPECIFICALLY so GamificationController can find it
+                // Ensure "student_id" matches the column name in your MySQL table
+                session.setAttribute("student_id", studentMap.get("student_id").toString()); 
+                
                 return "redirect:/home";
             } else {
                 model.addAttribute("error", "Invalid student credentials.");
                 return "auth/login";
             }
-        } 
+        }
         
         else if (role.equals("counselor")) {
             String sql = "SELECT * FROM counselor WHERE (id = ? OR email = ?) AND password = ?";

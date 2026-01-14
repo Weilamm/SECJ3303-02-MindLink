@@ -202,6 +202,8 @@
                 <form
                     action="${pageContext.request.contextPath}/admin/assessment/${assessment.id > 0 ? 'update' : 'save'}"
                     method="post" id="assessmentForm">
+                    <input type="hidden" name="moduleId" value="${assessment.moduleId}">
+
                     <c:if test="${assessment.id > 0}">
                         <input type="hidden" name="id" value="${assessment.id}">
                     </c:if>

@@ -182,16 +182,15 @@
                 <div class="header-title-section">
                     <h1>Mental Health Assessment</h1>
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <a href="${pageContext.request.contextPath}/admin/assessment/add" class="btn-add"
-                            style="text-decoration:none;">+</a>
+                        <a href="${pageContext.request.contextPath}/admin/assessment/add?moduleId=${selectedModuleId}" class="btn-add">+</a>
                     </div>
                 </div>
 
                 <c:forEach items="${questions}" var="q">
                     <div class="question-card">
+                        <p>Number of questions: ${questions.size()}</p>
                         <div
-                            style="margin-bottom: 5px; color: #888; text-transform: uppercase; font-size: 12px; font-weight: 700;">
-                            ${q.title}</div>
+                            style="margin-bottom: 5px; color: #888; text-transform: uppercase; font-size: 12px; font-weight: 700;"> ${q.title}</div>
                         <div class="question-text">${q.questionText}</div>
                         <div class="options-text">
                             <c:choose>
