@@ -32,6 +32,18 @@ public class ForumCommentDAOImpl implements ForumCommentDAO {
             comment.setUserName(rs.getString("user_name"));
             comment.setContent(rs.getString("content"));
             
+            // Read status and report_reason if they exist
+            try {
+                comment.setStatus(rs.getString("status"));
+            } catch (SQLException e) {
+                comment.setStatus("normal");
+            }
+            try {
+                comment.setReportReason(rs.getString("report_reason"));
+            } catch (SQLException e) {
+                comment.setReportReason(null);
+            }
+            
             Timestamp createdAt = rs.getTimestamp("created_at");
             if (createdAt != null) {
                 comment.setCreatedAt(createdAt.toLocalDateTime());
@@ -48,14 +60,14 @@ public class ForumCommentDAOImpl implements ForumCommentDAO {
 
     @Override
     public List<ForumComment> findByPostId(int postId) {
-        String sql = "SELECT id, post_id, user_id, user_name, content, created_at, updated_at " +
+        String sql = "SELECT id, post_id, user_id, user_name, content, status, report_reason, created_at, updated_at " +
                      "FROM forum_comment WHERE post_id = ? ORDER BY created_at ASC";
         return jdbcTemplate.query(sql, forumCommentRowMapper, postId);
     }
 
     @Override
     public ForumComment findById(int id) {
-        String sql = "SELECT id, post_id, user_id, user_name, content, created_at, updated_at " +
+        String sql = "SELECT id, post_id, user_id, user_name, content, status, report_reason, created_at, updated_at " +
                      "FROM forum_comment WHERE id = ?";
         List<ForumComment> comments = jdbcTemplate.query(sql, forumCommentRowMapper, id);
         return comments.isEmpty() ? null : comments.get(0);
@@ -97,6 +109,17 @@ public class ForumCommentDAOImpl implements ForumCommentDAO {
         String sql = "SELECT COUNT(*) FROM forum_comment WHERE post_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, postId);
         return count != null ? count : 0;
+    }
+
+    public int updateStatusWithReason(int id, String status, String reportReason) {
+        String sql = "UPDATE forum_comment SET status = ?, report_reason = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, status, reportReason, id);
+    }
+
+    public List<ForumComment> findReportedComments() {
+        String sql = "SELECT id, post_id, user_id, user_name, content, status, report_reason, created_at, updated_at " +
+                     "FROM forum_comment WHERE status = 'reported' ORDER BY created_at DESC";
+        return jdbcTemplate.query(sql, forumCommentRowMapper);
     }
 }
 

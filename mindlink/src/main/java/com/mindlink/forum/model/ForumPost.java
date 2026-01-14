@@ -9,6 +9,8 @@ public class ForumPost {
     private String userName;
     private String content;
     private String status; // 'normal' or 'reported'
+    private boolean isAnonymous;
+    private String reportReason;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -96,6 +98,22 @@ public class ForumPost {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public boolean isAnonymous() {
+        return isAnonymous;
+    }
+
+    public void setAnonymous(boolean anonymous) {
+        isAnonymous = anonymous;
+    }
+
+    public String getReportReason() {
+        return reportReason;
+    }
+
+    public void setReportReason(String reportReason) {
+        this.reportReason = reportReason;
     }
 }
 

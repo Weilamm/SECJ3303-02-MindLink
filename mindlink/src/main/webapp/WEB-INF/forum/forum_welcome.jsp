@@ -232,7 +232,6 @@
         
         <div class="nav-right">
             <a href="${pageContext.request.contextPath}/forum/welcome" style="color: #0d4e57; font-weight: 600;">Forum</a>
-            <a href="${pageContext.request.contextPath}/admin/forum/posts" style="color: #d32f2f; font-weight: 600;">Manage Forums</a>
             <a href="${pageContext.request.contextPath}/profile">Profile</a>
         </div>
     </div>

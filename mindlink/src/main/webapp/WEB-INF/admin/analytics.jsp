@@ -68,15 +68,30 @@
     </style>
 </head>
 <body>
+<!-- Header Navigation -->
+    <div class="header">
+        <div class="nav-left">
+            <a href="${pageContext.request.contextPath}/admin/home">Home</a>
+            <a href="${pageContext.request.contextPath}/admin/modules/dashboard">Module</a>
+        </div>
+        
+        <a href="${pageContext.request.contextPath}/admin/home" class="logo">
+            <div class="logo-icon">
+                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
+            </div>
+            <span>MindLink</span>
+        </a>
+        
+        <div class="nav-right">
+            <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
+            <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
+        </div>
+    </div>
 
     <div class="container">
         
-        <a href="${pageContext.request.contextPath}/admin/home" class="btn-back">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </a>
-
-        <h2>Analytics Dashboard</h2>
-        <div class="subtitle">Platform performance based on real-time data.</div>
+        <h2>Key Metrics</h2>
+        <p class="subtitle">Overview of platform performance and user engagement</p>
 
         <div class="metrics-grid">
             <div class="card">

@@ -41,6 +41,17 @@ public interface ForumPostDAO {
     int create(int forumId, String userId, String userName, String content);
     
     /**
+     * Create a new post with parameters including anonymous flag
+     * @param forumId Forum ID
+     * @param userId User ID
+     * @param userName User name
+     * @param content Post content
+     * @param isAnonymous Whether the post should be anonymous
+     * @return Number of rows affected
+     */
+    int create(int forumId, String userId, String userName, String content, boolean isAnonymous);
+    
+    /**
      * Update an existing post
      * @param post ForumPost object to update
      * @return Number of rows affected
@@ -82,5 +93,22 @@ public interface ForumPostDAO {
      * @return Number of rows affected
      */
     int updateStatus(int id, String status);
+    
+    /**
+     * Update post status with report reason
+     * @param id Post ID
+     * @param status New status ('normal' or 'reported')
+     * @param reportReason Reason for reporting
+     * @return Number of rows affected
+     */
+    int updateStatusWithReason(int id, String status, String reportReason);
+    
+    /**
+     * Search posts by content within a forum
+     * @param forumId Forum ID
+     * @param searchTerm Search term to match against post content
+     * @return List of matching posts
+     */
+    List<ForumPost> searchByContent(int forumId, String searchTerm);
 }
 

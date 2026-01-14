@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 /**
  * Admin Controller for Managing Daily Tips
  * Allows admin to create, read, update, and delete daily mental health tips
@@ -23,8 +25,29 @@ public class AdminTipsController {
 
     // List all daily tips
     @GetMapping("")
-    public String listTips(Model model) {
-        model.addAttribute("tips", dailyTipService.getAllTips());
+    public String listTips(@RequestParam(value = "search", required = false) String search, Model model) {
+        List<DailyTip> allTips = dailyTipService.getAllTips();
+        
+        // Filter by search query if provided
+        if (search != null && !search.trim().isEmpty()) {
+            String searchLower = search.toLowerCase().trim();
+            allTips = allTips.stream()
+                .filter(tip -> {
+                    // Search by ID
+                    if (String.valueOf(tip.getId()).contains(searchLower)) {
+                        return true;
+                    }
+                    // Search by title
+                    if (tip.getTitle() != null && tip.getTitle().toLowerCase().contains(searchLower)) {
+                        return true;
+                    }
+                    return false;
+                })
+                .collect(java.util.stream.Collectors.toList());
+        }
+        
+        model.addAttribute("tips", allTips);
+        model.addAttribute("searchQuery", search != null ? search : "");
         return "admin/tips_list";
     }
 

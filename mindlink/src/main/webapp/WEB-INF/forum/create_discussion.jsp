@@ -406,7 +406,7 @@
                         <label class="form-label">3. Post Settings: <span class="required">*</span></label>
                         <div class="checkbox-group">
                             <div class="checkbox-item">
-                                <input type="checkbox" id="anonymous">
+                                <input type="checkbox" id="anonymous" name="anonymous" value="true">
                                 <label for="anonymous">Post anonymously</label>
                             </div>
                             <div class="checkbox-item">

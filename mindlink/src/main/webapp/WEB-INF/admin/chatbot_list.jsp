@@ -1,212 +1,385 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-        <!DOCTYPE html>
-        <html lang="en">
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Chatbot Rules</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #FFF3E0;
+            --text-dark: #003049;
+            --btn-blue: #00313e;
+            --btn-green: #48C9B0;
+            --btn-red: #FF6B6B;
+        }
 
-        <head>
-            <meta charset="UTF-8">
-            <title>Manage Chatbot Rules</title>
-            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-            <style>
-                :root {
-                    --bg-color: #FFF3E0;
-                    --text-dark: #003049;
-                }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+        }
 
-                body {
-                    font-family: 'Inter', sans-serif;
-                    background-color: var(--bg-color);
-                    margin: 0;
-                    padding: 0;
-                    color: var(--text-dark);
-                }
+        .header {
+            padding: 20px 100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
 
-                /* Header Navigation */
-                .header {
-                    padding: 20px 100px;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    background: white;
-                }
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            flex: 1;
+            gap: 0;
+        }
 
-                .nav-left,
-                .nav-right {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-evenly;
-                    flex: 1;
-                    gap: 0;
-                }
+        .nav-left a, .nav-right a {
+            text-decoration: none;
+            color: #00313e;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
 
-                .nav-left a,
-                .nav-right a {
-                    text-decoration: none;
-                    color: #00313e;
-                    font-size: 16px;
-                    font-weight: 500;
-                    transition: color 0.3s;
-                }
+        .nav-left a:hover, .nav-right a:hover {
+            color: #0d4e57;
+        }
 
-                .nav-left a:hover,
-                .nav-right a:hover {
-                    color: #0d4e57;
-                }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: #00313e;
+            font-size: 32px;
+            text-decoration: none;
+        }
 
-                .logo {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    font-weight: 700;
-                    color: #00313e;
-                    font-size: 32px;
-                    text-decoration: none;
-                }
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
 
-                .logo-icon {
-                    width: 40px;
-                    height: 40px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
 
-                .logo-icon img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: contain;
-                }
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 40px;
+        }
 
-                /* Main Container */
-                .container {
-                    max-width: 1000px;
-                    margin: 40px auto;
-                    padding: 0 40px;
-                }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
 
-                .page-title-row {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 30px;
-                }
+        h1 {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin: 0;
+        }
 
-                .btn-add {
-                    background: transparent;
-                    border: none;
-                    font-size: 32px;
-                    cursor: pointer;
-                    color: #000;
-                    text-decoration: none;
-                }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: inline-block;
+        }
 
-                .rule-card {
-                    background: #FFF5F5;
-                    border-radius: 20px;
-                    padding: 30px;
-                    margin-bottom: 20px;
-                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-                    position: relative;
-                }
+        .btn-primary {
+            background-color: var(--btn-blue);
+            color: white;
+        }
 
-                .keyword-text {
-                    font-size: 20px;
-                    font-weight: 800;
-                    margin-bottom: 10px;
-                    color: #000;
-                }
+        .btn-primary:hover {
+            background-color: #004d61;
+        }
 
-                .response-text {
-                    font-size: 14px;
-                    color: #666;
-                    font-weight: 400;
-                    line-height: 1.6;
-                }
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
 
-                .actions {
-                    position: absolute;
-                    top: 20px;
-                    right: 20px;
-                    display: flex;
-                    gap: 10px;
-                }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-                .action-icon {
-                    text-decoration: none;
-                    font-size: 20px;
-                    color: #000;
-                    padding: 5px;
-                    border-radius: 5px;
-                    transition: background 0.2s;
-                }
+        thead {
+            background: linear-gradient(135deg, #00313e 0%, #004d61 100%);
+            color: white;
+        }
 
-                .action-icon:hover {
-                    background: rgba(0, 0, 0, 0.1);
-                }
+        th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-                .delete-icon {
-                    color: #d32f2f;
-                }
-            </style>
-        </head>
+        th:first-child {
+            width: 60px;
+            text-align: center;
+        }
 
-        <body>
-            <!-- Header Navigation -->
-            <div class="header">
-                <div class="nav-left">
-                    <a href="${pageContext.request.contextPath}/admin/home">Home</a>
-                    <a href="${pageContext.request.contextPath}/admin/modules/dashboard">Module</a>
-                    <a href="${pageContext.request.contextPath}/admin/tips">Tips</a>
-                    <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
-                </div>
+        th:last-child {
+            width: 150px;
+            text-align: center;
+        }
 
-                <a href="${pageContext.request.contextPath}/admin/home" class="logo">
-                    <div class="logo-icon">
-                        <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
-                    </div>
-                    <span>MindLink</span>
-                </a>
+        tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+        }
 
-                <div class="nav-right">
-                    <a href="${pageContext.request.contextPath}/admin/chatbot">Chatbot</a>
-                    <a href="${pageContext.request.contextPath}/admin/forum/posts">Manage Forums</a>
-                    <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
-                </div>
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        td {
+            padding: 18px 20px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        td:first-child {
+            text-align: center;
+            color: #999;
+            font-weight: 600;
+        }
+
+        .keyword-cell {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 15px;
+        }
+
+        .response-cell {
+            color: #666;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        .actions-cell {
+            text-align: center;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.2s;
+            margin: 0 4px;
+        }
+
+        .btn-edit {
+            background-color: var(--btn-green);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background-color: #3ab89a;
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background-color: var(--btn-red);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #e55a5a;
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--btn-blue);
+            box-shadow: 0 0 0 3px rgba(0, 49, 62, 0.1);
+        }
+
+        .search-btn {
+            padding: 10px 20px;
+            background-color: var(--btn-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .search-btn:hover {
+            background-color: #004d61;
+        }
+
+        .clear-btn {
+            padding: 10px 20px;
+            background-color: #E0E0E0;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+
+        .clear-btn:hover {
+            background-color: #d0d0d0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="nav-left">
+            <a href="${pageContext.request.contextPath}/admin/home">Home</a>
+            <a href="${pageContext.request.contextPath}/admin/modules/dashboard">Module</a>
+        </div>
+        
+        <a href="${pageContext.request.contextPath}/admin/home" class="logo">
+            <div class="logo-icon">
+                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
             </div>
+            <span>MindLink</span>
+        </a>
+        
+        <div class="nav-right">
+            <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
+            <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
+        </div>
+    </div>
 
-            <div class="container">
+    <div class="container">
+        <div class="page-header">
+            <h1>Chatbot Rules Management</h1>
+            <a href="${pageContext.request.contextPath}/admin/chatbot/add" class="btn btn-primary">+ Add New Rule</a>
+        </div>
 
-                <div class="page-title-row">
-                    <h1>Chatbot Rules Management</h1>
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <a href="${pageContext.request.contextPath}/admin/chatbot/add" class="btn-add">+</a>
-                        <a href="${pageContext.request.contextPath}/admin/home"
-                            style="font-size:14px; color:#666; text-decoration:none;">Back</a>
+        <form method="get" action="${pageContext.request.contextPath}/admin/chatbot" class="search-container">
+            <input type="text" 
+                   name="search" 
+                   class="search-input" 
+                   placeholder="Search by ID or keyword..." 
+                   value="${searchQuery}">
+            <button type="submit" class="search-btn">🔍 Search</button>
+            <c:if test="${not empty searchQuery}">
+                <a href="${pageContext.request.contextPath}/admin/chatbot" class="clear-btn">Clear</a>
+            </c:if>
+        </form>
+
+        <div class="table-container">
+            <c:choose>
+                <c:when test="${empty rules}">
+                    <div class="empty-state">
+                        <div class="empty-icon">🤖</div>
+                        <p style="font-size: 20px; font-weight: 600; margin-bottom: 10px;">No chatbot rules found</p>
+                        <p>Click "Add New Rule" to create your first chatbot rule.</p>
                     </div>
-                </div>
-
-                <c:forEach var="rule" items="${rules}">
-                    <div class="rule-card">
-                        <div class="keyword-text">Keyword: "${rule.keyword}"</div>
-                        <div class="response-text">${rule.response}</div>
-
-                        <div class="actions">
-                            <a href="${pageContext.request.contextPath}/admin/chatbot/edit?id=${rule.id}"
-                                class="action-icon">✏️</a>
-                            <a href="${pageContext.request.contextPath}/admin/chatbot/delete?id=${rule.id}"
-                                class="action-icon delete-icon"
-                                onclick="return confirm('Are you sure you want to delete this rule?')">🗑️</a>
-                        </div>
-                    </div>
-                </c:forEach>
-
-                <c:if test="${empty rules}">
-                    <div style="text-align: center; padding: 40px; color: #666;">
-                        <p>No chatbot rules found. Click + to add a new rule.</p>
-                    </div>
-                </c:if>
-
-            </div>
-        </body>
-
-        </html>
+                </c:when>
+                <c:otherwise>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Keyword</th>
+                                <th>Response</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="rule" items="${rules}">
+                                <tr>
+                                    <td>${rule.id}</td>
+                                    <td class="keyword-cell"><c:out value="${rule.keyword}" /></td>
+                                    <td class="response-cell"><c:out value="${rule.response}" /></td>
+                                    <td class="actions-cell">
+                                        <a href="${pageContext.request.contextPath}/admin/chatbot/edit?id=${rule.id}" 
+                                           class="action-btn btn-edit" 
+                                           title="Edit Rule">✏️</a>
+                                        <a href="${pageContext.request.contextPath}/admin/chatbot/delete?id=${rule.id}" 
+                                           class="action-btn btn-delete" 
+                                           title="Delete Rule"
+                                           onclick="return confirm('Are you sure you want to delete this chatbot rule?\n\nKeyword: ${rule.keyword}\n\nThis action cannot be undone.');">🗑️</a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </c:otherwise>
+            </c:choose>
+        </div>
+    </div>
+</body>
+</html>

@@ -36,7 +36,7 @@ public class ChatbotDAOImpl implements ChatbotDAO {
 
     @Override
     public List<Chatbot> findAll() {
-        String sql = "SELECT id, keyword, response FROM chatbot ORDER BY keyword";
+        String sql = "SELECT id, keyword, response FROM chatbot ORDER BY id ASC";
         return jdbcTemplate.query(sql, chatbotRowMapper);
     }
 

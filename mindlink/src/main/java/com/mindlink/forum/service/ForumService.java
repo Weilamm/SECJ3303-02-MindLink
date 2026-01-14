@@ -89,6 +89,21 @@ public class ForumService {
     public int addPost(int forumId, String userId, String userName, String content) {
         return forumPostDAO.create(forumId, userId, userName, content);
     }
+    
+    /**
+     * Add a new post to a forum with anonymous flag
+     */
+    public int addPost(int forumId, String userId, String userName, String content, boolean isAnonymous) {
+        // If anonymous, still store real user info but display as "Anonymous"
+        return forumPostDAO.create(forumId, userId, userName, content, isAnonymous);
+    }
+    
+    /**
+     * Update post status with report reason
+     */
+    public void updatePostStatusWithReason(int id, String status, String reportReason) {
+        forumPostDAO.updateStatusWithReason(id, status, reportReason);
+    }
 
     /**
      * Update a post
@@ -158,5 +173,29 @@ public class ForumService {
      */
     public void updatePostStatus(int id, String status) {
         forumPostDAO.updateStatus(id, status);
+    }
+
+    /**
+     * Update comment status and report reason
+     */
+    public void updateCommentStatusWithReason(int id, String status, String reportReason) {
+        forumCommentDAO.updateStatusWithReason(id, status, reportReason);
+    }
+
+    /**
+     * Get all reported comments
+     */
+    public List<ForumComment> getReportedComments() {
+        return forumCommentDAO.findReportedComments();
+    }
+
+    /**
+     * Search posts by content within a forum
+     */
+    public List<ForumPost> searchPostsByContent(int forumId, String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return getPostsByForumId(forumId);
+        }
+        return forumPostDAO.searchByContent(forumId, searchTerm);
     }
 }

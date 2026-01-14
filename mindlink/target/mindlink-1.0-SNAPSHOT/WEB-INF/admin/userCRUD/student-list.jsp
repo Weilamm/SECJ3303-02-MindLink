@@ -240,6 +240,63 @@
                 width: 300px;
                 opacity: 0.8;
             }
+
+            /* Search Bar */
+            .search-container {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                margin-bottom: 20px;
+                padding: 15px;
+                background: white;
+                border-radius: 20px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            }
+
+            .search-input {
+                flex: 1;
+                padding: 12px 20px;
+                border: 1px solid #ddd;
+                border-radius: 25px;
+                font-size: 14px;
+                outline: none;
+                transition: border-color 0.3s;
+            }
+
+            .search-input:focus {
+                border-color: #003B46;
+            }
+
+            .search-button {
+                padding: 12px 25px;
+                background-color: #003B46;
+                color: white;
+                border: none;
+                border-radius: 25px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            .search-button:hover {
+                background-color: #005566;
+            }
+
+            .clear-btn {
+                padding: 12px 20px;
+                background-color: #f0f0f0;
+                color: #666;
+                text-decoration: none;
+                border-radius: 25px;
+                font-size: 14px;
+                font-weight: 500;
+                transition: background-color 0.3s;
+            }
+
+            .clear-btn:hover {
+                background-color: #e0e0e0;
+            }
         </style>
     </head>
 
@@ -248,12 +305,10 @@
         <div class="header">
             <div class="nav-left">
                 <a href="${pageContext.request.contextPath}/admin/home">Home</a>
-                <a href="${pageContext.request.contextPath}/admin/modules">Module</a>
-                <a href="${pageContext.request.contextPath}/admin/tips">Tips</a>
-                <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
+                <a href="${pageContext.request.contextPath}/admin/modules/dashboard">Module</a>
             </div>
 
-            <a href="${pageContext.request.contextPath}/home" class="logo">
+            <a href="${pageContext.request.contextPath}/admin/home" class="logo">
                 <div class="logo-icon">
                     <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
                 </div>
@@ -261,8 +316,7 @@
             </a>
 
             <div class="nav-right">
-                <a href="${pageContext.request.contextPath}/admin/chatbot">Chatbot</a>
-                <a href="${pageContext.request.contextPath}/admin/forum/manage">Forum</a>
+                <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
                 <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
             </div>
         </div>
@@ -274,8 +328,12 @@
         <div class="container">
             <div class="page-header">
                 <h2>Students</h2>
-                <a href="${pageContext.request.contextPath}/admin/user-management/students/new" class="btn btn-teal">Add
-                    New Student</a>
+                <div>
+                    <a href="${pageContext.request.contextPath}/admin/user-management/students/pending"
+                        class="btn btn-yellow" style="margin-right: 10px;">Approve Sign Up</a>
+                    <a href="${pageContext.request.contextPath}/admin/user-management/students/new"
+                        class="btn btn-teal">Add New Student</a>
+                </div>
             </div>
 
             <c:if test="${not empty success}">
@@ -292,6 +350,20 @@
                 </div>
             </c:if>
 
+            <form method="get" action="${pageContext.request.contextPath}/admin/user-management/students"
+                class="search-container">
+                <input type="text" name="search" placeholder="Search by Student ID or name..."
+                    value="${searchQuery != null ? searchQuery : ''}" class="search-input">
+                <c:if test="${param.counselorSearch != null && !param.counselorSearch.isEmpty()}">
+                    <input type="hidden" name="counselorSearch" value="${param.counselorSearch}">
+                </c:if>
+                <button type="submit" class="search-button">Search</button>
+                <c:if test="${searchQuery != null && !searchQuery.isEmpty()}">
+                    <a href="${pageContext.request.contextPath}/admin/user-management/students${param.counselorSearch != null && !param.counselorSearch.isEmpty() ? '?counselorSearch=' : ''}${param.counselorSearch != null && !param.counselorSearch.isEmpty() ? param.counselorSearch : ''}"
+                        class="clear-btn">Clear</a>
+                </c:if>
+            </form>
+
             <div class="card">
                 <div class="table-container">
                     <table>
@@ -303,6 +375,7 @@
                                 <th>Faculty</th>
                                 <th>Year</th>
                                 <th>Created At</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -316,6 +389,19 @@
                                     <td>${student.year}</td>
                                     <td>${student.createdAt != null ? student.createdAt.toString().substring(0, 16) :
                                         'N/A'}</td>
+                                    <td>
+                                        <span style="
+                                            padding: 4px 12px; 
+                                            border-radius: 12px; 
+                                            font-size: 12px; 
+                                            font-weight: 600;
+                                            text-transform: uppercase;
+                                            background-color: ${student.status == 'APPROVED' ? '#d4edda' : (student.status == 'REJECTED' ? '#f8d7da' : '#fff3cd')};
+                                            color: ${student.status == 'APPROVED' ? '#155724' : (student.status == 'REJECTED' ? '#721c24' : '#856404')};
+                                        ">
+                                            ${student.status}
+                                        </span>
+                                    </td>
                                     <td>
                                         <a href="${pageContext.request.contextPath}/admin/user-management/students/edit/${student.studentId}"
                                             class="btn btn-sm btn-yellow" style="margin-right: 5px;">Edit</a>
@@ -338,7 +424,10 @@
 
 
             <!-- Import Counselor List Fragment -->
-            <c:import url="/admin/user-management/counselors/fragment" />
+            <c:import url="/admin/user-management/counselors/fragment">
+                <c:param name="search" value="${param.counselorSearch != null ? param.counselorSearch : ''}" />
+                <c:param name="mainSearch" value="${param.search != null ? param.search : ''}" />
+            </c:import>
         </div>
 
     </body>

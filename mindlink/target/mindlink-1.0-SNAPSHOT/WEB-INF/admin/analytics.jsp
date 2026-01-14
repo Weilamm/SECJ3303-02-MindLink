@@ -199,8 +199,7 @@
     <div class="header">
         <div class="nav-left">
             <a href="${pageContext.request.contextPath}/admin/home">Home</a>
-            <a href="${pageContext.request.contextPath}/admin/modules">Module</a>
-            <a href="${pageContext.request.contextPath}/admin/tips">Tips</a>
+            <a href="${pageContext.request.contextPath}/admin/modules/dashboard">Module</a>
         </div>
         
         <a href="${pageContext.request.contextPath}/admin/home" class="logo">
@@ -211,8 +210,7 @@
         </a>
         
         <div class="nav-right">
-            <a href="${pageContext.request.contextPath}/admin/chatbot">Chatbot</a>
-            <a href="${pageContext.request.contextPath}/admin/forum/manage">Forum</a>
+            <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
             <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
         </div>
     </div>
