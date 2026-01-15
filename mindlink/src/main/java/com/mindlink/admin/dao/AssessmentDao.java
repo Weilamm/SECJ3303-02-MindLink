@@ -1,4 +1,4 @@
-package com.mindlink.assessment.dao;
+package com.mindlink.admin.dao;
 
 import com.mindlink.assessment.Assessment;
 
@@ -8,6 +8,8 @@ public interface AssessmentDao {
     List<Assessment> findByTitle(String title);
 
     List<Assessment> findAll();
+
+    List<Assessment> findByModuleId(int moduleId);
 
     Assessment findById(int id);
 

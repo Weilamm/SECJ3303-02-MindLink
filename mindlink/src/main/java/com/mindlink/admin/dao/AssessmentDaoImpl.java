@@ -1,4 +1,4 @@
-package com.mindlink.assessment.dao;
+package com.mindlink.admin.dao;
 
 import com.mindlink.assessment.Assessment;
 import com.mindlink.assessment.AssessmentOption;
@@ -64,6 +64,18 @@ public class AssessmentDaoImpl implements AssessmentDao {
         // but user probably wants to see them or at least counting them.
         // For admin list, we can just fetch options too or lazy load.
         // Let's fetch them for now to be safe.
+        for (Assessment assessment : assessments) {
+            String optionSql = "SELECT * FROM ass_question WHERE assessment_id = ?";
+            List<AssessmentOption> options = jdbcTemplate.query(optionSql, optionRowMapper, assessment.getId());
+            assessment.setOptions(options);
+        }
+        return assessments;
+    }
+
+    @Override
+    public List<Assessment> findByModuleId(int moduleId) {
+        String sql = "SELECT * FROM assessment WHERE module_id = ?";
+        List<Assessment> assessments = jdbcTemplate.query(sql, assessmentRowMapper, moduleId);
         for (Assessment assessment : assessments) {
             String optionSql = "SELECT * FROM ass_question WHERE assessment_id = ?";
             List<AssessmentOption> options = jdbcTemplate.query(optionSql, optionRowMapper, assessment.getId());
