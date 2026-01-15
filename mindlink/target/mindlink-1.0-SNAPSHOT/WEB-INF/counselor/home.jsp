@@ -1,222 +1,209 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+    <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+        <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
-<%-- 
-    1. CALCULATE UPCOMING COUNT (Real-Time)
-    We loop through appointments and check 'app.upcoming' instead of just 'status'.
---%>
-<c:set var="bookedCount" value="0" />
-<c:forEach items="${appointments}" var="app">
-    <c:if test="${app.upcoming}">
-        <c:set var="bookedCount" value="${bookedCount + 1}" />
-    </c:if>
-</c:forEach>
+            <%-- CALCULATE UPCOMING COUNT --%>
+                <c:set var="bookedCount" value="0" />
+                <c:forEach items="${appointments}" var="app">
+                    <c:if test="${app.upcoming}">
+                        <c:set var="bookedCount" value="${bookedCount + 1}" />
+                    </c:if>
+                </c:forEach>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Counselor Home | MindLink</title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                <!DOCTYPE html>
+                <html lang="en">
+
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Counselor Home | MindLink</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+                        rel="stylesheet">
+                    <link rel="stylesheet"
+                        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
         :root {
-            --bg-peach: #FFF0E5;       
-            --text-dark: #003B46;      
-            --text-body: #666;         
-            --card-white: #FFFFFF;
-            --btn-orange: #FF9F1C;     
-            --btn-hover: #E68A00;
+            --bg-color: #FFF3E0; 
+            --text-dark: #003049;
+            --card-bg: #FFFFFF;
+            --btn-orange: #F77F00;
+            --btn-hover: #D62828;
+            --text-grey: #555;
         }
 
         body {
-            font-family: 'Quicksand', sans-serif;
-            background-color: var(--bg-peach);
-            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(247, 127, 0, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(72, 201, 176, 0.1) 0%, transparent 50%);
+            margin: 0; padding: 0;
             color: var(--text-dark);
+            overflow-x: hidden;
             min-height: 100vh;
-            overflow-x: hidden; 
+            position: relative;
         }
 
-        /* --- Navbar --- */
-        .navbar {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 15px 50px;
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 100;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-        }
+        /* 🟢 ANIMATED BLOBS */
+        .blob { position: absolute; filter: blur(50px); z-index: -1; opacity: 0.6; animation: float 10s ease-in-out infinite; }
+        .blob-1 { top: -100px; left: -100px; width: 500px; height: 500px; background: rgba(247, 127, 0, 0.15); border-radius: 40% 60% 70% 30%; }
+        .blob-2 { bottom: -150px; right: -100px; width: 600px; height: 600px; background: rgba(72, 201, 176, 0.15); border-radius: 60% 40% 30% 70%; animation-direction: reverse; }
+        @keyframes float { 0% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(30px, 20px) rotate(5deg); } 100% { transform: translate(0, 0) rotate(0deg); } }
 
-        .nav-center-logo {
-            font-size: 24px; font-weight: 700; color: var(--text-dark);
-            display: flex; align-items: center; gap: 10px;
-            position: absolute; left: 50%; transform: translateX(-50%);
-        }
+        /* 🟢 DECORATIVE SIDE IMAGES */
+        .deco-img { position: fixed; bottom: 0; z-index: -1; width: 300px; opacity: 0.9; pointer-events: none; transition: all 0.3s ease; }
+        .deco-left { left: 0; animation: slideInLeft 1s ease-out; }
+        .deco-right { right: 0; animation: slideInRight 1s ease-out; }
+        @media (max-width: 1300px) { .deco-img { opacity: 0.3; width: 150px; } }
+        @keyframes slideInLeft { from { transform: translateX(-100px); opacity: 0; } to { transform: translateX(0); opacity: 0.9; } }
+        @keyframes slideInRight { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 0.9; } }
 
-        .nav-links { display: flex; gap: 40px; align-items: center; }
-        .nav-links a {
-            text-decoration: none; color: var(--text-dark);
-            font-weight: 700; font-size: 16px; transition: color 0.2s; position: relative;
-        }
-        
-        .active-link { color: var(--btn-orange) !important; }
-        .nav-links a::after {
-            content: ''; position: absolute; width: 0; height: 3px;
-            bottom: -5px; left: 0; background-color: var(--btn-orange);
-            transition: width 0.3s; border-radius: 2px;
-        }
-        .nav-links a:hover::after { width: 100%; }
-        .btn-logout { color: #d9534f !important; }
+        /* 🟢 HEADER STYLE */
+        .header { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; }
+        .nav-left, .nav-right { display: flex; align-items: center; justify-content: space-evenly; flex: 1; gap: 0; }
+        .nav-left a, .nav-right a { text-decoration: none; color: #00313e; font-size: 16px; font-weight: 500; transition: color 0.3s; }
+        .nav-left a:hover, .nav-right a:hover { color: var(--btn-orange); }
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; color: #00313e; font-size: 32px; text-decoration: none; }
+        .logo-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+        .logo-icon img { width: 100%; height: 100%; object-fit: contain; }
 
         /* --- Main Layout --- */
-        .container {
-            max-width: 800px; margin: 0 auto; padding: 60px 20px 100px; 
-            text-align: center; position: relative; z-index: 2;
+        .container { max-width: 900px; margin: 0 auto; padding: 120px 20px 60px; text-align: center; }
+        h1 { font-size: 48px; font-weight: 800; color: var(--text-dark); margin: 0 0 10px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .subtitle { font-size: 22px; font-weight: 600; color: #555; margin-bottom: 50px; }
+
+        /* 🟢 DASHBOARD GRID (New Layout for Cards) */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 50px;
         }
 
-        h1 { font-size: 42px; margin: 0 0 10px 0; color: var(--text-dark); }
-        .subtitle { font-size: 20px; color: var(--text-body); margin-bottom: 50px; font-weight: 500; }
-
-        /* --- Highlight Card --- */
-        .highlight-card {
-            background: var(--card-white); border-radius: 25px; padding: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 60px;
-            display: flex; flex-direction: column; align-items: center;
-            position: relative; overflow: hidden;
+        /* --- INFO CARD (General Style) --- */
+        .info-card {
+            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px);
+            border-radius: 20px; padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            text-align: center; border: 1px solid rgba(255,255,255,0.6);
+            transition: transform 0.2s;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-        .highlight-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
-            background: linear-gradient(90deg, #FF9F1C, #2EC4B6);
-        }
-        .highlight-icon {
-            font-size: 32px; color: var(--btn-orange); margin-bottom: 15px;
-            background: #FFF4E6; width: 60px; height: 60px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .highlight-text { font-size: 18px; line-height: 1.6; color: var(--text-body); max-width: 500px; }
-        .highlight-stat { font-weight: 700; color: var(--text-dark); }
+        .info-card:hover { transform: translateY(-5px); }
 
-        /* --- Session Cards --- */
-        .section-title { font-size: 28px; font-weight: 700; margin-bottom: 30px; color: var(--text-dark); }
+        /* Specific Card Styles */
+        .card-session { border-bottom: 4px solid var(--btn-orange); }
+        .card-assessment { border-bottom: 4px solid #27AE60; } /* Green accent */
 
-        .session-card {
-            background: var(--card-white); border-radius: 20px; padding: 25px 35px;
-            margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.03); transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid transparent;
+        .info-header { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 18px; font-weight: 700; color: var(--text-dark); margin-bottom: 10px; }
+        .info-text { font-size: 15px; color: var(--text-grey); margin-bottom: 15px; }
+
+        /* Small link button inside card */
+        .card-link {
+            text-decoration: none; font-size: 14px; font-weight: 700; 
+            color: var(--text-dark); border-bottom: 2px solid transparent; transition: 0.2s;
         }
-        .session-card:hover {
-            transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.06); border-color: #FFF0E5;
-        }
+        .card-link:hover { border-bottom-color: var(--btn-orange); }
 
-        .session-left { display: flex; align-items: center; gap: 20px; text-align: left; }
-
-        .avatar-circle {
-            width: 50px; height: 50px; background-color: #E0F7FA; color: #006064;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 18px; font-weight: 700;
-        }
-
-        .session-details h3 { margin: 0 0 5px 0; font-size: 18px; color: var(--text-dark); }
-        .session-meta { color: #888; font-size: 14px; display: flex; gap: 15px; }
-        .session-meta i { color: var(--btn-orange); }
-
-        .btn-view {
-            background-color: var(--btn-orange); color: white; padding: 12px 28px;
-            border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 14px;
-            transition: background 0.2s; border: none;
-        }
-        .btn-view:hover { background-color: var(--btn-hover); }
-
-        /* --- Shapes --- */
-        .shape { position: fixed; z-index: 1; opacity: 0.6; pointer-events: none; }
-        .shape-blob-left {
-            bottom: -50px; left: -50px; width: 300px; height: 300px;
-            background: #C4E0E5; border-radius: 40% 60% 70% 30%;
-            animation: float 8s ease-in-out infinite;
-        }
-        .shape-blob-right {
-            top: 100px; right: -80px; width: 250px; height: 250px;
-            background: #FFE0B2; border-radius: 60% 40% 30% 70%;
-            animation: float 6s ease-in-out infinite reverse;
-        }
-        @keyframes float { 0% { transform: translate(0, 0); } 50% { transform: translate(10px, -20px); } 100% { transform: translate(0, 0); } }
-
+        /* --- SESSION LIST --- */
+        .section-title { font-size: 28px; font-weight: 800; color: var(--text-dark); margin-bottom: 25px; }
+        .session-card { background: white; border-radius: 16px; padding: 25px 35px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden; }
+        .session-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--btn-orange); }
+        .session-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .session-info { text-align: left; }
+        .session-name { font-size: 18px; font-weight: 700; color: var(--text-dark); margin-bottom: 5px; }
+        .session-date { font-size: 14px; color: var(--text-grey); font-weight: 500; }
+        .btn-view { background-color: var(--btn-orange); color: white; padding: 10px 30px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 14px; border: none; box-shadow: 0 4px 10px rgba(247, 127, 0, 0.3); transition: all 0.2s; }
+        .btn-view:hover { background-color: #e06c00; box-shadow: 0 6px 15px rgba(247, 127, 0, 0.4); transform: translateY(-1px); }
+        .empty-state { padding: 30px; background: rgba(255,255,255,0.6); border-radius: 16px; color: #777; font-style: italic; }
     </style>
 </head>
 <body>
 
-    <div class="shape shape-blob-left"></div>
-    <div class="shape shape-blob-right"></div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <img src="${pageContext.request.contextPath}/images/assessment-left.png" class="deco-img deco-left" alt="Decoration Left">
+    <img src="${pageContext.request.contextPath}/images/assessment-right.png" class="deco-img deco-right" alt="Decoration Right">
 
-    <nav class="navbar">
-        <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/counselor/dashboard" class="active-link">Home</a>
-            <a href="${pageContext.request.contextPath}/counselor/appointments">Appointment</a>
-        </div>
+                    <div class="header">
+                        <div class="nav-left">
+                            <a href="${pageContext.request.contextPath}/counselor/dashboard">Home</a>
+                            <a href="${pageContext.request.contextPath}/counselor/appointments">Appointment</a>
+                            <a href="${pageContext.request.contextPath}/assessment/admin/history">Assessment</a>
+                        </div>
 
-        <div class="nav-center-logo">
-            <i class="fas fa-heart"></i> MindLink
-        </div>
-
-        <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/counselor/profile">Profile</a>
-            <a href="${pageContext.request.contextPath}/logout" class="btn-logout">Logout</a>
-        </div>
-    </nav>
-
-    <div class="container">
-        <h1>Welcome back, ${sessionScope.loggedInCounselor.name}!</h1>
-        <div class="subtitle">Ready to make a difference today?</div>
-
-        <div class="highlight-card">
-            <div class="highlight-icon"><i class="far fa-lightbulb"></i></div>
-            <div class="highlight-text">
-                <p style="margin: 0;">
-                    You have <span class="highlight-stat">${bookedCount} upcoming sessions</span>. 
-                </p>
-            </div>
-        </div>
-
-        <div class="section-title">Upcoming Sessions</div>
-
-        <c:forEach items="${appointments}" var="app">
-            
-            <%-- 
-               2. FILTER LIST (Real-Time)
-               Only show this card if it is TRULY upcoming (checked by Java Logic)
-            --%>
-            <c:if test="${app.upcoming}">
-                <div class="session-card">
-                    <div class="session-left">
-                        <div class="avatar-circle"><i class="fas fa-user"></i></div>
-                        <div class="session-details">
-                            
-                            <%-- 3. SHOW STUDENT NAME (Not ID) --%>
-                            <h3>Session with ${app.studentName != null ? app.studentName : 'Unknown Student'}</h3>
-                            
-                            <div class="session-meta">
-                                <span><i class="far fa-calendar"></i> ${app.date}</span>
-                                <span><i class="far fa-clock"></i> ${app.time}</span>
-                                <span><i class="fas fa-video"></i> ${app.type}</span>
+                        <a href="${pageContext.request.contextPath}/counselor/dashboard" class="logo">
+                            <div class="logo-icon">
+                                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
                             </div>
+                            <span>MindLink</span>
+                        </a>
+
+                        <div class="nav-right">
+                            <a href="${pageContext.request.contextPath}/counselor/profile">Profile</a>
+                            <a href="${pageContext.request.contextPath}/logout" style="color: #D62828;">Logout</a>
                         </div>
                     </div>
-                    <a href="${pageContext.request.contextPath}/counselor/appointment?id=${app.id}" class="btn-view">View</a>
+
+                    <div class="container">
+                        <h1>Welcome back, ${not empty sessionScope.loggedInCounselor.name ?
+                            sessionScope.loggedInCounselor.name : 'Counselor'}!</h1>
+                        <div class="subtitle">Ready to support your students today?</div>
+
+        <div class="dashboard-grid">
+            
+            <div class="info-card card-session">
+                <div class="info-header">
+                    <i class="fas fa-calendar-check" style="color: #F77F00;"></i> Session Overview
                 </div>
-            </c:if>
-        </c:forEach>
-
-        <c:if test="${bookedCount == 0}">
-            <div style="background: rgba(255,255,255,0.5); padding: 20px; border-radius: 15px; color: #888;">
-                <i class="fas fa-mug-hot"></i> No upcoming sessions found.
+                <div class="info-text">
+                    You have <strong>${bookedCount}</strong> upcoming sessions.
+                </div>
+                <a href="${pageContext.request.contextPath}/counselor/appointments" class="card-link">View Schedule &rarr;</a>
             </div>
-        </c:if>
-    </div>
 
-</body>
-</html>
+            <div class="info-card card-assessment">
+                <div class="info-header">
+                    <i class="fas fa-clipboard-list" style="color: #27AE60;"></i> Student Assessments
+                </div>
+                <div class="info-text">
+                    Review DASS & Stress Test results.
+                </div>
+                <a href="${pageContext.request.contextPath}/counselor/assessments" class="card-link">View Results &rarr;</a>
+            </div>
+
+        </div>
+
+                        <div class="section-title">Upcoming Sessions</div>
+
+                        <c:forEach items="${appointments}" var="app">
+                            <c:if test="${app.upcoming}">
+                                <div class="session-card">
+                                    <div class="session-info">
+                                        <div class="session-name">Session with ${app.studentName != null ?
+                                            app.studentName : 'Student'}</div>
+                                        <div class="session-date">
+                                            <i class="far fa-calendar-alt" style="margin-right: 5px;"></i> ${app.date}
+                                            &nbsp;|&nbsp;
+                                            <i class="far fa-clock" style="margin-right: 5px;"></i> ${app.time}
+                                        </div>
+                                    </div>
+                                    <a href="${pageContext.request.contextPath}/counselor/appointment?id=${app.id}"
+                                        class="btn-view">
+                                        View Details
+                                    </a>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+
+                        <c:if test="${bookedCount == 0}">
+                            <div class="empty-state">
+                                <i class="fas fa-mug-hot"></i> No upcoming sessions found. Enjoy your free time!
+                            </div>
+                        </c:if>
+
+                    </div>
+
+                </body>
+
+                </html>
