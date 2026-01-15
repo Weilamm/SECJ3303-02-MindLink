@@ -20,7 +20,7 @@ public class AssesModuleDaoImpl implements AssesModuleDao {
             Module m = new Module();
             m.setModuleId(rs.getInt("module_id"));
             m.setTitle(rs.getString("assessment_title"));
-            m.setDescription("Questions grouped under this module."); // Placeholder
+            m.setDescription("Questions grouped under this module."); 
             return m;
         });
     }

@@ -19,10 +19,9 @@ public class AdminAssessmentController {
     @Autowired
     private AssesModuleDao moduleDao; 
 
-    // Step 1: Entry Point - Now fetches unique "Modules" from the assessment table
+    // Fetches unique "Modules" from the assessment table
     @GetMapping
     public String selectModule(Model model) {
-        // This will call the updated DAO that queries 'assessment' table
         model.addAttribute("modules", moduleDao.findAll());
         return "admin/assessment_module_select";
     }

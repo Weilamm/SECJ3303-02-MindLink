@@ -10,7 +10,7 @@ public class AdminAssessment {
     private String questionText;
     private List<Option> options = new ArrayList<>();
 
-    // Standard Getters and Setters
+    // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public int getModuleId() { return moduleId; }
@@ -22,7 +22,7 @@ public class AdminAssessment {
     public List<Option> getOptions() { return options; }
     public void setOptions(List<Option> options) { this.options = options; }
 
-    // Required Inner Class for options
+    // Inner Class for options
     public static class Option {
         private int optionId;
         private int assessmentId;
@@ -30,7 +30,7 @@ public class AdminAssessment {
         private int scoreValue;
 
         public Option() {}
-        // Getters and Setters for optionId, assessmentId, optionText, scoreValue...
+        // Getters and Setters
         public int getOptionId() { return optionId; }
         public void setOptionId(int optionId) { this.optionId = optionId; }
         public int getAssessmentId() { return assessmentId; }

@@ -186,9 +186,10 @@
                     </div>
                 </div>
 
+                <p>Number of questions: ${questions.size()}</p>
+                
                 <c:forEach items="${questions}" var="q">
                     <div class="question-card">
-                        <p>Number of questions: ${questions.size()}</p>
                         <div
                             style="margin-bottom: 5px; color: #888; text-transform: uppercase; font-size: 12px; font-weight: 700;"> ${q.title}</div>
                         <div class="question-text">${q.questionText}</div>

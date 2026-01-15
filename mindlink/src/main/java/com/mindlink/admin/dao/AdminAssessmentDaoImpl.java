@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mindlink.admin.AdminAssessment;
-import com.mindlink.admin.AdminAssessment.Option; // Corrected import for inner class
+import com.mindlink.admin.AdminAssessment.Option; 
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;

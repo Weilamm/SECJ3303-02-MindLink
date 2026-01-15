@@ -29,7 +29,7 @@ public class AssessmentController {
         // Clear previous session data when starting a new test
         session.removeAttribute("userAnswers");
         
-        // Fetch titles like "Stress Test" and "Happiness Check" from the database
+        // Fetch titles from the database
         List<String> modules = assessmentDao.findAllAssessmentTitles(); 
         
         model.addAttribute("modules", modules);
@@ -62,13 +62,13 @@ public class AssessmentController {
                               @RequestParam("totalPages") int totalPages,
                               HttpSession session, Model model) {
 
-        // 1. Get or create the answer map in the session
+        // Get or create the answer map
         Map<Integer, Integer> answers = (Map<Integer, Integer>) session.getAttribute("userAnswers");
         if (answers == null) {
             answers = new HashMap<>();
         }
 
-        // 2. Capture answers from the current page
+        // Capture answers
         Enumeration<String> params = request.getParameterNames();
         while (params.hasMoreElements()) {
             String paramName = params.nextElement();
@@ -80,12 +80,12 @@ public class AssessmentController {
         }
         session.setAttribute("userAnswers", answers);
 
-        // 3. Navigation Logic
+        // Navigation 
         if (currentPage < totalPages) {
             return "redirect:/assessment/questions?title=" + title + "&page=" + (currentPage + 1);
         }
 
-        // 4. Final Calculation (Normalized to 100)
+        // Final Calculation
         return calculateFinalScore(title, answers, model);
     }
 
@@ -95,20 +95,20 @@ public class AssessmentController {
         List<Assessment> allQuestions = assessmentDao.findByTitle(title);
 
         for (Assessment q : allQuestions) {
-            // Find the highest possible score for each question in this set
+            // Highest possible score for each question in current set
             int qMax = q.getOptions().stream().mapToInt(AssessmentOption::getScoreValue).max().orElse(0);
             maxPossible += qMax;
             
-            // Add user's selected score
+            // User's selection
             userScore += answers.getOrDefault(q.getId(), 0);
         }
 
-        // Formula: (Total Scored / Max Possible) * 100
+        // (Total Scored / Max Possible) * 100
         int finalScore = (maxPossible > 0) ? (userScore * 100 / maxPossible) : 0;
         
         model.addAttribute("score", finalScore);
         
-        // Interpretation Logic based on 100-point scale
+        // 100-point scale
         if (finalScore < 30) {
             model.addAttribute("suggestionTitle", "Doing Well!");
             model.addAttribute("interpretation", "Your results suggest a stable mental state. Keep maintaining your healthy routines.");

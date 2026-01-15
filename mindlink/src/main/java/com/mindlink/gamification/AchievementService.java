@@ -13,14 +13,10 @@ public class AchievementService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    /**
-     * Fetches all achievements for a student, calculates progress dynamically,
-     * and checks the database for permanent unlock status.
-     */
     public List<Achievement> getStudentAchievements(String studentId) {
         List<Achievement> list = new ArrayList<>();
 
-        // 1. Mind Explorer: Progress based on assessment count
+        // 1. Mind Explorer
         int modCount = getCount(
             "SELECT COUNT(DISTINCT assessment_id) FROM user_module_progress WHERE student_id = ?", 
             studentId
@@ -29,7 +25,7 @@ public class AchievementService {
         attachDateAndStatus(ach1, studentId, "MIND_EXPLORER", modCount > 0);
         list.add(ach1);
 
-        // 2. Wellness Warrior: Progress based on confirmed appointments
+        // 2. Wellness Warrior
         int sessCount = getCount(
             "SELECT COUNT(*) FROM appointment WHERE student_id = ? AND status = 'Confirmed'", 
             studentId
@@ -38,13 +34,13 @@ public class AchievementService {
         attachDateAndStatus(ach2, studentId, "WELLNESS_WARRIOR", sessCount >= 5);
         list.add(ach2);
 
-        // 3. Inner Peace: Progress based on calculated points
+        // 3. Inner Peace
         int points = (modCount * 100) + (sessCount * 50);
         Achievement ach3 = new Achievement("Inner Peace", "Achieved 2000 points", "badge5.png", false, points, 2000);
         attachDateAndStatus(ach3, studentId, "INNER_PEACE", points >= 2000);
         list.add(ach3);
 
-        // 4-15. Milestone Loop: Static/Placeholder achievements
+        // 4-15. Milestone Loop
         String[] types = {"BALANCED_MIND", "RESILIENCE_BUILDER", "TINY_TRIUMPH", "STEADY_START", "FIRST_STEP_FORWARD", "FORUM_MASTER", "KNOWLEDGE_SEEKER", "CONSISTENT_CALM", "DAILY_ZEN", "COMMUNITY_STAR", "FEEDBACK_HERO", "MINDFUL_MEMBER"};
         String[] names = {"Balanced Mind", "Resilience Builder", "Tiny Triumph", "Steady Start", "First Step Forward", "Forum Master", "Knowledge Seeker", "Consistent Calm", "Daily Zen", "Community Star", "Feedback Hero", "Mindful Member"};
         String[] icons = {"badge2.png", "badge4.png", "badge7.png", "badge8.png", "badge6.png", "badge1.png", "badge2.png", "badge3.png", "badge4.png", "badge5.png", "badge6.png", "badge7.png"};

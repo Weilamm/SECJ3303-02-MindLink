@@ -17,6 +17,8 @@
         .module-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .module-card h3 { margin: 0 0 10px 0; font-size: 20px; }
         .module-card p { font-size: 14px; color: #666; margin: 0; }
+        .header-title-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .btn-add { background: transparent; border: none; font-size: 32px; cursor: pointer; color: #000; }
     </style>
 </head>
 <body>
@@ -28,6 +30,13 @@
         <h1>Select a Module</h1>
         <p>Choose a module to manage its assessment questions.</p>
         
+        <div class="header-title-section">
+            <h1>Mental Health Assessment</h1>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <a href="${pageContext.request.contextPath}/admin/assessment/add?moduleId=${selectedModuleId}" class="btn-add">+</a>
+            </div>
+        </div>
+
         <div class="module-grid">
             <c:forEach items="${modules}" var="m">
                 <a href="${pageContext.request.contextPath}/admin/assessment/list?moduleId=${m.moduleId}" class="module-card">
