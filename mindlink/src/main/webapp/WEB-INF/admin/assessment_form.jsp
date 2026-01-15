@@ -247,16 +247,21 @@
             <div class="container">
                 <div class="form-card">
                     <c:choose>
+                        <c:when test="${not empty isNewSet}">
+                            <h2>Create New Assessment Set</h2>
+                        </c:when>
+                        <c:when test="${assessment.id > 0}">
+                            <h2>Edit Question for
+                                <c:out value="${assessment.title}" />
+                            </h2>
+                        </c:when>
                         <c:when test="${moduleId != null}">
                             <h2>Add Question for
                                 <c:out value="${assessment.title}" />
                             </h2>
                         </c:when>
-                        <c:when test="${not empty isNewSet}">
-                            <h2>Create New Assessment Set</h2>
-                        </c:when>
                         <c:otherwise>
-                            <h2>${assessment.id > 0 ? 'Edit' : 'Create New'} Assessment</h2>
+                            <h2>Create New Assessment</h2>
                         </c:otherwise>
                     </c:choose>
 
