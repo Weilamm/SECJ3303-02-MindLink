@@ -1,6 +1,7 @@
 package com.mindlink.counselor;
 
-import com.mindlink.assessment.AssessmentService;
+import com.mindlink.assessment.AssessmentResult;
+import com.mindlink.assessment.CounselorAssessmentService;
 import com.mindlink.counseling.Appointment;
 import com.mindlink.counseling.AppointmentService;
 import com.mindlink.counseling.CounselorService;
@@ -21,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.*;
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +39,7 @@ public class CounselorController {
     private SessionFeedbackService sessionFeedbackService;
 
     @Autowired
-    private AssessmentService assessmentService;
+    private CounselorAssessmentService assessmentService;
 
     // --- 1. DASHBOARD ---
     @GetMapping({ "/home", "/dashboard" })
@@ -126,9 +126,7 @@ public class CounselorController {
 
                 existingCounselor.setImageUrl("/images/uploads/" + fileName);
             } else {
-                // If no new image, ensure we keep the old one (which is already in
-                // existingCounselor)
-                // No action needed here, existingCounselor.imageUrl is already set from DB
+
             }
 
             // 🟢 STEP 4: Save the MERGED object
@@ -192,6 +190,7 @@ public class CounselorController {
     public String showAssessments(
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "risk", required = false) String risk,
+            @RequestParam(value = "search", required = false) String search,
             HttpSession session, 
             Model model) {
         
@@ -199,12 +198,13 @@ public class CounselorController {
             return "redirect:/login";
         }
 
-        // 🟢 Clean one-liner, just like your appointmentService calls!
-        List<AssessmentResult> results = assessmentService.getAssessmentResults(type, risk);
+        // Now this method exists because we are using CounselorAssessmentService
+        List<AssessmentResult> results = assessmentService.getAssessmentResults(type, risk, search);
 
         model.addAttribute("assessments", results);
         model.addAttribute("currentType", type);
         model.addAttribute("currentRisk", risk);
+        model.addAttribute("currentSearch", search);
 
         return "counselor/assessment_results";
     }

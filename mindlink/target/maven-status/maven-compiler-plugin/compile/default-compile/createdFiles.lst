@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-com\mindlink\auth\ForgotPasswordController.class
-com\mindlink\module\dao\ModuleProgressDao.class
-com\mindlink\forum\model\ForumPost.class
-com\mindlink\module\UserProgress.class
-=======
 com\mindlink\achievement\dao\AchievementDao.class
 com\mindlink\assistant\service\DailyTipService.class
 com\mindlink\module\dao\ModuleDaoImpl.class
@@ -63,20 +57,18 @@ com\mindlink\module\dao\ModuleQuestionDaoImpl.class
 com\mindlink\forum\ReportController.class
 com\mindlink\assessment\dao\AssessmentDaoImpl$1.class
 com\mindlink\admin\Option.class
+com\mindlink\assessment\AssessmentResult.class
 com\mindlink\assistant\dao\ChatbotDAO.class
 com\mindlink\gamification\GamificationController.class
 com\mindlink\usermanagement\service\UserManagementCounselorService.class
+com\mindlink\assessment\CounselorAssessmentService.class
 com\mindlink\module\ModuleQuestion.class
 com\mindlink\usermanagement\dao\StudentDaoImpl.class
->>>>>>> dcea911ebf256eda3da8550226e1abe5a91da4fb
 com\mindlink\assistant\dao\DailyTipDAOImpl.class
-com\mindlink\admin\dao\AssessmentDao.class
-com\mindlink\assistant\dao\DailyTipDAO.class
+com\mindlink\auth\AdminLoginController.class
 com\mindlink\admin\ForumCommentReportService.class
 com\mindlink\assistant\dao\DailyTipDAOImpl$1.class
 com\mindlink\forum\model\ForumComment.class
-<<<<<<< HEAD
-=======
 com\mindlink\forum\model\Forum.class
 com\mindlink\admin\AdminChatbotController.class
 com\mindlink\assistant\dao\ChatbotDAOImpl.class
@@ -99,30 +91,27 @@ com\mindlink\usermanagement\dao\StudentDao.class
 com\mindlink\assessment\dao\AssessmentHistoryDao.class
 com\mindlink\module\dao\ModuleDao.class
 com\mindlink\forum\service\ForumService.class
->>>>>>> dcea911ebf256eda3da8550226e1abe5a91da4fb
 com\mindlink\assistant\model\Chatbot.class
 com\mindlink\assessment\AssessmentController.class
-com\mindlink\counseling\AppointmentService.class
-com\mindlink\counseling\AppointmentService$AppointmentRowMapper.class
-com\mindlink\forum\dao\ForumCommentDAO.class
+com\mindlink\forum\dao\ForumDAOImpl$1.class
 com\mindlink\counseling\Appointment.class
 com\mindlink\assistant\model\DailyTip.class
-com\mindlink\admin\dao\AssessmentDaoImpl$2.class
-com\mindlink\assessment\Assessment.class
-com\mindlink\admin\ReportedComment.class
+com\mindlink\module\dao\ModuleQuestionDaoImpl$1.class
+com\mindlink\student\StudentController.class
+com\mindlink\module\dao\ModuleQuestionDao.class
+com\mindlink\auth\CounselorApplicationController.class
 com\mindlink\assessment\AssessmentOption.class
-com\mindlink\assessment\AssessmentQuestion.class
-com\mindlink\forum\dao\ForumPostDAO.class
+com\mindlink\counseling\Feedback.class
+com\mindlink\assistant\dao\ChatbotDAOImpl$1.class
+com\mindlink\admin\AdminTipsController.class
+com\mindlink\admin\AdminAssessment.class
+com\mindlink\admin\AdminController.class
+com\mindlink\module\dao\ModuleProgressDaoImpl.class
+com\mindlink\assessment\AssessmentService.class
 com\mindlink\MindlinkApp.class
-<<<<<<< HEAD
-com\mindlink\admin\dao\AssessmentDaoImpl.class
-com\mindlink\admin\dao\AssessmentDaoImpl$1.class
-com\mindlink\assistant\dao\ChatbotDAO.class
-=======
 com\mindlink\admin\AdminProfile.class
 com\mindlink\assistant\TipsController.class
 com\mindlink\counseling\Counselor.class
 com\mindlink\admin\dao\AssesModuleDaoImpl.class
 com\mindlink\admin\ForumReportService.class
 com\mindlink\achievement\Achievement.class
->>>>>>> dcea911ebf256eda3da8550226e1abe5a91da4fb

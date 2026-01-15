@@ -20,6 +20,7 @@
             --text-grey: #555;
             --risk-red: #D62828;
             --safe-green: #27AE60;
+            --warn-orange: #F77F00; /* Added for Moderate */
         }
 
         body {
@@ -41,12 +42,6 @@
         .blob-2 { bottom: -150px; right: -100px; width: 600px; height: 600px; background: rgba(72, 201, 176, 0.15); border-radius: 60% 40% 30% 70%; animation-direction: reverse; }
         @keyframes float { 0% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(30px, 20px) rotate(5deg); } 100% { transform: translate(0, 0) rotate(0deg); } }
 
-        /* 🟢 MATCHED: Decorative Side Images */
-        .deco-img { position: fixed; bottom: 0; z-index: -1; width: 300px; opacity: 0.9; pointer-events: none; transition: all 0.3s ease; }
-        .deco-left { left: 0; }
-        .deco-right { right: 0; }
-        @media (max-width: 1300px) { .deco-img { opacity: 0.3; width: 150px; } }
-
         /* 🟢 MATCHED: Header Style */
         .header { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; }
         .nav-left, .nav-right { display: flex; align-items: center; justify-content: space-evenly; flex: 1; gap: 0; }
@@ -60,7 +55,7 @@
         .container { max-width: 1000px; margin: 0 auto; padding: 120px 20px 60px; }
         h1 { font-size: 32px; font-weight: 800; margin-bottom: 30px; text-align: center; color: var(--text-dark); }
 
-        /* --- Filter Card (Matches Info Card style) --- */
+        /* --- Filter Card --- */
         .filter-card {
             background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px);
             padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.6);
@@ -89,15 +84,16 @@
         tr:last-child td { border-bottom: none; }
         .student-name { font-weight: 700; color: var(--text-dark); display: block; }
         .student-id { font-size: 12px; color: #888; }
+        
+        /* Badges */
         .badge { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-        .badge-dass { background: #E3F2FD; color: #1565C0; }
+        .badge-happiness { background: #E3F2FD; color: #1565C0; }
         .badge-stress { background: #F3E5F5; color: #7B1FA2; }
+        
         .score-box { font-weight: 800; font-size: 16px; }
+        
+        /* Dynamic Dots */
         .sev-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-        .high-risk { color: var(--risk-red); }
-        .high-risk .sev-dot { background: var(--risk-red); box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.2); }
-        .normal { color: var(--safe-green); }
-        .normal .sev-dot { background: var(--safe-green); }
         .empty-state { text-align: center; padding: 40px; color: #999; font-style: italic; }
     </style>
 </head>
@@ -128,18 +124,33 @@
     <div class="container">
         <h1>Student Assessment Results</h1>
 
-        <div class="filter-card">
-            <div class="filter-group">
-                <a href="?type=all" class="filter-btn ${empty currentType || currentType == 'all' ? 'active' : ''}">All Tests</a>
-                <a href="?type=DASS" class="filter-btn ${currentType == 'DASS' ? 'active' : ''}">DASS Test</a>
-                <a href="?type=Stress Test" class="filter-btn ${currentType == 'Stress Test' ? 'active' : ''}">Stress Test</a>
-            </div>
+        <div class="filter-card" style="flex-direction: column; align-items: stretch; gap: 20px;">
             
-            <div>
-                <a href="?risk=${currentRisk == 'high' ? 'all' : 'high'}" 
-                   class="filter-btn risk-toggle ${currentRisk == 'high' ? 'active' : ''}">
-                   <i class="fas fa-exclamation-circle"></i> Prioritize High Risk
-                </a>
+            <form action="${pageContext.request.contextPath}/counselor/assessments" method="get" style="display: flex; gap: 10px;">
+                <input type="text" name="search" value="${currentSearch}" placeholder="Search student by name..." 
+                       style="flex: 1; padding: 12px 20px; border-radius: 50px; border: 1px solid #ddd; outline: none; font-family: 'Inter';">
+                
+                <button type="submit" style="background: var(--text-dark); color: white; border: none; padding: 0 25px; border-radius: 50px; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="filter-group">
+                    <a href="?type=all&search=${currentSearch}&risk=${currentRisk}" 
+                       class="filter-btn ${empty currentType || currentType == 'all' ? 'active' : ''}">All Tests</a>
+                    <a href="?type=Happiness Check&search=${currentSearch}&risk=${currentRisk}" 
+                       class="filter-btn ${currentType == 'Happiness Check' ? 'active' : ''}">Happiness Check</a>
+                    <a href="?type=Stress Test&search=${currentSearch}&risk=${currentRisk}" 
+                       class="filter-btn ${currentType == 'Stress Test' ? 'active' : ''}">Stress Test</a>
+                </div>
+                
+                <div>
+                    <a href="?risk=${currentRisk == 'high' ? 'all' : 'high'}&search=${currentSearch}&type=${currentType}" 
+                       class="filter-btn risk-toggle ${currentRisk == 'high' ? 'active' : ''}">
+                       <i class="fas fa-exclamation-circle"></i> Prioritize High Risk
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -162,17 +173,40 @@
                                 <span class="student-id">#${res.studentId}</span>
                             </td>
                             <td>
-                                <span class="badge ${res.assessmentTitle == 'DASS' ? 'badge-dass' : 'badge-stress'}">
+                                <span class="badge ${res.assessmentTitle == 'Happiness Check' ? 'badge-happiness' : 'badge-stress'}">
                                     ${res.assessmentTitle}
                                 </span>
                             </td>
                             <td style="color:#666; font-size:14px;">${res.completedAt}</td>
                             <td><span class="score-box">${res.score}</span></td>
+                            
+                            <%-- 🟢 NEW SCORE LOGIC --%>
                             <td>
-                                <div class="${res.highRisk ? 'high-risk' : 'normal'}" style="font-weight: 600; font-size: 14px;">
-                                    <span class="sev-dot"></span>
-                                    ${res.interpretation}
-                                </div>
+                                <c:choose>
+                                    <%-- HIGH RISK (> 20) --%>
+                                    <c:when test="${res.score > 20}">
+                                        <div style="color: var(--risk-red); font-weight: 700; font-size: 14px;">
+                                            <span class="sev-dot" style="background: var(--risk-red); box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.2);"></span>
+                                            High Risk
+                                        </div>
+                                    </c:when>
+                                    
+                                    <%-- MODERATE (> 10) --%>
+                                    <c:when test="${res.score > 10}">
+                                        <div style="color: var(--warn-orange); font-weight: 600; font-size: 14px;">
+                                            <span class="sev-dot" style="background: var(--warn-orange);"></span>
+                                            Moderate
+                                        </div>
+                                    </c:when>
+
+                                    <%-- NORMAL (0-10) --%>
+                                    <c:otherwise>
+                                        <div style="color: var(--safe-green); font-weight: 600; font-size: 14px;">
+                                            <span class="sev-dot" style="background: var(--safe-green);"></span>
+                                            Normal
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
                         </tr>
                     </c:forEach>

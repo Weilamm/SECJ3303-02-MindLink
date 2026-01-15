@@ -129,7 +129,6 @@
                         <div class="nav-left">
                             <a href="${pageContext.request.contextPath}/counselor/dashboard">Home</a>
                             <a href="${pageContext.request.contextPath}/counselor/appointments">Appointment</a>
-                            <a href="${pageContext.request.contextPath}/assessment/admin/history">Assessment</a>
                         </div>
 
                         <a href="${pageContext.request.contextPath}/counselor/dashboard" class="logo">
