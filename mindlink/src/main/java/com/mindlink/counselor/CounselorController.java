@@ -91,16 +91,12 @@ public class CounselorController {
                                 RedirectAttributes redirectAttributes) {
         
         try {
-            // 🟢 STEP 1: Fetch the REAL existing counselor from DB
-            // (Make sure your Service has a method to find by ID)
             Counselor existingCounselor = counselorService.getCounselorById(formData.getId()); 
             
             if (existingCounselor == null) {
                 throw new RuntimeException("Counselor not found in database");
             }
 
-            // 🟢 STEP 2: Manually update ONLY the fields from the form
-            // This prevents overwriting missing fields (like role, status) with null
             existingCounselor.setName(formData.getName());
             existingCounselor.setEmail(formData.getEmail());
             existingCounselor.setPassword(formData.getPassword());
@@ -111,7 +107,6 @@ public class CounselorController {
             existingCounselor.setQuote(formData.getQuote());
             existingCounselor.setBio(formData.getBio());
 
-            // 🟢 STEP 3: Handle Image
             if (!imageFile.isEmpty()) {
                 String uploadDir = "src/main/webapp/images/uploads/"; 
                 String fileName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
