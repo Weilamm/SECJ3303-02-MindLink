@@ -13,30 +13,38 @@ public class AchievementService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    /**
+     * Fetches all achievements for a student, calculates progress dynamically,
+     * and checks the database for permanent unlock status.
+     */
     public List<Achievement> getStudentAchievements(String studentId) {
         List<Achievement> list = new ArrayList<>();
 
-        // 1. Mind Explorer
-        Integer modules = jdbcTemplate.queryForObject("SELECT COUNT(DISTINCT assessment_id) FROM user_module_progress WHERE student_id = ?", Integer.class, studentId);
-        int modCount = (modules != null) ? modules : 0;
+        // 1. Mind Explorer: Progress based on assessment count
+        int modCount = getCount(
+            "SELECT COUNT(DISTINCT assessment_id) FROM user_module_progress WHERE student_id = ?", 
+            studentId
+        );
         Achievement ach1 = new Achievement("Mind Explorer", "Completed 1st mental health assessment", "badge3.png", false, modCount, 1);
         attachDateAndStatus(ach1, studentId, "MIND_EXPLORER", modCount > 0);
         list.add(ach1);
 
-        // 2. Wellness Warrior
-        Integer sessions = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM appointment WHERE student_id = ? AND status = 'Confirmed'", Integer.class, studentId);
-        int sessCount = (sessions != null) ? sessions : 0;
+        // 2. Wellness Warrior: Progress based on confirmed appointments
+        int sessCount = getCount(
+            "SELECT COUNT(*) FROM appointment WHERE student_id = ? AND status = 'Confirmed'", 
+            studentId
+        );
         Achievement ach2 = new Achievement("Wellness Warrior", "Completed 5 sessions with a counselor", "badge1.png", false, sessCount, 5);
         attachDateAndStatus(ach2, studentId, "WELLNESS_WARRIOR", sessCount >= 5);
         list.add(ach2);
 
-        // 3. Inner Peace
+        // 3. Inner Peace: Progress based on calculated points
         int points = (modCount * 100) + (sessCount * 50);
         Achievement ach3 = new Achievement("Inner Peace", "Achieved 2000 points", "badge5.png", false, points, 2000);
         attachDateAndStatus(ach3, studentId, "INNER_PEACE", points >= 2000);
         list.add(ach3);
 
-        // 4-15. Milestone Loop
+        // 4-15. Milestone Loop: Static/Placeholder achievements
         String[] types = {"BALANCED_MIND", "RESILIENCE_BUILDER", "TINY_TRIUMPH", "STEADY_START", "FIRST_STEP_FORWARD", "FORUM_MASTER", "KNOWLEDGE_SEEKER", "CONSISTENT_CALM", "DAILY_ZEN", "COMMUNITY_STAR", "FEEDBACK_HERO", "MINDFUL_MEMBER"};
         String[] names = {"Balanced Mind", "Resilience Builder", "Tiny Triumph", "Steady Start", "First Step Forward", "Forum Master", "Knowledge Seeker", "Consistent Calm", "Daily Zen", "Community Star", "Feedback Hero", "Mindful Member"};
         String[] icons = {"badge2.png", "badge4.png", "badge7.png", "badge8.png", "badge6.png", "badge1.png", "badge2.png", "badge3.png", "badge4.png", "badge5.png", "badge6.png", "badge7.png"};
@@ -47,28 +55,46 @@ public class AchievementService {
             list.add(ach);
         }
 
-        // SORTING: Locked (false) at Top, Unlocked (true) at Bottom
+        // SORTING: Unlocked (true) items go to the bottom, Locked (false) stay at the top
         Collections.sort(list, Comparator.comparing(Achievement::isUnlocked));
 
         return list;
     }
 
+    /**
+     * Safely executes a count query to avoid EmptyResultDataAccessException.
+     */
+    private int getCount(String sql, String studentId) {
+        try {
+            List<Integer> results = jdbcTemplate.queryForList(sql, Integer.class, studentId);
+            return (results.isEmpty() || results.get(0) == null) ? 0 : results.get(0);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Checks database for a specific achievement record and updates the Achievement object.
+     */
     private void attachDateAndStatus(Achievement ach, String studentId, String type, boolean dynamicCondition) {
         try {
+            // Check if the achievement exists in the manual unlock table
             List<Timestamp> dates = jdbcTemplate.queryForList(
                 "SELECT unlocked_at FROM student_achievements WHERE student_id = ? AND achievement_type = ? AND unlocked_at IS NOT NULL", 
                 Timestamp.class, studentId, type);
             
-            if (!dates.isEmpty()) {
+            if (!dates.isEmpty() && dates.get(0) != null) {
                 ach.setUnlocked(true);
                 ach.setUnlockedDate(new SimpleDateFormat("dd MMM yyyy").format(dates.get(0)));
-                // CRITICAL: Set progress to full if unlocked in database
+                // Set progress to max if it is already unlocked in DB
                 ach.setCurrentProgress(ach.getTargetValue());
             } else if (dynamicCondition) {
+                // If not in DB but meets live criteria, show as unlocked
                 ach.setUnlocked(true);
                 ach.setCurrentProgress(ach.getTargetValue());
             }
         } catch (Exception e) {
+            // Fallback to dynamic condition if query fails
             if (dynamicCondition) {
                 ach.setUnlocked(true);
                 ach.setCurrentProgress(ach.getTargetValue());

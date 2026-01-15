@@ -16,7 +16,7 @@ public class GamificationController {
     private AchievementService achievementService;
 
     // 1. Main Gamification Landing Page (dashboard.jsp)
-    @GetMapping("")
+    @GetMapping
     public String showDashboard() {
         return "gamification/dashboard"; 
     }
