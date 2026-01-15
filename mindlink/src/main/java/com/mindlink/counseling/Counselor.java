@@ -12,6 +12,7 @@ public class Counselor {
     private String bio;
     private String quote;
     private String imageUrl;
+    private String status;
 
     // --- 1. Empty Constructor (Required for Login to work) ---
     public Counselor() {
@@ -68,4 +69,7 @@ public class Counselor {
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

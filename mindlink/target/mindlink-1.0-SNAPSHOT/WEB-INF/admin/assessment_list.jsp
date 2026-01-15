@@ -2,6 +2,7 @@
     <%@ taglib prefix="c" uri="jakarta.tags.core" %>
         <!DOCTYPE html>
         <html lang="en">
+        <!--Admin view-->
 
         <head>
             <meta charset="UTF-8">
@@ -158,11 +159,9 @@
                 <div class="nav-left">
                     <a href="${pageContext.request.contextPath}/admin/home">Home</a>
                     <a href="${pageContext.request.contextPath}/admin/modules/dashboard">Module</a>
-                    <a href="${pageContext.request.contextPath}/admin/tips">Tips</a>
-                    <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
                 </div>
 
-                <a href="${pageContext.request.contextPath}/home" class="logo">
+                <a href="${pageContext.request.contextPath}/admin/home" class="logo">
                     <div class="logo-icon">
                         <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
                     </div>
@@ -170,8 +169,7 @@
                 </a>
 
                 <div class="nav-right">
-                    <a href="${pageContext.request.contextPath}/admin/chatbot">Chatbot</a>
-                    <a href="${pageContext.request.contextPath}/admin/forum/posts">Manage Forums</a>
+                    <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
                     <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
                 </div>
             </div>
@@ -179,9 +177,20 @@
             <div class="container">
 
                 <div class="header-title-section">
-                    <h1>Mental Health Assessment</h1>
+                    <div>
+                        <c:if test="${moduleId != null && selectedModule != null}">
+                            <a href="${pageContext.request.contextPath}/admin/assessment/select-module" 
+                               style="text-decoration: none; color: #666; font-size: 14px; margin-bottom: 10px; display: inline-block;">
+                                ← Back to Module Selection
+                            </a>
+                            <h1>${selectedModule.title} - Assessment</h1>
+                        </c:if>
+                        <c:if test="${moduleId == null || selectedModule == null}">
+                            <h1>Mental Health Assessment</h1>
+                        </c:if>
+                    </div>
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <a href="${pageContext.request.contextPath}/admin/assessment/add" class="btn-add"
+                        <a href="${pageContext.request.contextPath}/admin/assessment/add${moduleId != null ? '?moduleId=' : ''}${moduleId != null ? moduleId : ''}" class="btn-add"
                             style="text-decoration:none;">+</a>
                     </div>
                 </div>
@@ -204,10 +213,10 @@
                         </div>
 
                         <div class="actions">
-                            <a href="${pageContext.request.contextPath}/admin/assessment/edit?id=${q.id}"
+                            <a href="${pageContext.request.contextPath}/admin/assessment/edit?id=${q.id}${moduleId != null ? '&moduleId=' : ''}${moduleId != null ? moduleId : ''}"
                                 class="action-icon">✎</a>
 
-                            <a href="${pageContext.request.contextPath}/admin/assessment/delete?id=${q.id}"
+                            <a href="${pageContext.request.contextPath}/admin/assessment/delete?id=${q.id}${moduleId != null ? '&moduleId=' : ''}${moduleId != null ? moduleId : ''}"
                                 class="action-icon delete-icon" onclick="return confirm('Delete this question?')">🗑</a>
                         </div>
                     </div>

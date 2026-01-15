@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,153 +11,230 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { 
-            --bg-color: #FFF3E0; 
-            --primary: #003049; 
-            --accent: #F497AA; 
-            --white: #ffffff;
-            --gray: #666;
+        :root {
+            --primary: #003049;
+            --accent-pink: #F497AA;
+            --accent-orange: #F77F00;
+            --bg-color: #FFF3E0;
+            --glass-white: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --text-grey: #666;
         }
 
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; color: var(--primary); }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            /* 🟢 Pink & Orange Gradient Background */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(244, 151, 170, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(247, 127, 0, 0.1) 0%, transparent 50%);
+            margin: 0;
+            padding: 40px 20px; 
+            color: var(--primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 🟢 ANIMATED BLOBS */
+        .blob {
+            position: absolute; filter: blur(60px); z-index: -1; opacity: 0.7;
+            animation: float 10s ease-in-out infinite;
+        }
+        .blob-1 { top: -50px; left: -50px; width: 400px; height: 400px; background: rgba(244, 151, 170, 0.2); border-radius: 40% 60% 70% 30%; }
+        .blob-2 { bottom: 100px; right: -50px; width: 500px; height: 500px; background: rgba(247, 127, 0, 0.15); border-radius: 60% 40% 30% 70%; animation-direction: reverse; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(20px, 20px) rotate(5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 🟢 BACK BUTTON */
+        .btn-back { 
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 45px; height: 45px; border-radius: 50%;
+            background: white; color: var(--primary);
+            font-size: 18px; text-decoration: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: 0.2s; margin-bottom: 20px;
+        }
+        .btn-back:hover { background: var(--accent-pink); color: white; transform: translateX(-5px); }
 
         /* HEADER */
-        .header { padding: 20px 100px; display: flex; justify-content: space-between; align-items: center; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .nav-links a { text-decoration: none; color: #00313e; font-weight: 500; margin: 0 15px; transition: 0.3s; }
-        .nav-links a:hover { color: #0d4e57; }
-        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; color: #00313e; font-size: 24px; text-decoration: none; }
-        .logo img { height: 40px; }
+        .header-section { text-align: center; margin-bottom: 40px; }
+        h1 { font-size: 36px; font-weight: 800; margin: 0 0 10px 0; color: var(--primary); }
+        .subtitle { color: var(--text-grey); font-size: 16px; margin: 0; }
 
-        /* MAIN LAYOUT */
-        .container { max-width: 1100px; margin: 50px auto; padding: 0 20px; }
-        h1 { font-size: 36px; font-weight: 800; margin-bottom: 10px; text-align: center; }
-        .subtitle { color: var(--gray); font-size: 16px; margin-bottom: 50px; text-align: center; }
-
-        /* SEARCH BAR */
-        .search-wrapper { position: relative; max-width: 600px; margin: 0 auto 50px auto; }
-        .search-input {
-            width: 100%; padding: 18px 25px; padding-left: 55px;
-            border-radius: 50px; border: none;
-            background: white; font-size: 16px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); outline: none; transition: 0.3s;
+        /* 🟢 SEARCH BAR */
+        .search-container { text-align: center; margin-bottom: 50px; }
+        .search-wrapper {
+            position: relative; max-width: 500px; margin: 0 auto;
         }
-        .search-input:focus { box-shadow: 0 6px 25px rgba(0,0,0,0.12); transform: translateY(-2px); }
-        .search-icon { position: absolute; left: 25px; top: 50%; transform: translateY(-50%); color: #bbb; font-size: 18px; }
+        .search-box {
+            padding: 18px 50px 18px 25px;
+            width: 100%; box-sizing: border-box;
+            border: 2px solid transparent;
+            border-radius: 50px;
+            font-size: 16px;
+            background: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            outline: none; transition: 0.3s;
+            color: var(--primary);
+        }
+        .search-box:focus { border-color: var(--accent-pink); box-shadow: 0 8px 30px rgba(244, 151, 170, 0.2); }
+        
+        .search-btn {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            background: var(--accent-orange); color: white;
+            border: none; width: 40px; height: 40px; border-radius: 50%;
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;
+        }
+        .search-btn:hover { background: var(--primary); }
 
-        /* COUNSELOR GRID */
-        .counselor-grid {
+        /* 🟢 COUNSELOR GRID */
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 30px;
         }
 
-        /* CARD DESIGN */
         .card {
-            background: var(--white); border-radius: 16px; padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: transform 0.2s, box-shadow 0.2s;
-            text-decoration: none; color: inherit; display: block; position: relative; overflow: hidden;
-            border: 1px solid transparent;
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            padding: 30px 20px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            text-decoration: none; color: inherit;
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center;
+            position: relative; overflow: hidden;
         }
         
-        /* Hover Effect: Lift card + Pink Border */
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-color: var(--accent); }
+        .card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1); 
+            border-color: var(--accent-pink);
+        }
 
-        .card-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        /* Avatar */
+        .avatar-wrapper {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            padding: 4px;
+            background: linear-gradient(135deg, #F497AA, #F77F00);
+            margin-bottom: 15px;
+        }
         
         .avatar {
-            width: 60px; height: 60px; background: #E0F7FA; color: #006064;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 24px; font-weight: 700;
+            width: 100%; height: 100%;
+            background: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; font-weight: 800; color: var(--accent-orange);
+            overflow: hidden;
         }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        .info h3 { margin: 0; font-size: 18px; font-weight: 700; }
-        .info p { margin: 3px 0 0 0; font-size: 14px; color: #888; }
-
-        .tags { display: flex; gap: 8px; flex-wrap: wrap; }
-        .tag {
-            background: #f5f5f5; color: #555; padding: 5px 12px; border-radius: 20px;
+        .info h3 { margin: 0 0 5px 0; font-size: 20px; font-weight: 700; color: var(--primary); }
+        .location { color: #888; font-size: 13px; font-weight: 500; margin-bottom: 15px; display: block; }
+        
+        /* Tags */
+        .tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
+        .tag { 
+            background: #FFF0F3; color: #D81B60; 
+            padding: 5px 12px; border-radius: 15px; 
             font-size: 12px; font-weight: 600;
         }
+        
+        /* Action Button (Visible on Hover) */
+        .btn-view {
+            background: var(--primary); color: white;
+            padding: 10px 25px; border-radius: 50px;
+            font-size: 14px; font-weight: 600;
+            margin-top: auto; transition: 0.3s;
+            opacity: 0.8;
+        }
+        .card:hover .btn-view { background: var(--accent-orange); opacity: 1; }
+
+        /* Empty State */
+        .empty-state { grid-column: 1/-1; text-align: center; color: #888; padding: 40px; background: rgba(255,255,255,0.5); border-radius: 20px; }
+
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/home">Home</a>
-            <a href="${pageContext.request.contextPath}/learning">Learning</a>
-        </div>
-        <a href="${pageContext.request.contextPath}/home" class="logo">
-            <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
-            <span>MindLink</span>
-        </a>
-        <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/forum/welcome">Forum</a>
-            <a href="${pageContext.request.contextPath}/profile">Profile</a>
-        </div>
-    </div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
 
     <div class="container">
-        <h1>Find Your Counselor</h1>
-        <p class="subtitle">Connect with experienced professionals dedicated to your well-being.</p>
+        
+        <a href="${pageContext.request.contextPath}/counseling/home" class="btn-back" title="Back to Dashboard">
+            <i class="fas fa-arrow-left"></i>
+        </a>
 
-        <div class="search-wrapper">
-            <i class="fas fa-search search-icon"></i>
-            <input type="text" id="searchInput" class="search-input" placeholder="Search by name or location" onkeyup="filterCounselors()">
+        <div class="header-section">
+            <h1>Find Your Counselor</h1>
+            <p class="subtitle">Connect with experienced professionals dedicated to your well-being.</p>
         </div>
 
-        <div class="counselor-grid" id="counselorGrid">
-            
+        <form action="${pageContext.request.contextPath}/counseling/browse" method="get" class="search-container">
+            <div class="search-wrapper">
+                <input type="text" name="search" class="search-box" placeholder="Search by name or specialty..." value="${param.search}">
+                <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+
+        <div class="grid">
             <c:forEach items="${counselors}" var="c">
-                <a href="${pageContext.request.contextPath}/counseling/counselor?id=${c.id}" class="card search-item">
+                
+                <a href="${pageContext.request.contextPath}/counseling/counselor?id=${c.id}" class="card">
+                    <div class="avatar-wrapper">
+                        <div class="avatar">
+                            <c:choose>
+                                <c:when test="${not empty c.imageUrl}">
+                                    <img src="${pageContext.request.contextPath}${c.imageUrl}" alt="${c.name}">
+                                </c:when>
+                                <c:otherwise>
+                                    
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
                     
-                    <div class="card-header">
-                        <div class="avatar">${c.name.charAt(0)}</div>
-                        <div class="info">
-                            <h3 class="name-text">${c.name}</h3>
-                            <p class="loc-text"><i class="fas fa-map-marker-alt"></i> ${c.location}</p>
+                    <div class="info">
+                        <h3>${c.name}</h3>
+                        <span class="location"><i class="fas fa-map-marker-alt"></i> ${not empty c.location ? c.location : 'MindLink Center'}</span>
+                        
+                        <div class="tags">
+                            <span class="tag">Anxiety</span>
+                            <span class="tag">Stress</span>
+                            <span class="tag">Academic</span>
                         </div>
                     </div>
 
-                    <div class="tags">
-                        <span class="tag">Anxiety</span>
-                        <span class="tag">Stress</span>
-                        <span class="tag">Academic</span>
-                    </div>
+                    <div class="btn-view">View Profile</div>
                 </a>
+
             </c:forEach>
-
-            <div id="noResults" style="grid-column: 1/-1; text-align: center; display: none; padding: 40px;">
-                <i class="far fa-frown" style="font-size: 40px; color: #ddd; margin-bottom: 10px;"></i>
-                <p style="color: #666;">No counselors found matching your search.</p>
-            </div>
-
+            
+            <c:if test="${empty counselors}">
+                <div class="empty-state">
+                    <i class="fas fa-user-slash" style="font-size: 40px; margin-bottom: 10px;"></i>
+                    <p>No counselors found matching your search.</p>
+                </div>
+            </c:if>
         </div>
     </div>
-
-    <script>
-        function filterCounselors() {
-            let input = document.getElementById('searchInput').value.toLowerCase();
-            let cards = document.getElementsByClassName('search-item');
-            let hasResults = false;
-
-            for (let i = 0; i < cards.length; i++) {
-                let name = cards[i].querySelector('.name-text').innerText.toLowerCase();
-                let location = cards[i].querySelector('.loc-text').innerText.toLowerCase();
-                
-                // Check if name OR location matches search
-                if (name.includes(input) || location.includes(input)) {
-                    cards[i].style.display = ""; // Show
-                    hasResults = true;
-                } else {
-                    cards[i].style.display = "none"; // Hide
-                }
-            }
-
-            // Show "No Results" message if needed
-            document.getElementById('noResults').style.display = hasResults ? "none" : "block";
-        }
-    </script>
 
 </body>
 </html>

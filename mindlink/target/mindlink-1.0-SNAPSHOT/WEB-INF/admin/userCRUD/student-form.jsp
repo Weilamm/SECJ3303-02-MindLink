@@ -218,12 +218,10 @@
     <div class="header">
         <div class="nav-left">
             <a href="${pageContext.request.contextPath}/admin/home">Home</a>
-            <a href="${pageContext.request.contextPath}/admin/modules">Module</a>
-            <a href="${pageContext.request.contextPath}/admin/tips">Tips</a>
-            <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
+            <a href="${pageContext.request.contextPath}/admin/modules/dashboard">Module</a>
         </div>
         
-        <a href="${pageContext.request.contextPath}/home" class="logo">
+        <a href="${pageContext.request.contextPath}/admin/home" class="logo">
             <div class="logo-icon">
                 <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
             </div>
@@ -231,8 +229,7 @@
         </a>
         
         <div class="nav-right">
-            <a href="${pageContext.request.contextPath}/admin/chatbot">Chatbot</a>
-            <a href="${pageContext.request.contextPath}/admin/forum/manage">Forum</a>
+            <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
             <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
         </div>
     </div>
@@ -254,15 +251,23 @@
             </c:if>
 
             <form action="${pageContext.request.contextPath}/admin/user-management/students/save" method="post">
-                <input type="hidden" name="studentId" value="${student.studentId}" />
-                
-                <c:if test="${student.studentId != null && !empty student.studentId}">
-                    <div class="form-group">
-                        <label class="form-label">Student ID</label>
-                        <input type="text" class="form-control" value="${student.studentId}" disabled />
-                        <small class="form-text">Student ID cannot be changed</small>
-                    </div>
-                </c:if>
+                <c:choose>
+                    <c:when test="${student.studentId != null && !empty student.studentId}">
+                        <input type="hidden" name="studentId" value="${student.studentId}" />
+                        <div class="form-group">
+                            <label class="form-label">Student ID</label>
+                            <input type="text" class="form-control" value="${student.studentId}" disabled />
+                            <small class="form-text">Student ID cannot be changed</small>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="form-group">
+                            <label class="form-label">Student ID</label>
+                            <input type="text" name="studentId" class="form-control" placeholder="e.g. S123456" required />
+                            <small class="form-text">Enter the Student ID (must be unique)</small>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
 
                 <div class="form-group">
                     <label class="form-label">Full Name</label>

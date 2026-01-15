@@ -19,223 +19,285 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        :root {
-            --bg-color: #FFF3E0; 
-            --text-dark: #003049;
-            --card-bg: #FFFFFF;
-            --btn-orange: #F77F00;
-            --btn-hover: #D62828;
-            --text-grey: #555;
-        }
+    :root {
+        --bg-color: #FFF3E0; 
+        --text-dark: #003049;
+        --card-bg: #FFFFFF;
+        --btn-orange: #F77F00;
+        --btn-hover: #D62828;
+        --text-grey: #555;
+    }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            /* 🟢 FANCY BACKGROUND: Gradient Mesh */
-            background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(247, 127, 0, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(72, 201, 176, 0.1) 0%, transparent 50%);
-            margin: 0; padding: 0;
-            color: var(--text-dark);
-            overflow-x: hidden;
-            min-height: 100vh;
-            position: relative;
-        }
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-color);
+        background-image: 
+            radial-gradient(circle at 10% 20%, rgba(247, 127, 0, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 90% 80%, rgba(72, 201, 176, 0.1) 0%, transparent 50%);
+        margin: 0; 
+        padding: 0; /* REMOVED PADDING */
+        color: var(--text-dark);
+        overflow-x: hidden;
+        min-height: 100vh;
+        position: relative;
+    }
 
-        /* 🟢 ANIMATED BLOBS */
-        .blob {
-            position: absolute;
-            filter: blur(50px);
-            z-index: -1;
-            opacity: 0.6;
-            animation: float 10s ease-in-out infinite;
-        }
+    /* 🟢 ANIMATED BLOBS */
+    .blob {
+        position: absolute;
+        filter: blur(50px);
+        z-index: -1;
+        opacity: 0.6;
+        animation: float 10s ease-in-out infinite;
+    }
 
-        .blob-1 {
-            top: -100px; left: -100px;
-            width: 500px; height: 500px;
-            background: rgba(247, 127, 0, 0.15); /* Orange Tint */
-            border-radius: 40% 60% 70% 30%;
-        }
+    .blob-1 {
+        top: -100px; left: -100px;
+        width: 500px; height: 500px;
+        background: rgba(247, 127, 0, 0.15);
+        border-radius: 40% 60% 70% 30%;
+    }
 
-        .blob-2 {
-            bottom: -150px; right: -100px;
-            width: 600px; height: 600px;
-            background: rgba(72, 201, 176, 0.15); /* Teal Tint */
-            border-radius: 60% 40% 30% 70%;
-            animation-direction: reverse;
-        }
+    .blob-2 {
+        bottom: -150px; right: -100px;
+        width: 600px; height: 600px;
+        background: rgba(72, 201, 176, 0.15);
+        border-radius: 60% 40% 30% 70%;
+        animation-direction: reverse;
+    }
 
-        @keyframes float {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(30px, 20px) rotate(5deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
-        }
+    @keyframes float {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(30px, 20px) rotate(5deg); }
+        100% { transform: translate(0, 0) rotate(0deg); }
+    }
 
-        /* --- Navbar (Glass Effect) --- */
-        .navbar {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(15px);
-            padding: 15px 50px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            position: sticky; top: 0; z-index: 100;
-        }
+    /* 🟢 DECORATIVE SIDE IMAGES */
+    .deco-img {
+        position: fixed;
+        bottom: 0;
+        z-index: -1; /* Behind content, above background */
+        width: 300px; /* Adjust this size as needed */
+        opacity: 0.9;
+        pointer-events: none; /* Allows you to click through them if they overlap anything */
+        transition: all 0.3s ease;
+    }
 
-        .nav-links { display: flex; gap: 30px; }
-        .nav-links a {
-            text-decoration: none; color: #555; font-weight: 600; font-size: 16px;
-            transition: color 0.2s; position: relative;
-        }
-        .nav-links a:hover, .nav-links a.active-link { color: var(--text-dark); }
-        
-        .nav-links a::after {
-            content: ''; position: absolute; width: 0; height: 2px;
-            bottom: -4px; left: 0; background-color: var(--btn-orange);
-            transition: width 0.3s;
-        }
-        .nav-links a:hover::after, .nav-links a.active-link::after { width: 100%; }
+    .deco-left {
+        left: 0;
+        /* Optional: Entrance animation */
+        animation: slideInLeft 1s ease-out;
+    }
 
-        .btn-logout { color: #D62828 !important; }
+    .deco-right {
+        right: 0;
+        /* Optional: Entrance animation */
+        animation: slideInRight 1s ease-out;
+    }
 
-        /* 🟢 LOGO ADJUSTMENTS */
-        .logo {
-            display: flex; align-items: center; gap: 10px;
-            font-weight: 800;
-            color: var(--text-dark); /* Use Variable */
-            font-size: 26px; /* Adjusted size */
-            text-decoration: none;
+    /* Hide images on smaller screens so they don't cover text */
+    @media (max-width: 1300px) {
+        .deco-img {
+            opacity: 0.3; /* Fade them out or hide them completely with display: none; */
+            width: 150px;
         }
+    }
 
-        .logo-icon {
-            width: 35px; height: 35px;
-            display: flex; align-items: center; justify-content: center;
-        }
+    @keyframes slideInLeft {
+        from { transform: translateX(-100px); opacity: 0; }
+        to { transform: translateX(0); opacity: 0.9; }
+    }
 
-        .logo-icon img {
-            width: 100%; height: 100%; object-fit: contain;
-        }
+    @keyframes slideInRight {
+        from { transform: translateX(100px); opacity: 0; }
+        to { transform: translateX(0); opacity: 0.9; }
+    }
 
-        /* --- Main Layout --- */
-        .container {
-            max-width: 900px; margin: 50px auto; padding: 0 20px 60px; text-align: center;
-        }
+    /* --- NEW HEADER STYLE --- */
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        padding: 15px 50px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        box-sizing: border-box;
+    }
 
-        h1 { 
-            font-size: 48px; font-weight: 800; color: var(--text-dark); 
-            margin: 0 0 10px 0; 
-            text-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        
-        .subtitle { 
-            font-size: 22px; font-weight: 600; color: #555; 
-            margin-bottom: 50px; 
-        }
+    .nav-left, .nav-right {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        flex: 1;
+        gap: 0;
+    }
 
-        /* --- INFO CARD --- */
-        .info-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
-            margin-bottom: 50px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.6);
-        }
+    .nav-left a, .nav-right a {
+        text-decoration: none;
+        color: #00313e;
+        font-size: 16px;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
 
-        .info-header {
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            font-size: 20px; font-weight: 700; color: var(--text-dark);
-            margin-bottom: 15px;
-        }
-        
-        .info-text { font-size: 16px; color: var(--text-grey); }
+    .nav-left a:hover, .nav-right a:hover {
+        color: var(--btn-orange); /* Used orange here to match counselor theme */
+    }
 
-        /* --- SESSION LIST --- */
-        .section-title {
-            font-size: 28px; font-weight: 800; color: var(--text-dark);
-            margin-bottom: 25px;
-        }
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        color: #00313e;
+        font-size: 32px;
+        text-decoration: none;
+    }
 
-        .session-card {
-            background: white;
-            border-radius: 16px;
-            padding: 25px 35px;
-            margin-bottom: 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            transition: transform 0.2s, box-shadow 0.2s;
-            position: relative; overflow: hidden;
-        }
-        
-        .session-card::before {
-            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
-            background: var(--btn-orange);
-        }
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        .session-card:hover { 
-            transform: translateY(-5px); 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-        }
+    .logo-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
 
-        .session-info { text-align: left; }
-        
-        .session-name { 
-            font-size: 18px; font-weight: 700; color: var(--text-dark); 
-            margin-bottom: 5px; 
-        }
-        
-        .session-date { font-size: 14px; color: var(--text-grey); font-weight: 500; }
+    /* --- Main Layout --- */
+    .container {
+        max-width: 900px; 
+        margin: 0 auto; 
+        padding: 120px 20px 60px; /* ADDED TOP PADDING 120px */
+        text-align: center;
+    }
 
-        .btn-view {
-            background-color: var(--btn-orange);
-            color: white;
-            padding: 10px 30px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            border: none;
-            box-shadow: 0 4px 10px rgba(247, 127, 0, 0.3);
-            transition: all 0.2s;
-        }
-        .btn-view:hover { 
-            background-color: #e06c00; 
-            box-shadow: 0 6px 15px rgba(247, 127, 0, 0.4); 
-            transform: translateY(-1px);
-        }
+    h1 { 
+        font-size: 48px; font-weight: 800; color: var(--text-dark); 
+        margin: 0 0 10px 0; 
+        text-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .subtitle { 
+        font-size: 22px; font-weight: 600; color: #555; 
+        margin-bottom: 50px; 
+    }
 
-        .empty-state {
-            padding: 30px; background: rgba(255,255,255,0.6); 
-            border-radius: 16px; color: #777; font-style: italic;
-        }
+    /* --- INFO CARD --- */
+    .info-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        margin-bottom: 50px;
+        text-align: center;
+        border: 1px solid rgba(255,255,255,0.6);
+    }
 
-    </style>
+    .info-header {
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        font-size: 20px; font-weight: 700; color: var(--text-dark);
+        margin-bottom: 15px;
+    }
+    
+    .info-text { font-size: 16px; color: var(--text-grey); }
+
+    /* --- SESSION LIST --- */
+    .section-title {
+        font-size: 28px; font-weight: 800; color: var(--text-dark);
+        margin-bottom: 25px;
+    }
+
+    .session-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px 35px;
+        margin-bottom: 20px;
+        display: flex; justify-content: space-between; align-items: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        transition: transform 0.2s, box-shadow 0.2s;
+        position: relative; overflow: hidden;
+    }
+    
+    .session-card::before {
+        content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+        background: var(--btn-orange);
+    }
+
+    .session-card:hover { 
+        transform: translateY(-5px); 
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+    }
+
+    .session-info { text-align: left; }
+    
+    .session-name { 
+        font-size: 18px; font-weight: 700; color: var(--text-dark); 
+        margin-bottom: 5px; 
+    }
+    
+    .session-date { font-size: 14px; color: var(--text-grey); font-weight: 500; }
+
+    .btn-view {
+        background-color: var(--btn-orange);
+        color: white;
+        padding: 10px 30px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        border: none;
+        box-shadow: 0 4px 10px rgba(247, 127, 0, 0.3);
+        transition: all 0.2s;
+    }
+    .btn-view:hover { 
+        background-color: #e06c00; 
+        box-shadow: 0 6px 15px rgba(247, 127, 0, 0.4); 
+        transform: translateY(-1px);
+    }
+
+    .empty-state {
+        padding: 30px; background: rgba(255,255,255,0.6); 
+        border-radius: 16px; color: #777; font-style: italic;
+    }
+</style>
 </head>
 <body>
 
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
 
-    <nav class="navbar">
-        <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/counselor/dashboard" class="active-link">Home</a>
+    <img src="${pageContext.request.contextPath}/images/assessment-left.png" class="deco-img deco-left" alt="Decoration Left">
+    <img src="${pageContext.request.contextPath}/images/assessment-right.png" class="deco-img deco-right" alt="Decoration Right">
+
+    <div class="header">
+        <div class="nav-left">
+            <a href="${pageContext.request.contextPath}/counselor/dashboard">Home</a>
             <a href="${pageContext.request.contextPath}/counselor/appointments">Appointment</a>
         </div>
 
         <a href="${pageContext.request.contextPath}/counselor/dashboard" class="logo">
             <div class="logo-icon">
-                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="Logo">
+                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
             </div>
             <span>MindLink</span>
         </a>
 
-        <div class="nav-links">
+        <div class="nav-right">
             <a href="${pageContext.request.contextPath}/counselor/profile">Profile</a>
-            <a href="${pageContext.request.contextPath}/logout" class="btn-logout">Logout</a>
+            <a href="${pageContext.request.contextPath}/logout" style="color: #D62828;">Logout</a>
         </div>
-    </nav>
+    </div>
 
     <div class="container">
         <h1>Welcome back, ${not empty sessionScope.loggedInCounselor.name ? sessionScope.loggedInCounselor.name : 'Counselor'}!</h1>

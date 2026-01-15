@@ -1,7 +1,8 @@
 package com.mindlink.usermanagement.controller;
 
 import com.mindlink.usermanagement.model.Counselor;
-import com.mindlink.usermanagement.service.UserManagementCounselorService;import org.springframework.beans.factory.annotation.Autowired;
+import com.mindlink.usermanagement.service.UserManagementCounselorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +19,15 @@ public class CounselorManagementController {
 
     // Fragment for embedding
     @GetMapping("/fragment")
-    public String listCounselorsFragment(Model model) {
-        List<Counselor> counselors = counselorService.getAllCounselors();
+    public String listCounselorsFragment(@RequestParam(value = "search", required = false) String search, Model model) {
+        List<Counselor> counselors;
+        if (search != null && !search.trim().isEmpty()) {
+            counselors = counselorService.searchCounselors(search);
+        } else {
+            counselors = counselorService.getAllCounselors();
+        }
         model.addAttribute("counselors", counselors);
+        model.addAttribute("searchQuery", search);
         return "admin/userCRUD/counselor-list-fragment";
     }
 
@@ -54,7 +61,7 @@ public class CounselorManagementController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error saving counselor: " + e.getMessage());
         }
-        return "redirect:/admin/user-management/students"; // Redirect back to student list
+        return "redirect:/admin/user-management/students"; 
     }
 
     @GetMapping("/delete/{id}")
@@ -65,6 +72,35 @@ public class CounselorManagementController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error deleting counselor: " + e.getMessage());
         }
-        return "redirect:/admin/user-management/students"; // Redirect back to student list
+        return "redirect:/admin/user-management/students"; 
+    }
+
+    @GetMapping("/requests")
+    public String showPendingRequests(Model model) {
+        List<Counselor> pendingCounselors = counselorService.getPendingCounselors();
+        model.addAttribute("pendingCounselors", pendingCounselors);
+        return "admin/userCRUD/counselor-requests";
+    }
+
+    @PostMapping("/approve/{id}")
+    public String approveCounselor(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        try {
+            counselorService.approveCounselor(id);
+            redirectAttributes.addFlashAttribute("success", "Counselor application approved successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error approving counselor: " + e.getMessage());
+        }
+        return "redirect:/admin/user-management/counselors/requests";
+    }
+
+    @PostMapping("/reject/{id}")
+    public String rejectCounselor(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        try {
+            counselorService.rejectCounselor(id);
+            redirectAttributes.addFlashAttribute("success", "Counselor application rejected");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error rejecting counselor: " + e.getMessage());
+        }
+        return "redirect:/admin/user-management/counselors/requests";
     }
 }

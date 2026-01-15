@@ -2,6 +2,7 @@
     <%@ taglib prefix="c" uri="jakarta.tags.core" %>
         <!DOCTYPE html>
         <html lang="en">
+        <!--Admin view-->
 
         <head>
             <meta charset="UTF-8">
@@ -177,11 +178,9 @@
                 <div class="nav-left">
                     <a href="${pageContext.request.contextPath}/admin/home">Home</a>
                     <a href="${pageContext.request.contextPath}/admin/modules/dashboard">Module</a>
-                    <a href="${pageContext.request.contextPath}/admin/tips">Tips</a>
-                    <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
                 </div>
 
-                <a href="${pageContext.request.contextPath}/home" class="logo">
+                <a href="${pageContext.request.contextPath}/admin/home" class="logo">
                     <div class="logo-icon">
                         <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
                     </div>
@@ -189,8 +188,7 @@
                 </a>
 
                 <div class="nav-right">
-                    <a href="${pageContext.request.contextPath}/admin/chatbot">Chatbot</a>
-                    <a href="${pageContext.request.contextPath}/admin/forum/posts">Manage Forums</a>
+                    <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
                     <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
                 </div>
             </div>
@@ -236,8 +234,11 @@
                         <button type="button" class="btn-add" onclick="addOption()">+ Add Option</button>
                     </div>
 
+                    <c:if test="${moduleId != null}">
+                        <input type="hidden" name="moduleId" value="${moduleId}" />
+                    </c:if>
                     <button type="submit" class="btn-save">Save Question</button>
-                    <a href="${pageContext.request.contextPath}/admin/assessment"
+                    <a href="${pageContext.request.contextPath}/admin/assessment/list${moduleId != null ? '?moduleId=' : ''}${moduleId != null ? moduleId : ''}"
                         style="display:block; text-align:center; margin-top:20px; color:#666; text-decoration:none;">Cancel</a>
                 </form>
             </div>

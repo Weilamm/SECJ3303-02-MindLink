@@ -105,8 +105,8 @@
             <button type="submit" class="btn-login">Sign In</button>
         </form>
         
-        <p style="margin-top: 20px; font-size: 13px; color: #666;">
-            Don't have an account? <a href="${pageContext.request.contextPath}/register" style="color: #003B46; font-weight: 600;">Register</a>
+        <p id="registerLink" style="margin-top: 20px; font-size: 13px; color: #666;">
+            Don't have an account? <a id="registerLinkAnchor" href="${pageContext.request.contextPath}/register" style="color: #003B46; font-weight: 600;">Register now</a>
         </p>
     </div>
 
@@ -115,12 +115,17 @@
             var role = document.getElementById("roleSelect").value;
             var studentHint = document.getElementById("studentHint");
             var counselorHint = document.getElementById("counselorHint");
+            var registerLink = document.getElementById("registerLink");
+            var registerLinkAnchor = document.getElementById("registerLinkAnchor");
+            
             if(role === "counselor") {
                 studentHint.style.display = "none";
                 counselorHint.style.display = "block";
+                registerLink.innerHTML = 'Want to be a counselor? <a id="registerLinkAnchor" href="${pageContext.request.contextPath}/counselor/apply" style="color: #003B46; font-weight: 600;">Apply now</a>';
             } else {
                 studentHint.style.display = "block";
                 counselorHint.style.display = "none";
+                registerLink.innerHTML = 'Don\'t have an account? <a id="registerLinkAnchor" href="${pageContext.request.contextPath}/register" style="color: #003B46; font-weight: 600;">Register now</a>';
             }
         }
     </script>

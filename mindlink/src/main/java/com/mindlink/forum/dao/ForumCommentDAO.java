@@ -68,5 +68,20 @@ public interface ForumCommentDAO {
      * @return Number of comments
      */
     int countByPostId(int postId);
+    
+    /**
+     * Update comment status and report reason
+     * @param id Comment ID
+     * @param status New status
+     * @param reportReason Report reason
+     * @return Number of rows affected
+     */
+    int updateStatusWithReason(int id, String status, String reportReason);
+    
+    /**
+     * Find all reported comments
+     * @return List of reported comments
+     */
+    List<ForumComment> findReportedComments();
 }
 

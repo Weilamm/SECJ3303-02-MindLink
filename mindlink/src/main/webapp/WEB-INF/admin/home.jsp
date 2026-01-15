@@ -13,6 +13,9 @@
             --btn-yellow: #F2C94C;
             --btn-teal: #48C9B0;
             --btn-pink: #F497AA;
+            --btn-blue: #00313e;
+            --btn-purple: #9B59B6;
+            --btn-orange: #E67E22;
         }
 
         body {
@@ -97,7 +100,7 @@
         /* --- UPDATED GRID LAYOUT --- */
         .cards-grid {
             display: grid;
-            /* Force exactly 3 columns of equal width */
+            /* 3 columns for 6 cards (2 rows) */
             grid-template-columns: repeat(3, 1fr);
             gap: 40px; /* Space between cards */
             width: 100%;
@@ -107,31 +110,67 @@
             background: var(--card-bg);
             border-radius: 40px;
             padding: 50px 30px;
-            /* Remove fixed width so it fills the grid column */
             width: auto; 
             min-height: 400px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
+            text-align: center;
             transition: transform 0.2s;
+            position: relative;
         }
 
-        .admin-card:hover { transform: translateY(-5px); }
+        .admin-card:hover { 
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .card-icon {
+            font-size: 64px;
+            margin-bottom: 25px;
+            line-height: 1;
+        }
 
         .card-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 15px;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 20px;
             color: var(--text-dark);
+            line-height: 1.2;
         }
 
         .card-desc {
-            font-size: 15px;
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 30px;
+            font-size: 16px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 35px;
+            max-width: 280px;
+        }
+
+        .card-features {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 35px;
+            line-height: 1.8;
+        }
+
+        .card-features ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .card-features li {
+            margin-bottom: 8px;
+        }
+
+        .card-features li:before {
+            content: "✓ ";
+            color: var(--btn-teal);
+            font-weight: 700;
+            margin-right: 8px;
         }
 
         /* Buttons */
@@ -150,6 +189,9 @@
         .btn-yellow { background-color: var(--btn-yellow); }
         .btn-teal { background-color: var(--btn-teal); }
         .btn-pink { background-color: var(--btn-pink); }
+        .btn-blue { background-color: var(--btn-blue); }
+        .btn-purple { background-color: var(--btn-purple); }
+        .btn-orange { background-color: var(--btn-orange); }
         .btn:hover { opacity: 0.9; }
 
         /* Decorative Background Shapes */
@@ -175,11 +217,9 @@
         <div class="nav-left">
             <a href="${pageContext.request.contextPath}/admin/home">Home</a>
             <a href="${pageContext.request.contextPath}/admin/modules/dashboard">Module</a>
-            <a href="${pageContext.request.contextPath}/admin/tips">Tips</a>
-            <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
         </div>
         
-        <a href="${pageContext.request.contextPath}/home" class="logo">
+        <a href="${pageContext.request.contextPath}/admin/home" class="logo">
             <div class="logo-icon">
                 <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
             </div>
@@ -187,8 +227,7 @@
         </a>
         
         <div class="nav-right">
-            <a href="${pageContext.request.contextPath}/admin/chatbot">Chatbot</a>
-            <a href="${pageContext.request.contextPath}/admin/forum/posts">Manage Forums</a>
+            <a href="${pageContext.request.contextPath}/admin/user-management">User Management</a>
             <a href="${pageContext.request.contextPath}/admin/profile">Profile</a>
         </div>
     </div>
@@ -203,27 +242,87 @@
         <div class="cards-grid">
             
             <div class="admin-card">
-                <div>
-                    <div class="card-title">Learning<br>Module</div>
-                    <p class="card-desc">Practical tips on stress management, mindfulness, and emotional resilience.</p>
+                <div class="card-icon">📚</div>
+                <div class="card-title">Learning<br>Module</div>
+                <p class="card-desc">Practical tips on stress management, mindfulness, and emotional resilience for students.</p>
+                <div class="card-features">
+                    <ul>
+                        <li>Create modules</li>
+                        <li>Manage content</li>
+                        <li>Track progress</li>
+                    </ul>
                 </div>
                 <a href="${pageContext.request.contextPath}/admin/modules" class="btn btn-yellow">Update</a>
             </div>
 
             <div class="admin-card">
-                <div>
-                    <div class="card-title">Self<br>Assessment</div>
-                    <p class="card-desc">Set up self assessment question for student to know more about mental health.</p>
+                <div class="card-icon">📝</div>
+                <div class="card-title">Self<br>Assessment</div>
+                <p class="card-desc">Set up self assessment questions for students to evaluate their mental health status.</p>
+                <div class="card-features">
+                    <ul>
+                        <li>Create questions</li>
+                        <li>View results</li>
+                        <li>Analyze data</li>
+                    </ul>
                 </div>
-                <a href="${pageContext.request.contextPath}/admin/assessment" class="btn btn-teal">Update</a>
+                <a href="${pageContext.request.contextPath}/admin/assessment/select-module" class="btn btn-teal">Update</a>
             </div>
 
             <div class="admin-card">
-                <div>
-                    <div class="card-title">Analytics</div>
-                    <p class="card-desc">Reviews graphs</p>
+                <div class="card-icon">📊</div>
+                <div class="card-title">Analytics</div>
+                <p class="card-desc">Review comprehensive graphs and insights about user engagement and system usage.</p>
+                <div class="card-features">
+                    <ul>
+                        <li>User statistics</li>
+                        <li>Activity reports</li>
+                        <li>Trend analysis</li>
+                    </ul>
                 </div>
                 <a href="${pageContext.request.contextPath}/admin/analytics" class="btn btn-pink">Review</a>
+            </div>
+
+            <div class="admin-card">
+                <div class="card-icon">🤖</div>
+                <div class="card-title">Chatbot</div>
+                <p class="card-desc">Manage chatbot rules and responses to provide automated assistance to users.</p>
+                <div class="card-features">
+                    <ul>
+                        <li>Add keywords</li>
+                        <li>Edit responses</li>
+                        <li>Monitor usage</li>
+                    </ul>
+                </div>
+                <a href="${pageContext.request.contextPath}/admin/chatbot" class="btn btn-blue">Manage</a>
+            </div>
+
+            <div class="admin-card">
+                <div class="card-icon">💡</div>
+                <div class="card-title">Daily<br>Tips</div>
+                <p class="card-desc">Create and manage daily mental health tips to inspire and support students.</p>
+                <div class="card-features">
+                    <ul>
+                        <li>Create tips</li>
+                        <li>Edit content</li>
+                        <li>Schedule posts</li>
+                    </ul>
+                </div>
+                <a href="${pageContext.request.contextPath}/admin/tips" class="btn btn-purple">Manage</a>
+            </div>
+
+            <div class="admin-card">
+                <div class="card-icon">💬</div>
+                <div class="card-title">Forum</div>
+                <p class="card-desc">Manage community forums, posts, comments, and handle reported content.</p>
+                <div class="card-features">
+                    <ul>
+                        <li>Manage forums</li>
+                        <li>Review posts</li>
+                        <li>Handle reports</li>
+                    </ul>
+                </div>
+                <a href="${pageContext.request.contextPath}/admin/forum/manage" class="btn btn-orange">Manage</a>
             </div>
 
         </div>

@@ -15,4 +15,7 @@ public interface CounselorDao {
 
     void deleteById(String id);
     List<Counselor> findByNameOrLocation(String keyword);
+    List<Counselor> findByStatus(String status);
+    void updateStatus(String id, String status);
+    List<Counselor> searchByIdOrName(String keyword);
 }

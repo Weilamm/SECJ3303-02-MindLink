@@ -50,7 +50,7 @@ public class DailyTipDAOImpl implements DailyTipDAO {
 
     @Override
     public List<DailyTip> findAll() {
-        String sql = "SELECT id, title, content FROM daily_tips ORDER BY created_at DESC";
+        String sql = "SELECT id, title, content FROM daily_tips ORDER BY id ASC";
         return jdbcTemplate.query(sql, dailyTipRowMapper);
     }
 
