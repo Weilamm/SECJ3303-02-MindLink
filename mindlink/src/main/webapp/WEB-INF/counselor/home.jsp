@@ -1,22 +1,25 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+    <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+        <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
-<%-- CALCULATE UPCOMING COUNT --%>
-<c:set var="bookedCount" value="0" />
-<c:forEach items="${appointments}" var="app">
-    <c:if test="${app.upcoming}">
-        <c:set var="bookedCount" value="${bookedCount + 1}" />
-    </c:if>
-</c:forEach>
+            <%-- CALCULATE UPCOMING COUNT --%>
+                <c:set var="bookedCount" value="0" />
+                <c:forEach items="${appointments}" var="app">
+                    <c:if test="${app.upcoming}">
+                        <c:set var="bookedCount" value="${bookedCount + 1}" />
+                    </c:if>
+                </c:forEach>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Counselor Home | MindLink</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+                <!DOCTYPE html>
+                <html lang="en">
+
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Counselor Home | MindLink</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+                        rel="stylesheet">
+                    <link rel="stylesheet"
+                        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
         :root {
@@ -122,28 +125,30 @@
     <img src="${pageContext.request.contextPath}/images/assessment-left.png" class="deco-img deco-left" alt="Decoration Left">
     <img src="${pageContext.request.contextPath}/images/assessment-right.png" class="deco-img deco-right" alt="Decoration Right">
 
-    <div class="header">
-        <div class="nav-left">
-            <a href="${pageContext.request.contextPath}/counselor/dashboard">Home</a>
-            <a href="${pageContext.request.contextPath}/counselor/appointments">Appointment</a>
-        </div>
+                    <div class="header">
+                        <div class="nav-left">
+                            <a href="${pageContext.request.contextPath}/counselor/dashboard">Home</a>
+                            <a href="${pageContext.request.contextPath}/counselor/appointments">Appointment</a>
+                            <a href="${pageContext.request.contextPath}/assessment/admin/history">Assessment</a>
+                        </div>
 
-        <a href="${pageContext.request.contextPath}/counselor/dashboard" class="logo">
-            <div class="logo-icon">
-                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
-            </div>
-            <span>MindLink</span>
-        </a>
+                        <a href="${pageContext.request.contextPath}/counselor/dashboard" class="logo">
+                            <div class="logo-icon">
+                                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
+                            </div>
+                            <span>MindLink</span>
+                        </a>
 
-        <div class="nav-right">
-            <a href="${pageContext.request.contextPath}/counselor/profile">Profile</a>
-            <a href="${pageContext.request.contextPath}/logout" style="color: #D62828;">Logout</a>
-        </div>
-    </div>
+                        <div class="nav-right">
+                            <a href="${pageContext.request.contextPath}/counselor/profile">Profile</a>
+                            <a href="${pageContext.request.contextPath}/logout" style="color: #D62828;">Logout</a>
+                        </div>
+                    </div>
 
-    <div class="container">
-        <h1>Welcome back, ${not empty sessionScope.loggedInCounselor.name ? sessionScope.loggedInCounselor.name : 'Counselor'}!</h1>
-        <div class="subtitle">Ready to support your students today?</div>
+                    <div class="container">
+                        <h1>Welcome back, ${not empty sessionScope.loggedInCounselor.name ?
+                            sessionScope.loggedInCounselor.name : 'Counselor'}!</h1>
+                        <div class="subtitle">Ready to support your students today?</div>
 
         <div class="dashboard-grid">
             
@@ -169,33 +174,36 @@
 
         </div>
 
-        <div class="section-title">Upcoming Sessions</div>
+                        <div class="section-title">Upcoming Sessions</div>
 
-        <c:forEach items="${appointments}" var="app">
-            <c:if test="${app.upcoming}">
-                <div class="session-card">
-                    <div class="session-info">
-                        <div class="session-name">Session with ${app.studentName != null ? app.studentName : 'Student'}</div>
-                        <div class="session-date">
-                            <i class="far fa-calendar-alt" style="margin-right: 5px;"></i> ${app.date} 
-                            &nbsp;|&nbsp; 
-                            <i class="far fa-clock" style="margin-right: 5px;"></i> ${app.time}
-                        </div>
+                        <c:forEach items="${appointments}" var="app">
+                            <c:if test="${app.upcoming}">
+                                <div class="session-card">
+                                    <div class="session-info">
+                                        <div class="session-name">Session with ${app.studentName != null ?
+                                            app.studentName : 'Student'}</div>
+                                        <div class="session-date">
+                                            <i class="far fa-calendar-alt" style="margin-right: 5px;"></i> ${app.date}
+                                            &nbsp;|&nbsp;
+                                            <i class="far fa-clock" style="margin-right: 5px;"></i> ${app.time}
+                                        </div>
+                                    </div>
+                                    <a href="${pageContext.request.contextPath}/counselor/appointment?id=${app.id}"
+                                        class="btn-view">
+                                        View Details
+                                    </a>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+
+                        <c:if test="${bookedCount == 0}">
+                            <div class="empty-state">
+                                <i class="fas fa-mug-hot"></i> No upcoming sessions found. Enjoy your free time!
+                            </div>
+                        </c:if>
+
                     </div>
-                    <a href="${pageContext.request.contextPath}/counselor/appointment?id=${app.id}" class="btn-view">
-                        View Details
-                    </a>
-                </div>
-            </c:if>
-        </c:forEach>
 
-        <c:if test="${bookedCount == 0}">
-            <div class="empty-state">
-                <i class="fas fa-mug-hot"></i> No upcoming sessions found. Enjoy your free time!
-            </div>
-        </c:if>
+                </body>
 
-    </div>
-
-</body>
-</html>
+                </html>
