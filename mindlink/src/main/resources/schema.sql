@@ -346,16 +346,46 @@ INSERT INTO assessment (set_id, assessment_title, question_text) VALUES
 (1, 'Stress Test', 'How often do you feel overwhelmed by your workload?'),
 (1, 'Stress Test', 'Do you find it difficult to relax after work/study?'),
 (1, 'Stress Test', 'How often do you get headaches or physical tension?'),
-(2, 'Happiness Check', 'I feel satisfied with my life currently.'),
-(2, 'Happiness Check', 'I find joy in small things.');
+(1, 'Stress Test', 'I found myself getting upset by quite trivial things.'),
+(1, 'Stress Test', 'I felt that I was using a lot of nervous energy.'),
+(1, 'Stress Test', 'I found it difficult to relax.'),
+(1, 'Stress Test', 'I found myself getting impatient when I was delayed in any way.'),
+(1, 'Stress Test', 'I felt that I was rather touchy or over-reactive.'),
+(1, 'Stress Test', 'I found it hard to wind down.'),
+(1, 'Stress Test', 'I found myself getting upset rather easily.'),
+(2, 'DASS Test', 'I found it hard to wind down.'),
+(2, 'DASS Test', 'I was aware of dryness of my mouth.'),
+(2, 'DASS Test', 'I couldn’t seem to experience any positive feeling at all.'),
+(2, 'DASS Test', 'I experienced breathing difficulty.', 'Likert Scale'),
+(2, 'DASS Test', 'I found it difficult to work up the initiative to do things.'),
+(2, 'DASS Test', 'I tended to over-react to situations.'),
+(2, 'DASS Test', 'I experienced trembling (eg, in the hands).'),
+(2, 'DASS Test', 'I felt that I was using a lot of nervous energy.'),
+(2, 'DASS Test', 'I was worried about situations in which I might panic and make a fool of myself.'),
+(2, 'DASS Test', 'I felt that I had nothing to look forward to.');
 
 -- Assessment Questions/Options
 INSERT INTO ass_question (assessment_id, option_text, score_value) VALUES 
-(1, 'Never', 0), (1, 'Sometimes', 5), (1, 'Often', 10),
-(2, 'No, I relax easily', 0), (2, 'Sometimes', 5), (2, 'Yes, very difficult', 10),
-(3, 'Rarely', 0), (3, 'Occasionally', 5), (3, 'Frequently', 10),
-(4, 'Strongly Disagree', 0), (4, 'Neutral', 5), (4, 'Strongly Agree', 10),
-(5, 'Rarely', 0), (5, 'Sometimes', 5), (5, 'Always', 10);
+(1, 'Never', 1), (1, 'Sometimes', 2), (1, 'Often', 3), (1, 'Almost always', 4),
+(2, 'Never', 1), (2, 'Sometimes', 2), (2, 'Often', 3), (2, 'Almost always', 4),
+(3, 'Never', 1), (3, 'Sometimes', 2), (3, 'Often', 3), (3, 'Almost always', 4),
+(4, 'Never', 1), (4, 'Sometimes', 2), (4, 'Often', 3), (4, 'Almost always', 4),
+(5, 'Never', 1), (5, 'Sometimes', 2), (5, 'Often', 3), (5, 'Almost always', 4),
+(6, 'Never', 1), (6, 'Sometimes', 2), (6, 'Often', 3), (6, 'Almost always', 4),
+(7, 'Never', 1), (7, 'Sometimes', 2), (7, 'Often', 3), (7, 'Almost always', 4),
+(8, 'Never', 1), (8, 'Sometimes', 2), (8, 'Often', 3), (8, 'Almost always', 4),
+(9, 'Never', 1), (9, 'Sometimes', 2), (9, 'Often', 3), (9, 'Almost always', 4),
+(10, 'Never', 1), (10, 'Sometimes', 2), (10, 'Often', 3), (10, 'Almost always', 4),
+(11, 'Never', 1),(11, 'Sometimes', 2), (11, 'Often', 3), (11, 'Almost always', 4),
+(12, 'Never', 1), (12, 'Sometimes', 2), (12, 'Often', 3), (12, 'Almost always', 4),
+(13, 'Never', 1), (13, 'Sometimes', 2), (13, 'Often', 3), (13, 'Almost always', 4),
+(14, 'Never', 1), (14, 'Sometimes', 2), (14, 'Often', 3), (14, 'Almost always', 4),
+(15, 'Never', 1), (15, 'Sometimes', 2), (15, 'Often', 3), (15, 'Almost always', 4),
+(16, 'Never', 1), (16, 'Sometimes', 2), (16, 'Often', 3), (16, 'Almost always', 4),
+(17, 'Never', 1), (17, 'Sometimes', 2), (17, 'Often', 3), (17, 'Almost always', 4),
+(18, 'Never', 1), (18, 'Sometimes', 2), (18, 'Often', 3), (18, 'Almost always', 4),
+(19, 'Never', 1), (19, 'Sometimes', 2), (19, 'Often', 3), (19, 'Almost always', 4),
+(20, 'Never', 1), (20, 'Sometimes', 2), (20, 'Often', 3), (20, 'Almost always', 4);
 
 -- Feedback
 INSERT INTO feedback (booking_id, category, subject, message, rating, created_at) VALUES 
