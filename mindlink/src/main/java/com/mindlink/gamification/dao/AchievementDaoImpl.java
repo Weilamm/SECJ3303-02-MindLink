@@ -75,7 +75,6 @@ public class AchievementDaoImpl implements AchievementDao {
 
     @Override
     public int getForumPostCount(String studentId) {
-        // Assuming user_id in forum_post maps to student_id
         String sql = "SELECT COUNT(*) FROM forum_post WHERE user_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, studentId);
         return count != null ? count : 0;

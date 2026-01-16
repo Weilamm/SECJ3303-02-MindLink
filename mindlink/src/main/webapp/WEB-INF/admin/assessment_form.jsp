@@ -333,7 +333,7 @@
             <script>
                 function addOption() {
                     const container = document.getElementById('options-container');
-                    if (!container) return; // Guard clause if options are hidden
+                    if (!container) return; 
                     const index = container.children.length;
 
                     const div = document.createElement('div');

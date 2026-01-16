@@ -11,7 +11,6 @@ public class AssessmentService {
     private List<AssessmentQuestion> questions = new ArrayList<>();
 
     public AssessmentService() {
-        // Pre-load data from your screenshot "UC07 Update Asessment.png"
         questions.add(new AssessmentQuestion("Are you taking any medications?", "Prescribed Medications;Over the Counter Supplements;I'm not taking any;Prefer not to say"));
         questions.add(new AssessmentQuestion("Do you have other mental health symptoms?", "#Social Withdrawal;#Feeling Numbness;#Feeling Sad;#Depressed;#Angry"));
         questions.add(new AssessmentQuestion("What's your health goal for today?", "I wanna reduce stress;I wanna try AI;I want to cope with trauma;I want to be a better person"));

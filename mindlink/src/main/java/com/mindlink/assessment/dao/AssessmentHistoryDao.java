@@ -9,9 +9,8 @@ public interface AssessmentHistoryDao {
 
     List<AssessmentHistory> findByStudentId(String studentId);
 
-    List<AssessmentHistory> findAll(); // For counselor view
+    List<AssessmentHistory> findAll();
 
-    // Detailed answers
     void saveAnswers(List<Assessment.AnswerSnapshot> answers);
 
     List<Assessment.AnswerSnapshot> findAnswersByHistoryId(int historyId);

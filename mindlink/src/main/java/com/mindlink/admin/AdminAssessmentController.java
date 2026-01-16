@@ -22,7 +22,6 @@ public class AdminAssessmentController {
 
     @GetMapping
     public String listQuestions(Model model) {
-        // Redirect to module select page first
         return "redirect:/admin/assessment/select-module";
     }
 
@@ -33,7 +32,6 @@ public class AdminAssessmentController {
         List<Assessment> questions;
         if (moduleId != null) {
             questions = assessmentDao.findBySetId(moduleId, search);
-            // Always get the title from the DAO or the first question
             String title = assessmentDao.getSetTitle(moduleId);
             if (title != null) {
                 model.addAttribute("selectedModuleTitle", title);
@@ -43,7 +41,6 @@ public class AdminAssessmentController {
         } else {
             questions = assessmentDao.findAll();
         }
-        // Convert Assessment to AdminAssessment for the view
         List<AdminAssessment> adminQuestions = convertToAdminAssessment(questions);
         model.addAttribute("questions", adminQuestions);
         model.addAttribute("moduleId", moduleId);
@@ -81,19 +78,17 @@ public class AdminAssessmentController {
 
         if (moduleId == null
                 && (adminAssessment.getQuestionText() == null || adminAssessment.getQuestionText().trim().isEmpty())) {
-            // Creating a new Set
             int newSetId = assessmentDao.getNextSetId();
             Assessment assessment = new Assessment();
             assessment.setSetId(newSetId);
             assessment.setTitle(adminAssessment.getTitle());
             assessment.setQuestionText("Introduction"); // Placeholder
             assessment.setQuestionType("multiple_choice");
-            // No options for set placeholder
+
             assessmentDao.save(assessment);
             return "redirect:/admin/assessment/list?moduleId=" + newSetId;
         }
 
-        // Convert AdminAssessment to Assessment
         Assessment assessment = convertToAssessment(adminAssessment, moduleId);
         assessmentDao.save(assessment);
         if (moduleId != null) {
@@ -138,7 +133,7 @@ public class AdminAssessmentController {
         return "redirect:/admin/assessment/select-module";
     }
 
-    // Set CRUD
+    // CRUD
     @PostMapping("/set/update-title")
     public String updateSetTitle(@RequestParam("setId") int setId,
             @RequestParam("oldTitle") String oldTitle,

@@ -6,11 +6,11 @@ import java.util.List;
 public class AdminAssessment {
     private int id;
     private int setId;
-    private String title; // Maps to 'assessment_title'
+    private String title; 
     private String questionText;
     private List<Option> options = new ArrayList<>();
 
-    // Standard Getters and Setters
+    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -61,7 +61,6 @@ public class AdminAssessment {
         public Option() {
         }
 
-        // Getters and Setters for optionId, assessmentId, optionText, scoreValue...
         public int getOptionId() {
             return optionId;
         }

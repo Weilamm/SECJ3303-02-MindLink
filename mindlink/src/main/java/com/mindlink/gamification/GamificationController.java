@@ -15,13 +15,12 @@ public class GamificationController {
     @Autowired
     private AchievementService achievementService;
 
-    // 1. Gamification Dashboard (The page in your screenshot)
     @GetMapping("")
     public String showDashboard() {
-        return "gamification/dashboard"; // Looks for WEB-INF/gamification/dashboard.jsp
+        return "gamification/dashboard"; 
     }
 
-    // Placeholders for the buttons
+    // Placeholders for buttons
     @GetMapping("/achievements")
     public String showAchievements(HttpSession session, Model model) {
         Object studentObj = session.getAttribute("loggedInStudent");

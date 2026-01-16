@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
-//student view assessment
 import com.mindlink.assessment.dao.AssessmentHistoryDao;
 import com.mindlink.assessment.dao.AssessmentDao;
 
@@ -34,7 +33,7 @@ public class AssessmentController {
 
     @GetMapping("/select-module")
     public String moduleSelect(Model model) {
-        // Fetch distinct assessment titles for selection
+        // Fetch assessment titles
         List<Assessment> allAssessments = assessmentDao.findAll();
         List<String> assessmentTitles = allAssessments.stream()
                 .map(Assessment::getTitle)
@@ -66,7 +65,6 @@ public class AssessmentController {
         List<Assessment> pageQuestions = (start < totalQuestions) ? allQuestions.subList(start, end)
                 : java.util.Collections.emptyList();
 
-        // Initialize score on first page
         if (page == 1) {
             session.setAttribute("runningScore", 0);
         }
@@ -128,7 +126,7 @@ public class AssessmentController {
             return "redirect:/assessment/questions?title=" + title + "&page=" + (currentPage + 1);
         }
 
-        // Final submission
+        // Submission
         int totalScore = runningScore;
         session.setAttribute("assessmentScore", totalScore);
 
@@ -172,7 +170,6 @@ public class AssessmentController {
 
                 int historyId = historyDao.save(history);
 
-                // Link answers to historyId and save
                 for (Assessment.AnswerSnapshot ans : sessionAnswers) {
                     ans.setHistoryId(historyId);
                 }
@@ -182,7 +179,6 @@ public class AssessmentController {
             e.printStackTrace();
         }
 
-        // Clear session data
         session.removeAttribute("runningScore");
         session.removeAttribute("sessionAnswers");
 
@@ -199,7 +195,6 @@ public class AssessmentController {
         String studentId = (String) loggedInStudent.get("student_id");
         List<AssessmentHistory> historyList = historyDao.findByStudentId(studentId);
 
-        // Populate answers for each history item
         for (AssessmentHistory h : historyList) {
             h.setAnswers(historyDao.findAnswersByHistoryId(h.getHistoryId()));
         }
@@ -210,8 +205,6 @@ public class AssessmentController {
 
     @GetMapping("/admin/history")
     public String showAllHistory(HttpSession session, Model model) {
-        // Just redirect to counselor home or similar if team is doing this,
-        // for now let's keep it but point to a generic place or fetch details too.
         if (session.getAttribute("loggedInCounselor") == null && session.getAttribute("adminId") == null) {
             return "redirect:/login";
         }
@@ -220,7 +213,7 @@ public class AssessmentController {
             h.setAnswers(historyDao.findAnswersByHistoryId(h.getHistoryId()));
         }
         model.addAttribute("historyList", historyList);
-        return "assessment/history"; // Reuse student view for now if admin_history is gone
+        return "assessment/history"; 
     }
 
     @GetMapping("/loading")

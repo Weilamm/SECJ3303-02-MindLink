@@ -11,7 +11,7 @@ import java.util.List;
 public class CounselorAssessmentService {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate; // Connects to your real database
+    private JdbcTemplate jdbcTemplate; // Connects to real database
 
     public List<AssessmentResult> getAssessmentResults(String type, String risk, String search) {
         // 1. Build Query with JOIN (History + Student Name)

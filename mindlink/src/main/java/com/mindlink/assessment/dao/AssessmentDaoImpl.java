@@ -152,7 +152,6 @@ public class AssessmentDaoImpl implements AssessmentDao {
                 assessment.getQuestionType(),
                 assessment.getId());
 
-        // Replace options
         String deleteOptions = "DELETE FROM ass_question WHERE assessment_id = ?";
         jdbcTemplate.update(deleteOptions, assessment.getId());
 
@@ -192,7 +191,6 @@ public class AssessmentDaoImpl implements AssessmentDao {
 
     @Override
     public void deleteSet(int setId, String title) {
-        // Delete all options first
         String deleteOptions = "DELETE FROM ass_question WHERE assessment_id IN (SELECT assessment_id FROM assessment WHERE set_id = ? AND assessment_title = ?)";
         jdbcTemplate.update(deleteOptions, setId, title);
 
