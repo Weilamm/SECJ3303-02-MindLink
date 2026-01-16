@@ -183,11 +183,10 @@ CREATE TABLE IF NOT EXISTS user_module_progress (
 -- Assessment Table: Stores questions for assessments
 CREATE TABLE IF NOT EXISTS assessment (
     assessment_id INT AUTO_INCREMENT PRIMARY KEY,
-    set_id INT, -- Formerly module_id
+    set_id INT,
     assessment_title VARCHAR(255) NOT NULL,
     question_text TEXT NOT NULL,
     question_type VARCHAR(50) DEFAULT 'Multiple Choice',
-    FOREIGN KEY (set_id) REFERENCES module(module_id) ON DELETE CASCADE,
     INDEX idx_set_id (set_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

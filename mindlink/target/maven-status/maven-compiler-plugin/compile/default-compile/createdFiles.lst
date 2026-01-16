@@ -6,7 +6,6 @@ com\mindlink\usermanagement\dao\CounselorDao.class
 com\mindlink\assessment\Assessment$AnswerSnapshot.class
 com\mindlink\counseling\DashboardStats.class
 com\mindlink\module\LearningModule.class
-com\mindlink\admin\dao\AssesModuleDao.class
 com\mindlink\usermanagement\model\Student.class
 com\mindlink\usermanagement\dao\CounselorDaoImpl$1.class
 com\mindlink\forum\dao\ForumCommentDAOImpl.class
@@ -112,6 +111,5 @@ com\mindlink\MindlinkApp.class
 com\mindlink\admin\AdminProfile.class
 com\mindlink\assistant\TipsController.class
 com\mindlink\counseling\Counselor.class
-com\mindlink\admin\dao\AssesModuleDaoImpl.class
 com\mindlink\admin\ForumReportService.class
 com\mindlink\achievement\Achievement.class
