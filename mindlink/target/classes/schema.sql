@@ -356,7 +356,7 @@ INSERT INTO assessment (set_id, assessment_title, question_text) VALUES
 (2, 'DASS Test', 'I found it hard to wind down.'),
 (2, 'DASS Test', 'I was aware of dryness of my mouth.'),
 (2, 'DASS Test', 'I couldn’t seem to experience any positive feeling at all.'),
-(2, 'DASS Test', 'I experienced breathing difficulty.', 'Likert Scale'),
+(2, 'DASS Test', 'I experienced breathing difficulty.'),
 (2, 'DASS Test', 'I found it difficult to work up the initiative to do things.'),
 (2, 'DASS Test', 'I tended to over-react to situations.'),
 (2, 'DASS Test', 'I experienced trembling (eg, in the hands).'),
