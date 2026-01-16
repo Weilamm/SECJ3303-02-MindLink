@@ -9,6 +9,7 @@ public class AssessmentHistory {
     private String assessmentTitle;
     private int score;
     private String interpretation;
+    private String suggestion;
     private Date completedAt;
 
     // Getters and Setters
@@ -50,6 +51,14 @@ public class AssessmentHistory {
 
     public void setInterpretation(String interpretation) {
         this.interpretation = interpretation;
+    }
+
+    public String getSuggestion() {
+        return suggestion;
+    }
+
+    public void setSuggestion(String suggestion) {
+        this.suggestion = suggestion;
     }
 
     public Date getCompletedAt() {

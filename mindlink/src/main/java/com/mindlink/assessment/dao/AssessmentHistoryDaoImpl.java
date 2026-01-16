@@ -20,7 +20,7 @@ public class AssessmentHistoryDaoImpl implements AssessmentHistoryDao {
 
     @Override
     public int save(AssessmentHistory history) {
-        String sql = "INSERT INTO assessment_history (student_id, assessment_title, score, interpretation, completed_at) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO assessment_history (student_id, assessment_title, score, interpretation, suggestion, completed_at) VALUES (?, ?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -29,7 +29,8 @@ public class AssessmentHistoryDaoImpl implements AssessmentHistoryDao {
             ps.setString(2, history.getAssessmentTitle());
             ps.setInt(3, history.getScore());
             ps.setString(4, history.getInterpretation());
-            ps.setTimestamp(5, new java.sql.Timestamp(
+            ps.setString(5, history.getSuggestion());
+            ps.setTimestamp(6, new java.sql.Timestamp(
                     (history.getCompletedAt() != null ? history.getCompletedAt() : new Date()).getTime()));
             return ps;
         }, keyHolder);

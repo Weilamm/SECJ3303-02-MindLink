@@ -338,6 +338,17 @@
                                 </div>
                             </div>
                             <div id="details-${status.index}" class="details-content" style="display: none;">
+                                <c:if test="${not empty item.suggestion}">
+                                    <div style="margin-bottom: 25px; padding: 20px; background: rgba(255, 255, 255, 0.7); border-radius: 20px; border-left: 5px solid var(--highlight);">
+                                        <h4 style="margin-bottom: 10px; color: var(--teal-dark);">Suggestions for you</h4>
+                                        <ul style="list-style-position: inside; color: #555;">
+                                            <c:forEach var="sug" items="${item.suggestion.split('\\\\|')}">
+                                                <li>${sug}</li>
+                                            </c:forEach>
+                                        </ul>
+                                    </div>
+                                </c:if>
+
                                 <h3>Detailed Responses</h3>
                                 <div class="answers-grid">
                                     <c:forEach var="ans" items="${item.answers}">

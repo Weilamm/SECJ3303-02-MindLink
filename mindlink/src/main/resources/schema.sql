@@ -247,6 +247,7 @@ CREATE TABLE IF NOT EXISTS assessment_history (
     assessment_title VARCHAR(255) NOT NULL,
     score INT NOT NULL,
     interpretation TEXT,
+    suggestion TEXT,
     completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (student_id) REFERENCES student(student_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

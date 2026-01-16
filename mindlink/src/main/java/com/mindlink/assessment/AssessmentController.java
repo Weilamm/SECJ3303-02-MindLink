@@ -136,11 +136,11 @@ public class AssessmentController {
         String suggestionTitle;
         List<String> suggestions;
 
-        if (totalScore < 10) {
+        if (totalScore < 30) {
             interpretation = "Your mental health seems stable!";
             suggestionTitle = "Great Job!";
             suggestions = List.of("Keep up your healthy habits", "Share your positivity with others");
-        } else if (totalScore < 20) {
+        } else if (totalScore < 50) {
             interpretation = "You might be experiencing some stress.";
             suggestionTitle = "Take Care!";
             suggestions = List.of("Take short breaks", "Practice deep breathing", "Talk to a friend");
@@ -163,6 +163,12 @@ public class AssessmentController {
                 history.setAssessmentTitle(title);
                 history.setScore(totalScore);
                 history.setInterpretation(interpretation);
+
+                @SuppressWarnings("unchecked")
+                List<String> suggestionList = (List<String>) session.getAttribute("suggestions");
+                if (suggestionList != null && !suggestionList.isEmpty()) {
+                    history.setSuggestion(String.join("|", suggestionList));
+                }
 
                 int historyId = historyDao.save(history);
 
