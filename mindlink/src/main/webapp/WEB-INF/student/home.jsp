@@ -1,199 +1,405 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+    <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+        <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomePage-Student Portal - MindLink</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+            <!DOCTYPE html>
+            <html lang="en">
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #FFE6D0;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>HomePage-Student Portal - MindLink</title>
+                <style>
+                    * {
+                        margin: 0;
+                        padding: 0;
+                        box-sizing: border-box;
+                    }
 
-        .header {
-            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-            padding: 15px 50px; display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
+                    body {
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        background: #FFE6D0;
+                        min-height: 100vh;
+                        overflow-x: hidden;
+                    }
 
-        .nav-left, .nav-right { display: flex; align-items: center; justify-content: space-evenly; flex: 1; gap: 0; }
-        .nav-left a, .nav-right a { text-decoration: none; color: #00313e; font-size: 16px; font-weight: 500; transition: color 0.3s; }
-        .nav-left a:hover, .nav-right a:hover { color: #F77F00; }
+                    .header {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        z-index: 1000;
+                        padding: 15px 50px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        background: rgba(255, 255, 255, 0.95);
+                        backdrop-filter: blur(10px);
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+                    }
 
-        .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; color: #00313e; font-size: 32px; text-decoration: none; }
-        .logo-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
-        .logo-icon img { width: 100%; height: 100%; object-fit: contain; }
+                    .nav-left,
+                    .nav-right {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-evenly;
+                        flex: 1;
+                        gap: 0;
+                    }
 
-        .container {
-            background: #FFE6D0;
-            padding: 130px 100px 120px;
-            position: relative; overflow: hidden; min-height: 100vh;
-            background-image:
-                url('${pageContext.request.contextPath}/images/background-left.png'),
-                url('${pageContext.request.contextPath}/images/background-right.png');
-            background-position: left bottom, right bottom;
-            background-repeat: no-repeat, no-repeat;
-            background-size: auto, auto;
-            background-color: #FFE6D0;
-        }
+                    .nav-left a,
+                    .nav-right a {
+                        text-decoration: none;
+                        color: #00313e;
+                        font-size: 16px;
+                        font-weight: 500;
+                        transition: color 0.3s;
+                    }
 
-        .welcome-content { text-align: center; position: relative; z-index: 2; }
-        .welcome-title { font-size: 56px; color: #00313e; font-weight: 700; margin-bottom: 15px; }
-        .welcome-subtitle { font-size: 40px; color: #00313e; font-weight: 600; margin-bottom: 50px; }
+                    .nav-left a:hover,
+                    .nav-right a:hover {
+                        color: #F77F00;
+                    }
 
-        .tip-box {
-            background: white; border-radius: 20px; padding: 30px 40px;
-            max-width: 600px; margin: 0 auto 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-        .tip-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .lightbulb-link { display: flex; align-items: center; justify-content: center; transition: transform 0.3s; }
-        .lightbulb-link:hover { transform: scale(1.1); }
-        .lightbulb-link img { width: 32px; height: 32px; object-fit: contain; }
-        .tip-title { font-size: 20px; color: #00313e; font-weight: 600; }
-        .tip-content { font-size: 16px; color: #555; line-height: 1.6; text-align: left; }
+                    .logo {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        font-weight: 700;
+                        color: #00313e;
+                        font-size: 32px;
+                        text-decoration: none;
+                    }
 
-        .sessions-section { max-width: 600px; margin: 0 auto; }
-        .sessions-title { font-size: 28px; color: #00313e; font-weight: 700; margin-bottom: 25px; }
-        .session-item {
-            background: white; border-radius: 15px; padding: 25px 30px; margin-bottom: 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-        .session-info h3 { font-size: 18px; color: #00313e; font-weight: 600; margin-bottom: 8px; }
-        .session-info p { font-size: 14px; color: #666; }
-        
-        .view-button {
-            background: linear-gradient(135deg, #ffa500, #ff8c00);
-            color: white; border: none; padding: 12px 30px; border-radius: 25px;
-            font-size: 14px; font-weight: 600; cursor: pointer;
-            transition: all 0.3s; text-decoration: none;
-        }
-        .view-button:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4); }
+                    .logo-icon {
+                        width: 40px;
+                        height: 40px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
 
-        .empty-state { font-style: italic; color: #777; margin-top: 10px; }
+                    .logo-icon img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: contain;
+                    }
 
-        .chat-button {
-            position: fixed; bottom: 60px; right: 60px; background: white;
-            padding: 20px; border-radius: 20px; cursor: pointer;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); transition: all 0.3s; z-index: 1000;
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-            text-decoration: none; width: 120px;
-        }
-        .chat-button:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2); }
-        .chat-button-icon { width: 60px; height: 60px; object-fit: contain; }
-        .chat-button-text { font-size: 11px; font-weight: 700; color: #00313e; text-align: center; line-height: 1.3; }
+                    .container {
+                        background: #FFE6D0;
+                        padding: 130px 100px 120px;
+                        position: relative;
+                        overflow: hidden;
+                        min-height: 100vh;
+                        background-image: url('${pageContext.request.contextPath}/images/background-left.png'),
+                        url('${pageContext.request.contextPath}/images/background-right.png');
+                        background-position: left bottom, right bottom;
+                        background-repeat: no-repeat, no-repeat;
+                        background-size: auto, auto;
+                        background-color: #FFE6D0;
+                    }
 
-        @media (max-width: 1200px) {
-            .header { padding: 15px 30px; }
-            .container { padding: 120px 50px 50px; background-size: 15% auto, 15% auto; }
-            .nav-left, .nav-right { gap: 20px; }
-        }
-        @media (max-width: 768px) {
-            .header { flex-direction: column; gap: 10px; position: static; padding: 20px; }
-            .container { padding-top: 20px; background-image: none; }
-            .nav-left, .nav-right { gap: 15px; }
-            .welcome-title { font-size: 36px; }
-            .welcome-subtitle { font-size: 28px; }
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div class="nav-left">
-            <a href="${pageContext.request.contextPath}/home">Home</a>
-            <a href="${pageContext.request.contextPath}/learning">Learning</a>
-        </div>
-        
-        <a href="${pageContext.request.contextPath}/home" class="logo">
-            <div class="logo-icon">
-                <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
-            </div>
-            <span>MindLink</span>
-        </a>
-        
-        <div class="nav-right">
-            <a href="${pageContext.request.contextPath}/forum/welcome">Forum</a>
-            <a href="${pageContext.request.contextPath}/profile">Profile</a>
-        </div>
-    </div>
+                    .welcome-content {
+                        text-align: center;
+                        position: relative;
+                        z-index: 2;
+                    }
 
-    <div class="container">
-        <div class="welcome-content">
-            <h1 class="welcome-title">Welcome back, ${not empty sessionScope.loggedInStudent.name ? sessionScope.loggedInStudent.name : 'Student'}!</h1>
-            <h2 class="welcome-subtitle">How are you feeling today?</h2>
+                    .welcome-title {
+                        font-size: 56px;
+                        color: #00313e;
+                        font-weight: 700;
+                        margin-bottom: 15px;
+                    }
 
-            <div class="tip-box">
-                <div class="tip-header">
-                    <a href="${pageContext.request.contextPath}/ai/tips" class="lightbulb-link" title="Go to Mind Tips page">
-                        <img src="${pageContext.request.contextPath}/images/lightbulb.png" alt="Mind Tip">
-                    </a>
-                    <span class="tip-title">Today's Mind Tip:</span>
-                </div>
-                <p class="tip-content">
-                    "Take a few deep breaths before studying — calm mind, better focus."
-                </p>
-            </div>
+                    .welcome-subtitle {
+                        font-size: 40px;
+                        color: #00313e;
+                        font-weight: 600;
+                        margin-bottom: 50px;
+                    }
 
-            <div class="sessions-section">
-                <h3 class="sessions-title">Upcoming Sessions:</h3>
+                    .tip-box {
+                        background: white;
+                        border-radius: 20px;
+                        padding: 30px 40px;
+                        max-width: 600px;
+                        margin: 0 auto 50px;
+                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                    }
 
-                <c:set var="hasUpcoming" value="false" />
+                    .tip-header {
+                        display: flex;
+                        align-items: center;
+                        gap: 15px;
+                        margin-bottom: 15px;
+                    }
 
-                <c:forEach items="${appointments}" var="app">
-                    <c:if test="${app.upcoming}">
-                        <c:set var="hasUpcoming" value="true" />
-                        <div class="session-item">
-                            <div class="session-info">
-                                <h3>Session with ${app.counselorName}</h3>
-                                <p>Date: ${app.date}, ${app.time}</p>
-                            </div>
-                            <a href="${pageContext.request.contextPath}/appointment/details?id=${app.id}" class="view-button">View</a>
-                        </div>
-                    </c:if>
-                </c:forEach>
+                    .lightbulb-link {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transition: transform 0.3s;
+                    }
 
-                <c:if test="${not hasUpcoming}">
-                    <div class="empty-state">
-                        You have no upcoming counseling sessions.
+                    .lightbulb-link:hover {
+                        transform: scale(1.1);
+                    }
+
+                    .lightbulb-link img {
+                        width: 32px;
+                        height: 32px;
+                        object-fit: contain;
+                    }
+
+                    .tip-title {
+                        font-size: 20px;
+                        color: #00313e;
+                        font-weight: 600;
+                    }
+
+                    .tip-content {
+                        font-size: 16px;
+                        color: #555;
+                        line-height: 1.6;
+                        text-align: left;
+                    }
+
+                    .sessions-section {
+                        max-width: 600px;
+                        margin: 0 auto;
+                    }
+
+                    .sessions-title {
+                        font-size: 28px;
+                        color: #00313e;
+                        font-weight: 700;
+                        margin-bottom: 25px;
+                    }
+
+                    .session-item {
+                        background: white;
+                        border-radius: 15px;
+                        padding: 25px 30px;
+                        margin-bottom: 20px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+                    }
+
+                    .session-info h3 {
+                        font-size: 18px;
+                        color: #00313e;
+                        font-weight: 600;
+                        margin-bottom: 8px;
+                    }
+
+                    .session-info p {
+                        font-size: 14px;
+                        color: #666;
+                    }
+
+                    .view-button {
+                        background: linear-gradient(135deg, #ffa500, #ff8c00);
+                        color: white;
+                        border: none;
+                        padding: 12px 30px;
+                        border-radius: 25px;
+                        font-size: 14px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        text-decoration: none;
+                    }
+
+                    .view-button:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
+                    }
+
+                    .empty-state {
+                        font-style: italic;
+                        color: #777;
+                        margin-top: 10px;
+                    }
+
+                    .chat-button {
+                        position: fixed;
+                        bottom: 60px;
+                        right: 60px;
+                        background: white;
+                        padding: 20px;
+                        border-radius: 20px;
+                        cursor: pointer;
+                        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+                        transition: all 0.3s;
+                        z-index: 1000;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 10px;
+                        text-decoration: none;
+                        width: 120px;
+                    }
+
+                    .chat-button:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+                    }
+
+                    .chat-button-icon {
+                        width: 60px;
+                        height: 60px;
+                        object-fit: contain;
+                    }
+
+                    .chat-button-text {
+                        font-size: 11px;
+                        font-weight: 700;
+                        color: #00313e;
+                        text-align: center;
+                        line-height: 1.3;
+                    }
+
+                    @media (max-width: 1200px) {
+                        .header {
+                            padding: 15px 30px;
+                        }
+
+                        .container {
+                            padding: 120px 50px 50px;
+                            background-size: 15% auto, 15% auto;
+                        }
+
+                        .nav-left,
+                        .nav-right {
+                            gap: 20px;
+                        }
+                    }
+
+                    @media (max-width: 768px) {
+                        .header {
+                            flex-direction: column;
+                            gap: 10px;
+                            position: static;
+                            padding: 20px;
+                        }
+
+                        .container {
+                            padding-top: 20px;
+                            background-image: none;
+                        }
+
+                        .nav-left,
+                        .nav-right {
+                            gap: 15px;
+                        }
+
+                        .welcome-title {
+                            font-size: 36px;
+                        }
+
+                        .welcome-subtitle {
+                            font-size: 28px;
+                        }
+                    }
+                </style>
+            </head>
+
+            <body>
+                <div class="header">
+                    <div class="nav-left">
+                        <a href="${pageContext.request.contextPath}/home">Home</a>
+                        <a href="${pageContext.request.contextPath}/learning">Learning</a>
                     </div>
-                </c:if>
+
+                    <a href="${pageContext.request.contextPath}/home" class="logo">
+                        <div class="logo-icon">
+                            <img src="${pageContext.request.contextPath}/images/mindlink.png" alt="MindLink">
+                        </div>
+                        <span>MindLink</span>
+                    </a>
+
+                    <div class="nav-right">
+                        <a href="${pageContext.request.contextPath}/forum/welcome">Forum</a>
+                        <a href="${pageContext.request.contextPath}/profile">Profile</a>
+                    </div>
                 </div>
-        </div>
-    </div>
 
-    <a href="${pageContext.request.contextPath}/ai/chatbot" class="chat-button">
-        <img src="${pageContext.request.contextPath}/images/chatbot.png" alt="Chat with AI" class="chat-button-icon">
-        <span class="chat-button-text">CHAT<br>WITH AI<br>HERE!</span>
-    </a>
+                <div class="container">
+                    <div class="welcome-content">
+                        <h1 class="welcome-title">Welcome back, ${not empty sessionScope.loggedInStudent.name ?
+                            sessionScope.loggedInStudent.name : 'Student'}!</h1>
+                        <h2 class="welcome-subtitle">How are you feeling today?</h2>
 
-    <script>
-        window.addEventListener('load', function() {
-            const container = document.querySelector('.container');
-            container.style.opacity = '0';
-            setTimeout(function() {
-                container.style.transition = 'opacity 0.8s';
-                container.style.opacity = '1';
-            }, 100);
-        });
+                        <div class="tip-box">
+                            <div class="tip-header">
+                                <a href="${pageContext.request.contextPath}/ai/tips" class="lightbulb-link"
+                                    title="Go to Mind Tips page">
+                                    <img src="${pageContext.request.contextPath}/images/lightbulb.png" alt="Mind Tip">
+                                </a>
+                                <span class="tip-title">Today's Mind Tip:</span>
+                            </div>
+                            <p class="tip-content">
+                                "Take a few deep breaths before studying — calm mind, better focus."
+                            </p>
+                        </div>
 
-        document.querySelectorAll('.view-button, .chat-button, .lightbulb-link').forEach(function(element) {
-            element.addEventListener('click', function(e) {
-                const currentTransform = this.style.transform || '';
-                this.style.transform = currentTransform + ' scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = currentTransform;
-                }, 150);
-            });
-        });
-    </script>
-</body>
-</html>
+                        <div class="sessions-section">
+                            <h3 class="sessions-title">Upcoming Sessions:</h3>
+
+                            <c:set var="hasUpcoming" value="false" />
+
+                            <c:forEach items="${appointments}" var="app">
+                                <c:if test="${app.upcoming}">
+                                    <c:set var="hasUpcoming" value="true" />
+                                    <div class="session-item">
+                                        <div class="session-info">
+                                            <h3>Session with ${app.counselorName}</h3>
+                                            <p>Date: ${app.date}, ${app.time}</p>
+                                        </div>
+                                        <a href="${pageContext.request.contextPath}/counseling/view?id=${app.id}"
+                                            class="view-button">View</a>
+                                    </div>
+                                </c:if>
+                            </c:forEach>
+
+                            <c:if test="${not hasUpcoming}">
+                                <div class="empty-state">
+                                    You have no upcoming counseling sessions.
+                                </div>
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="${pageContext.request.contextPath}/ai/chatbot" class="chat-button">
+                    <img src="${pageContext.request.contextPath}/images/chatbot.png" alt="Chat with AI"
+                        class="chat-button-icon">
+                    <span class="chat-button-text">CHAT<br>WITH AI<br>HERE!</span>
+                </a>
+
+                <script>
+                    window.addEventListener('load', function () {
+                        const container = document.querySelector('.container');
+                        container.style.opacity = '0';
+                        setTimeout(function () {
+                            container.style.transition = 'opacity 0.8s';
+                            container.style.opacity = '1';
+                        }, 100);
+                    });
+
+                    document.querySelectorAll('.view-button, .chat-button, .lightbulb-link').forEach(function (element) {
+                        element.addEventListener('click', function (e) {
+                            const currentTransform = this.style.transform || '';
+                            this.style.transform = currentTransform + ' scale(0.95)';
+                            setTimeout(() => {
+                                this.style.transform = currentTransform;
+                            }, 150);
+                        });
+                    });
+                </script>
+            </body>
+
+            </html>
