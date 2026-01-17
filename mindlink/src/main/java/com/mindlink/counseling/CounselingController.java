@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 
 @Controller
 @RequestMapping("/counseling")
@@ -162,6 +163,8 @@ public class CounselingController {
                 past.add(app);
             }
         }
+
+        Collections.reverse(past);
 
         model.addAttribute("appointments", past);
         return "counseling/history";
