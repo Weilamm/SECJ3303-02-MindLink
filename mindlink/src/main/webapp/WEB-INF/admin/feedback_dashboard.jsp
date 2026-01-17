@@ -27,7 +27,6 @@
             overflow-x: hidden;
         }
         
-        /* HEADER (Unchanged) */
         .header {
                 padding: 20px 100px;
                 display: flex;
@@ -83,7 +82,6 @@
                 object-fit: contain;
             }
 
-        /* CONTAINER */
         .container { 
             max-width: 900px; 
             margin: 50px auto 0 auto; 
@@ -92,7 +90,6 @@
         }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* 3. BACK BUTTON (Icon Only) */
         .btn-back {
             display: inline-flex; align-items: center; justify-content: center;
             width: 45px; height: 45px; border-radius: 50%;
@@ -104,7 +101,6 @@
 
         h1 { margin: 0 0 30px 0; font-weight: 800; font-size: 36px; color: var(--primary); letter-spacing: -1px; }
 
-        /* FILTER BAR (Floating) */
         .filter-bar {
             background: var(--bg-card); padding: 15px 30px; border-radius: 50px;
             display: flex; gap: 20px; align-items: center; margin-bottom: 35px;
@@ -118,7 +114,6 @@
         }
         .filter-select:hover { border-color: var(--accent-orange); background: white; }
 
-        /* TABS */
         .tabs { display: flex; gap: 30px; margin-bottom: 25px; border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 0; }
         .tab-btn {
             background: none; border: none; padding: 12px 10px;
@@ -135,7 +130,6 @@
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* FEEDBACK CARD */
         .feedback-card {
             background: var(--bg-card); border-radius: 16px; margin-bottom: 20px;
             box-shadow: var(--shadow); overflow: hidden;
@@ -155,7 +149,6 @@
         .chevron { width: 30px; height: 30px; border-radius: 50%; background: #F4F7FE; display: flex; align-items: center; justify-content: center; transition: transform 0.3s, background 0.3s; color: var(--primary); }
         .feedback-card.active .chevron { transform: rotate(180deg); background: var(--primary); color: white; }
 
-        /* CARD DETAILS */
         .card-details { display: none; padding: 0 30px 30px 30px; border-top: 1px solid #F0F0F0; background: #FAFAFA; }
         
         .message-box { 
@@ -219,9 +212,9 @@
         <span class="filter-label"><i class="fas fa-filter"></i> Filter By:</span>
         <select id="filterCategory" class="filter-select" onchange="applyFilters()">
             <option value="all">All Categories</option>
+            <option value="counseling session quality">Counseling Session Quality</option>
             <option value="counselor behavior">Counselor Behavior</option>
-            <option value="facility">Facility</option>
-            <option value="system issue">System Issue</option>
+            <option value="platform technical issue">Platform / Technical Issue</option>
             <option value="other">Other</option>
         </select>
         <select id="filterRating" class="filter-select" onchange="applyFilters()">
