@@ -19,15 +19,13 @@ public class AppointmentService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    // --- 1. BOOKING (Create New Appointment) ---
     public void bookAppointment(Appointment appt) {
-        // Auto-generate ID like "BK001"
         String newId = generateNextBookingId();
         appt.setId(newId);
         
         String sql = "INSERT INTO appointment (id, student_id, counselor_name, date, time, type, venue, status) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                     
+                      
         jdbcTemplate.update(sql, 
             appt.getId(), 
             appt.getStudentId(), 
@@ -36,18 +34,16 @@ public class AppointmentService {
             appt.getTime(), 
             appt.getType(), 
             appt.getVenue(), 
-            "Booked" // Default status
+            "Booked" 
         );
     }
 
     public List<Appointment> getAppointmentsByStudentId(String studentId) {
-        String sql = "SELECT * FROM appointment WHERE student_id = ? ORDER BY date DESC, time DESC";
+        String sql = "SELECT * FROM appointment WHERE student_id = ? ORDER BY date ASC, time ASC";
         return jdbcTemplate.query(sql, new AppointmentRowMapper(), studentId);
     }
 
-    // --- 2. RESCHEDULE (Update Existing Appointment) ---
     public void rescheduleAppointment(Appointment appt) {
-        // Only updates the changeable details, keeps the ID same
         String sql = "UPDATE appointment SET date = ?, time = ?, type = ?, venue = ?, status = 'Rescheduled' WHERE id = ?";
         
         jdbcTemplate.update(sql, 
@@ -59,7 +55,6 @@ public class AppointmentService {
         );
     }
 
-    // --- 3. HELPER: Generate ID (BK001, BK002...) ---
     private String generateNextBookingId() {
         String sql = "SELECT id FROM appointment ORDER BY id DESC LIMIT 1";
         try {
@@ -75,17 +70,13 @@ public class AppointmentService {
         }
     }
 
-    // --- 4. READ ALL (Join with Student Table) ---
     public List<Appointment> getAllAppointments() {
-        // Updated to include Student Name
         String sql = "SELECT a.*, s.name AS student_name FROM appointment a " +
                      "LEFT JOIN student s ON a.student_id = s.student_id";
         return jdbcTemplate.query(sql, new AppointmentRowMapper());
     }
 
-    // --- 5. READ ONE (Find by ID) ---
     public Appointment getAppointmentById(String id) {
-        // Updated to include Student Name
         String sql = "SELECT a.*, s.name AS student_name FROM appointment a " +
                      "LEFT JOIN student s ON a.student_id = s.student_id " +
                      "WHERE a.id = ?";
@@ -96,7 +87,6 @@ public class AppointmentService {
         }
     }
 
-    // --- 6. FILTERED SEARCH (For Counselor Dashboard) ---
     public List<Appointment> getAppointmentsForCounselor(String counselorName, String search, String status) {
         StringBuilder sql = new StringBuilder(
             "SELECT a.*, s.name AS student_name " +
@@ -125,14 +115,11 @@ public class AppointmentService {
         return jdbcTemplate.query(sql.toString(), new AppointmentRowMapper(), params.toArray());
     }
 
-    // --- 7. DELETE ---
     public void deleteAppointment(String id) {
         String sql = "DELETE FROM appointment WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
 
-    // --- 8. HELPER METHODS (Past/Upcoming Filtering in Java) ---
-    // Note: It's often better to filter in SQL, but keeping your logic here is fine for now.
     public List<Appointment> getPastAppointments() {
         List<Appointment> allAppointments = getAllAppointments();
         List<Appointment> pastAppointments = new ArrayList<>();
@@ -145,24 +132,21 @@ public class AppointmentService {
                 if (appDate.isBefore(today)) {
                     pastAppointments.add(app);
                 }
-            } catch (Exception e) { /* Ignore invalid dates */ }
+            } catch (Exception e) { }
         }
         return pastAppointments;
     }
 
     public List<Appointment> getUpcomingAppointments() {
-        // Fetch all appointments (ensure this query includes JOIN for student_name)
         List<Appointment> allAppointments = getAllAppointments();
         List<Appointment> upcoming = new ArrayList<>();
 
         for (Appointment app : allAppointments) {
-            // Use the shared helper method we just created
             if (app.isUpcoming()) {
                 upcoming.add(app);
             }
         }
         
-        // Sort: Nearest date first
         upcoming.sort((a1, a2) -> {
             int dateCompare = a1.getDate().compareTo(a2.getDate());
             if (dateCompare != 0) return dateCompare;
@@ -174,19 +158,15 @@ public class AppointmentService {
 
     public void updateSessionNotes(String id, String notes, boolean markCompleted) {
         String sql;
-        
         if (markCompleted) {
-            // Update Notes AND Status
             sql = "UPDATE appointment SET notes = ?, status = 'Completed' WHERE id = ?";
             jdbcTemplate.update(sql, notes, id);
         } else {
-            // Update Notes ONLY (keep existing status)
             sql = "UPDATE appointment SET notes = ? WHERE id = ?";
             jdbcTemplate.update(sql, notes, id);
         }
     }
 
-    // --- ROW MAPPER (Handles 'student_name' mapping) ---
     private static class AppointmentRowMapper implements RowMapper<Appointment> {
         @Override
         public Appointment mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -203,7 +183,7 @@ public class AppointmentService {
             
             try {
                 appt.setNotes(rs.getString("notes")); 
-            } catch (SQLException e) { /* Ignore if column missing */ }
+            } catch (SQLException e) { }
 
             try {
                 appt.setStudentName(rs.getString("student_name")); 
