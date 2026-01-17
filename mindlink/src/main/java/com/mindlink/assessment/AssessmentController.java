@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
+import com.mindlink.usermanagement.model.Student;
+
 import com.mindlink.assessment.dao.AssessmentHistoryDao;
 import com.mindlink.assessment.dao.AssessmentDao;
 
@@ -153,11 +155,11 @@ public class AssessmentController {
         session.setAttribute("suggestions", suggestions);
 
         try {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> loggedInStudent = (Map<String, Object>) session.getAttribute("loggedInStudent");
-            if (loggedInStudent != null) {
+            Object studentObj = session.getAttribute("loggedInStudent");
+            if (studentObj instanceof Student) {
+                Student loggedInStudent = (Student) studentObj;
                 AssessmentHistory history = new AssessmentHistory();
-                history.setStudentId((String) loggedInStudent.get("student_id"));
+                history.setStudentId(loggedInStudent.getStudentId());
                 history.setAssessmentTitle(title);
                 history.setScore(totalScore);
                 history.setInterpretation(interpretation);
@@ -187,12 +189,12 @@ public class AssessmentController {
 
     @GetMapping("/history")
     public String showHistory(HttpSession session, Model model) {
-        @SuppressWarnings("unchecked")
-        Map<String, Object> loggedInStudent = (Map<String, Object>) session.getAttribute("loggedInStudent");
-        if (loggedInStudent == null)
+        Object studentObj = session.getAttribute("loggedInStudent");
+        if (!(studentObj instanceof Student))
             return "redirect:/login";
 
-        String studentId = (String) loggedInStudent.get("student_id");
+        Student loggedInStudent = (Student) studentObj;
+        String studentId = loggedInStudent.getStudentId();
         List<AssessmentHistory> historyList = historyDao.findByStudentId(studentId);
 
         for (AssessmentHistory h : historyList) {
@@ -213,7 +215,7 @@ public class AssessmentController {
             h.setAnswers(historyDao.findAnswersByHistoryId(h.getHistoryId()));
         }
         model.addAttribute("historyList", historyList);
-        return "assessment/history"; 
+        return "assessment/history";
     }
 
     @GetMapping("/loading")

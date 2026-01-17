@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import com.mindlink.usermanagement.model.Student;
 
 @Controller
 @RequestMapping("/gamification")
@@ -17,21 +18,19 @@ public class GamificationController {
 
     @GetMapping("")
     public String showDashboard() {
-        return "gamification/dashboard"; 
+        return "gamification/dashboard";
     }
 
     // Placeholders for buttons
     @GetMapping("/achievements")
     public String showAchievements(HttpSession session, Model model) {
         Object studentObj = session.getAttribute("loggedInStudent");
-        if (!(studentObj instanceof java.util.Map)) {
+        if (!(studentObj instanceof Student)) {
             return "redirect:/login";
         }
 
-        java.util.Map<String, Object> studentMap = (java.util.Map<String, Object>) studentObj;
-        String studentId = (String) studentMap.get("student_id");
-        if (studentId == null)
-            return "redirect:/login";
+        Student student = (Student) studentObj;
+        String studentId = student.getStudentId();
 
         List<Achievement> achievements = achievementService.getStudentAchievements(studentId);
         model.addAttribute("achievements", achievements);
@@ -42,14 +41,12 @@ public class GamificationController {
     @GetMapping("/activities")
     public String showActivities(HttpSession session, Model model) {
         Object studentObj = session.getAttribute("loggedInStudent");
-        if (!(studentObj instanceof java.util.Map)) {
+        if (!(studentObj instanceof Student)) {
             return "redirect:/login";
         }
 
-        java.util.Map<String, Object> studentMap = (java.util.Map<String, Object>) studentObj;
-        String studentId = (String) studentMap.get("student_id");
-        if (studentId == null)
-            return "redirect:/login";
+        Student student = (Student) studentObj;
+        String studentId = student.getStudentId();
 
         List<Achievement> achievements = achievementService.getStudentAchievements(studentId);
 
