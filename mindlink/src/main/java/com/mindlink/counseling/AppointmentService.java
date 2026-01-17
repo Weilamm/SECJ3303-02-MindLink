@@ -40,6 +40,11 @@ public class AppointmentService {
         );
     }
 
+    public List<Appointment> getAppointmentsByStudentId(String studentId) {
+        String sql = "SELECT * FROM appointment WHERE student_id = ? ORDER BY date DESC, time DESC";
+        return jdbcTemplate.query(sql, new AppointmentRowMapper(), studentId);
+    }
+
     // --- 2. RESCHEDULE (Update Existing Appointment) ---
     public void rescheduleAppointment(Appointment appt) {
         // Only updates the changeable details, keeps the ID same

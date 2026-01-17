@@ -18,7 +18,6 @@ public class Appointment {
     private String status; 
     private String notes;
 
-    // Constructor 1: Used by Controller when booking
     public Appointment(String id, String counselorName, String date, String time, String type, String venue) {
         this.id = id;
         this.counselorName = counselorName;
@@ -29,8 +28,6 @@ public class Appointment {
         this.status = "Booked"; // Default status
     }
 
-    // Constructor 2: Used by RowMapper (Database reading)
-    // We update this to include status and studentId
     public Appointment(String id, String counselorName, String date, String time, String type, String venue, String status, String studentId) {
         this.id = id;
         this.counselorName = counselorName;
@@ -48,30 +45,24 @@ public class Appointment {
     public boolean isUpcoming() {
         if (this.date == null || this.time == null) return false;
         
-        // If status is cancelled, it's never "upcoming"
         if ("Cancelled".equalsIgnoreCase(this.status)) return false;
         if ("Completed".equalsIgnoreCase(this.status)) return false;
 
         try {
-            // 1. Parse Date
+
             LocalDate appDate = LocalDate.parse(this.date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            
-            // 2. Parse Time (Handle both "14:30" and "02:30 PM" formats)
+
             LocalTime appTime;
             try {
-                // Try standard 24-hour format first
                 appTime = LocalTime.parse(this.time, DateTimeFormatter.ofPattern("HH:mm"));
             } catch (DateTimeParseException e) {
-                // Try AM/PM format
                 appTime = LocalTime.parse(this.time, DateTimeFormatter.ofPattern("hh:mm a"));
             }
 
-            // 3. Combine and Compare with NOW
             LocalDateTime appDateTime = LocalDateTime.of(appDate, appTime);
             return appDateTime.isAfter(LocalDateTime.now());
 
         } catch (Exception e) {
-            // If parsing fails, fallback to simple date comparison
             try {
                 LocalDate appDate = LocalDate.parse(this.date);
                 return !appDate.isBefore(LocalDate.now());
@@ -80,8 +71,6 @@ public class Appointment {
             }
         }
     }
-
-    // --- GETTERS AND SETTERS ---
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }

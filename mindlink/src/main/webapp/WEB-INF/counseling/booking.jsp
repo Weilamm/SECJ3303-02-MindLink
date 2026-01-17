@@ -23,7 +23,6 @@
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: var(--bg-color); 
-            /* 🟢 Attractive Pink Gradient Background */
             background-image: 
                 radial-gradient(circle at 10% 20%, rgba(244, 151, 170, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 90% 80%, rgba(247, 127, 0, 0.1) 0%, transparent 50%);
@@ -35,7 +34,6 @@
             overflow-x: hidden; 
         }
         
-        /* 🟢 ANIMATED BLOBS */
         .blob {
             position: absolute; filter: blur(60px); z-index: -1; opacity: 0.7;
             animation: float 10s ease-in-out infinite;
@@ -57,7 +55,6 @@
         
         .layout-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; }
         
-        /* 🟢 Glass Card Style */
         .card { 
             background: var(--white-glass); 
             backdrop-filter: blur(10px);
@@ -73,7 +70,6 @@
             color: var(--accent-dark-pink);
         }
 
-        /* CALENDAR STYLES */
         .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; }
         .nav-btn { cursor: pointer; padding: 5px 10px; user-select: none; transition: 0.2s; }
         .nav-btn:hover { color: var(--accent-pink); transform: scale(1.1); }
@@ -86,25 +82,21 @@
         }
         .day-cell:hover:not(.disabled) { background: #ffe0e6; color: var(--accent-dark-pink); border-color: var(--accent-pink); }
         
-        /* 🟢 Pink Selected State */
         .day-cell.selected { background: var(--accent-pink); color: white; font-weight: bold; box-shadow: 0 4px 10px rgba(244, 151, 170, 0.4); }
         .day-cell.disabled { color: #ccc; cursor: not-allowed; opacity: 0.4; pointer-events: none; background: #f9f9f9; }
 
-        /* COUNSELOR GRID */
         .counselor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
         .counselor-card {
             border: 1px solid var(--gray); border-radius: 16px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; background: white;
         }
         .counselor-card:hover { border-color: var(--accent-pink); background: #fff5f7; transform: translateY(-3px); }
         
-        /* 🟢 Active Counselor Pink */
         .counselor-card.active { 
             background: var(--accent-pink); color: white; border-color: var(--accent-pink); 
             transform: translateY(-3px); box-shadow: 0 5px 15px rgba(244, 151, 170, 0.4); 
         }
         .counselor-icon { font-size: 24px; margin-bottom: 8px; display: block; }
 
-        /* TIME SLOTS */
         .time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
         .time-btn {
             padding: 12px; border: 1px solid var(--gray); border-radius: 12px; text-align: center; 
@@ -114,7 +106,6 @@
         .time-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
         .time-btn.disabled { background: #f5f5f5; color: #bbb; cursor: not-allowed; text-decoration: line-through; border-color: #eee; }
 
-        /* MODE SELECTION */
         .mode-selection { display: flex; gap: 15px; margin-top: 15px; }
         .mode-option { flex: 1; position: relative; }
         .mode-option input { position: absolute; opacity: 0; cursor: pointer; }
@@ -127,7 +118,6 @@
         }
         .mode-option:hover .mode-label { border-color: var(--accent-pink); color: var(--accent-dark-pink); }
 
-        /* BUTTONS */
         .action-bar { 
             margin-top: 30px; 
             text-align: right; 
@@ -138,7 +128,6 @@
             gap: 15px;                
         }
 
-        /* 🟢 Gradient Submit Button */
         .submit-btn { 
             background: linear-gradient(135deg, #F497AA, #F77F00); 
             color: white; padding: 15px 40px; font-size: 16px; border: none; border-radius: 50px; 
@@ -154,7 +143,6 @@
         }
         .btn-cancel-booking:hover { background-color: #f5f5f5; color: #333; }
         
-        /* Mobile */
         @media (max-width: 900px) {
             .layout-grid { grid-template-columns: 1fr; }
             .time-grid { grid-template-columns: repeat(3, 1fr); }
@@ -240,10 +228,8 @@
     </div>
 
 <script>
-    // --- 1. GLOBAL VARIABLES ---
     var bookedSlots = [];
     
-    // Inject JSP data into JS array
     <c:forEach items="${bookedAppointments}" var="app">
         bookedSlots.push({ 
             date: "${app.date}", 
@@ -256,17 +242,14 @@
     let currYear = currentDate.getFullYear();
     let currMonth = currentDate.getMonth();
     let pickedDate = ""; 
-    let pickedCounselor = "${preselectedName}"; // Auto-select logic
+    let pickedCounselor = "${preselectedName}"; 
 
-    // Important: Initialize month names
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-    // Set hidden input if auto-selected
     if (pickedCounselor) {
         document.getElementById("selectedCounselor").value = pickedCounselor;
     }
 
-    // --- 2. RENDER CALENDAR (WITH DISABLE PAST DATES LOGIC) ---
     function renderCalendar() {
         let firstDay = new Date(currYear, currMonth, 1).getDay();
         let lastDate = new Date(currYear, currMonth + 1, 0).getDate();
@@ -303,7 +286,6 @@
     document.getElementById("prevMonth").onclick = () => { currMonth--; if(currMonth<0){currMonth=11;currYear--;} renderCalendar(); };
     document.getElementById("nextMonth").onclick = () => { currMonth++; if(currMonth>11){currMonth=0;currYear++;} renderCalendar(); };
     
-    // --- 3. SELECTION FUNCTIONS ---
     window.selectDate = function(el, dateStr) {
         pickedDate = dateStr;
         document.getElementById("selectedDate").value = dateStr;
@@ -330,18 +312,55 @@
         return slots;
     }
 
+    function timeToMinutes(timeStr) {
+        let [time, modifier] = timeStr.split(' ');
+        let [hours, minutes] = time.split(':');
+        
+        hours = parseInt(hours);
+        minutes = parseInt(minutes);
+
+        if (hours === 12 && modifier === 'AM') { hours = 0; }
+        if (hours !== 12 && modifier === 'PM') { hours += 12; }
+
+        return (hours * 60) + minutes;
+    }
+
+    function getTodayString() {
+        let now = new Date();
+        let y = now.getFullYear();
+        let m = String(now.getMonth() + 1).padStart(2, '0');
+        let d = String(now.getDate()).padStart(2, '0');
+        return y + "-" + m + "-" + d;
+    }
+
     function refreshTimeSlots() {
         let container = document.getElementById("timeSlotContainer");
         container.innerHTML = "";
         let allSlots = generateTimeSlots();
+
+        let now = new Date();
+        let currentMinutes = (now.getHours() * 60) + now.getMinutes();
+        let isToday = (pickedDate === getTodayString());
+
         allSlots.forEach(time => {
             let isTaken = false;
             if (pickedDate && pickedCounselor) {
                 isTaken = bookedSlots.some(b => b.date === pickedDate && b.time === time && b.counselor === pickedCounselor);
             }
+
+            let isPast = false;
+            if (isToday) {
+                let slotMinutes = timeToMinutes(time);
+                // Disable if slot time is less than current time
+                if (slotMinutes < currentMinutes) {
+                    isPast = true;
+                }
+            }
             
-            let disabledClass = isTaken ? "disabled" : "";
-            let clickAction = isTaken ? "" : "selectTime(this, '" + time + "')";
+            let isDisabled = isTaken || isPast;
+            
+            let disabledClass = isDisabled ? "disabled" : "";
+            let clickAction = isDisabled ? "" : "selectTime(this, '" + time + "')";
             
             container.innerHTML += '<div class="time-btn ' + disabledClass + '" onclick="' + clickAction + '">' + time + '</div>';
         });
@@ -363,7 +382,6 @@
         return true;
     }
 
-    // --- 4. INITIALIZE ---
     renderCalendar();
     refreshTimeSlots();
 </script>

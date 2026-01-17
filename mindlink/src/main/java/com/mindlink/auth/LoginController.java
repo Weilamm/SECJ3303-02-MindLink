@@ -1,11 +1,11 @@
 package com.mindlink.auth;
 
-import com.mindlink.counseling.Counselor; // Import your Counselor Model
-// Import Student Model if you have one
+import com.mindlink.counseling.Counselor; 
+import com.mindlink.usermanagement.model.Student;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException; // Import this for error handling
-import org.springframework.jdbc.core.BeanPropertyRowMapper; // Import this for object mapping
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 public class LoginController {
@@ -37,25 +35,32 @@ public class LoginController {
 
         if (role.equals("student")) {
             String sql = "SELECT * FROM student WHERE (student_id = ? OR email = ?) AND password = ?";
-            List<Map<String, Object>> students = jdbcTemplate.queryForList(sql, username, username, password);
+            
+            try {
+                Student student = jdbcTemplate.queryForObject(
+                        sql, 
+                        new BeanPropertyRowMapper<>(Student.class), 
+                        username, username, password
+                );
 
-            if (!students.isEmpty()) {
-                Map<String, Object> student = students.get(0);
-                String status = (String) student.get("status");
+                if (student != null) {
+                    String status = student.getStatus(); 
 
-                if ("PENDING".equalsIgnoreCase(status)) {
-                    model.addAttribute("error", "Account pending approval. Please wait for administrator review.");
-                    return "auth/login";
+                    if ("PENDING".equalsIgnoreCase(status)) {
+                        model.addAttribute("error", "Account pending approval. Please wait for administrator review.");
+                        return "auth/login";
+                    }
+
+                    if ("REJECTED".equalsIgnoreCase(status)) {
+                        model.addAttribute("error", "Your account has been rejected. Please contact support.");
+                        return "auth/login";
+                    }
+
+                    session.setAttribute("loggedInStudent", student);
+                    return "redirect:/home";
                 }
 
-                if ("REJECTED".equalsIgnoreCase(status)) {
-                    model.addAttribute("error", "Your account has been rejected. Please contact support.");
-                    return "auth/login";
-                }
-
-                session.setAttribute("loggedInStudent", student);
-                return "redirect:/home";
-            } else {
+            } catch (EmptyResultDataAccessException e) {
                 model.addAttribute("error", "Invalid student credentials.");
                 return "auth/login";
             }
@@ -65,40 +70,29 @@ public class LoginController {
             String sql = "SELECT * FROM counselor WHERE (id = ? OR email = ?) AND password = ?";
 
             try {
-                // 1. Use queryForObject instead of queryForList
-                // 2. Use BeanPropertyRowMapper to convert the DB row into a real Counselor
-                // object
                 Counselor counselor = jdbcTemplate.queryForObject(
                         sql,
                         new BeanPropertyRowMapper<>(Counselor.class),
                         username, username, password);
 
-                // 3. Check if counselor is approved
                 if (counselor != null) {
                     String status = counselor.getStatus();
                     if (status == null || status.isEmpty() || !status.equals("approved")) {
                         if ("pending".equals(status)) {
-                            model.addAttribute("error",
-                                    "Your counselor application is pending approval. Please wait for administrator review.");
+                            model.addAttribute("error", "Your counselor application is pending approval.");
                         } else if ("rejected".equals(status)) {
-                            model.addAttribute("error",
-                                    "Your counselor application has been rejected. Please contact the administrator.");
+                            model.addAttribute("error", "Your counselor application has been rejected.");
                         } else {
-                            model.addAttribute("error",
-                                    "Your counselor application is pending approval. Please wait for administrator review.");
+                            model.addAttribute("error", "Your counselor application is pending approval.");
                         }
                         return "auth/login";
                     }
 
-                    // 4. Now session contains a real Counselor object, so the Controller won't
-                    // crash
                     session.setAttribute("loggedInCounselor", counselor);
-
-                    return "redirect:/counselor/dashboard"; // Make sure this matches your Controller mapping
+                    return "redirect:/counselor/dashboard";
                 }
 
             } catch (EmptyResultDataAccessException e) {
-                // This block runs if no user is found
                 model.addAttribute("error", "Invalid counselor credentials.");
                 return "auth/login";
             }
