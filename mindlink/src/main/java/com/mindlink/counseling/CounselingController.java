@@ -8,8 +8,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jakarta.servlet.http.HttpSession; 
-import java.util.Map; 
+import com.mindlink.usermanagement.model.Student; // Import Student Model
+
+import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/counseling")
@@ -24,14 +28,27 @@ public class CounselingController {
     @Autowired
     private SessionFeedbackService sessionFeedbackService;
 
-    // --- 1. HOME PAGE ---
     @GetMapping("/home") 
     public String showCounselingHome(Model model, HttpSession session) { 
-        model.addAttribute("appointments", appointmentService.getUpcomingAppointments());
+        // 1. Get Logged-in Student
+        Object studentObj = session.getAttribute("loggedInStudent");
+        if (studentObj == null) return "redirect:/login";
+
+        String studentId = getStudentId(studentObj);
+
+        List<Appointment> myApps = appointmentService.getAppointmentsByStudentId(studentId);
+
+        List<Appointment> upcoming = new ArrayList<>();
+        for (Appointment app : myApps) {
+            if (app.isUpcoming()) {
+                upcoming.add(app);
+            }
+        }
+
+        model.addAttribute("appointments", upcoming);
         return "counseling/home"; 
     }
 
-    // --- 2. BOOKING PAGE ---
     @GetMapping("/booking")
     public String showBookingPage(
             @RequestParam(value = "preselected", required = false) String preselected,
@@ -39,6 +56,7 @@ public class CounselingController {
             Model model) {
         
         model.addAttribute("counselors", counselorService.getAllCounselors());
+        
         model.addAttribute("bookedAppointments", appointmentService.getAllAppointments());
         
         if (rescheduleId != null && !rescheduleId.isEmpty()) {
@@ -54,28 +72,22 @@ public class CounselingController {
         return "counseling/booking";
     }
 
-    // --- 3. HANDLE BOOKING SUBMISSION ---
     @SuppressWarnings("unchecked") 
     @PostMapping("/booking/submit")
     public String processBooking(
             @RequestParam(value = "existingId", required = false) String existingId,
             @RequestParam("date") String date,
             @RequestParam("time") String time,
-            @RequestParam("counselor") String counselorName, // Renamed to avoid confusion with class name
+            @RequestParam("counselor") String counselorName,
             @RequestParam(value = "mode", defaultValue = "Online") String mode,
             HttpSession session,
             Model model) {
         
-        // 1. Get Student ID from Session
         Object studentObj = session.getAttribute("loggedInStudent");
-        String studentId = "S001"; // Default fallback
+        if (studentObj == null) return "redirect:/login";
         
-        if (studentObj instanceof Map) {
-            Map<String, Object> studentMap = (Map<String, Object>) studentObj;
-            studentId = (String) studentMap.get("student_id");
-        } 
+        String studentId = getStudentId(studentObj);
 
-        // 2. Determine Venue
         String venue;
         if (mode.equalsIgnoreCase("Physical")) {
             venue = "Block B Room 314";
@@ -84,7 +96,6 @@ public class CounselingController {
             venue = "https://utm.webex.com/utm/" + cleanName;
         }
 
-        // 3. Create Appointment Object
         Appointment app = new Appointment();
         app.setStudentId(studentId);
         app.setCounselorName(counselorName);
@@ -93,7 +104,6 @@ public class CounselingController {
         app.setType(mode);
         app.setVenue(venue);
 
-        // 4. Save or Update
         if (existingId != null && !existingId.isEmpty()) {
             app.setId(existingId);
             app.setStatus("Rescheduled");
@@ -103,7 +113,6 @@ public class CounselingController {
             appointmentService.bookAppointment(app); 
         }
 
-        // 5. Success Page Data
         model.addAttribute("bookingId", app.getId()); 
         model.addAttribute("counselorName", counselorName);
         model.addAttribute("sessionType", mode);
@@ -114,14 +123,12 @@ public class CounselingController {
         return "counseling/booking_success";
     }
 
-    // --- 4. CANCEL ---
     @GetMapping("/booking/cancel")
     public String cancelBooking(@RequestParam("id") String id) {
         appointmentService.deleteAppointment(id);
         return "redirect:/counseling/home";
     }
 
-    // --- 5. BROWSE ---
     @GetMapping("/browse")
     public String showBrowsePage(@RequestParam(value = "search", required = false) String search, Model model) {
         if (search != null && !search.isEmpty()) {
@@ -132,37 +139,42 @@ public class CounselingController {
         return "counseling/browse";
     }
 
-    // --- 6. PROFILE ---
     @GetMapping("/counselor")
     public String showCounselorProfile(@RequestParam("id") String id, Model model) {
-        // FIX: Removed .orElse(null) because getCounselorById returns the object directly
         Counselor c = counselorService.getCounselorById(id);
-        
-        if (c == null)
-            return "redirect:/counseling/browse";
-        
+        if (c == null) return "redirect:/counseling/browse";
         model.addAttribute("c", c);
         return "counseling/profile";
     }
 
-    // --- 7. HISTORY & FEEDBACK ---
     @GetMapping("/history")
-    public String showHistoryPage(Model model) {
-        model.addAttribute("appointments", appointmentService.getPastAppointments());
+    public String showHistoryPage(Model model, HttpSession session) {
+        Object studentObj = session.getAttribute("loggedInStudent");
+        if (studentObj == null) return "redirect:/login";
+
+        String studentId = getStudentId(studentObj);
+
+        List<Appointment> myApps = appointmentService.getAppointmentsByStudentId(studentId);
+
+        List<Appointment> past = new ArrayList<>();
+        for (Appointment app : myApps) {
+            if (!app.isUpcoming()) {
+                past.add(app);
+            }
+        }
+
+        model.addAttribute("appointments", past);
         return "counseling/history";
     }
 
     @GetMapping("/history/view")
     public String viewAppointment(@RequestParam("id") String id, Model model) {
-        
-        // 1. Get Appointment Details
         Appointment app = appointmentService.getAppointmentById(id);
         if (app == null) return "redirect:/counseling/history";
         model.addAttribute("app", app);
 
-        // 🟢 2. NEW: Fetch Feedback for this specific appointment
         Feedback fb = sessionFeedbackService.getFeedbackByAppointmentId(id);
-        model.addAttribute("feedback", fb); // Pass it to the JSP
+        model.addAttribute("feedback", fb);
 
         return "counseling/appointment_details";
     }
@@ -189,7 +201,6 @@ public class CounselingController {
         return "counseling/submit_feedback";
     }
 
-    // --- 8. VIEW DETAILS (Success Page Reuse) ---
     @GetMapping("/view")
     public String viewAppointmentDetails(@RequestParam("id") String id, Model model) {
         Appointment app = appointmentService.getAppointmentById(id);
@@ -204,5 +215,13 @@ public class CounselingController {
 
         return "counseling/booking_success";
     }
-    
+
+    private String getStudentId(Object studentObj) {
+        if (studentObj instanceof Student) {
+            return ((Student) studentObj).getStudentId();
+        } else if (studentObj instanceof Map) {
+            return (String) ((Map<?, ?>) studentObj).get("student_id");
+        }
+        return null;
+    }
 }
